@@ -65,10 +65,10 @@ function PricingSection(props) {
             data-aos="zoom-in-up"
           >
             <PriceCard
-              title="Starter"
+              title="Silver"
               pricing={
                 <span>
-                  $14.99
+                  $2.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
@@ -86,10 +86,10 @@ function PricingSection(props) {
           >
             <PriceCard
               highlighted
-              title="Premium"
+              title="Gold"
               pricing={
                 <span>
-                  $29.99
+                  $9.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
@@ -106,30 +106,10 @@ function PricingSection(props) {
             data-aos-delay={isWidthUpMd ? "400" : "0"}
           >
             <PriceCard
-              title="Business"
+              title="Platinum"
               pricing={
                 <span>
-                  $49.99
-                  <Typography display="inline"> / month</Typography>
-                </span>
-              }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
-            />
-          </Grid>
-          <Grid
-            item
-            className={classes.cardWrapper}
-            xs={12}
-            sm={6}
-            lg={3}
-            data-aos="zoom-in-up"
-            data-aos-delay={isWidthUpMd ? "600" : "200"}
-          >
-            <PriceCard
-              title="Tycoon"
-              pricing={
-                <span>
-                  $99.99
+                  $19.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }

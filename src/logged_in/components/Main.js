@@ -7,7 +7,6 @@ import NavBar from "./navigation/NavBar";
 import ConsecutiveSnackbarMessages from "../../shared/components/ConsecutiveSnackbarMessages";
 import smoothScrollTop from "../../shared/functions/smoothScrollTop";
 import persons from "../dummy_data/persons";
-import LazyLoadAddBalanceDialog from "./subscription/LazyLoadAddBalanceDialog";
 
 const styles = (theme) => ({
   main: {
@@ -50,7 +49,6 @@ function Main(props) {
   const [targets, setTargets] = useState([]);
   const [messages, setMessages] = useState([]);
   const [isAccountActivated, setIsAccountActivated] = useState(false);
-  const [isAddBalanceDialogOpen, setIsAddBalanceDialogOpen] = useState(false);
   const [pushMessageToSnackbar, setPushMessageToSnackbar] = useState(null);
 
   const fetchRandomTargets = useCallback(() => {
@@ -71,21 +69,6 @@ function Main(props) {
     }
     setTargets(targets);
   }, [setTargets]);
-
-  const openAddBalanceDialog = useCallback(() => {
-    setIsAddBalanceDialogOpen(true);
-  }, [setIsAddBalanceDialogOpen]);
-
-  const closeAddBalanceDialog = useCallback(() => {
-    setIsAddBalanceDialogOpen(false);
-  }, [setIsAddBalanceDialogOpen]);
-
-  const onPaymentSuccess = useCallback(() => {
-    pushMessageToSnackbar({
-      text: "Your balance has been updated.",
-    });
-    setIsAddBalanceDialogOpen(false);
-  }, [pushMessageToSnackbar, setIsAddBalanceDialogOpen]);
 
   const fetchRandomStatistics = useCallback(() => {
     const statistics = { profit: [], views: [] };
@@ -231,7 +214,7 @@ function Main(props) {
 
   const selectDashboard = useCallback(() => {
     smoothScrollTop();
-    document.title = "WaVer - Dashboard";
+    document.title = "FitConnect - User Dashsboard";
     setSelectedTab("Dashboard");
     if (!hasFetchedCardChart) {
       setHasFetchedCardChart(true);
@@ -290,12 +273,6 @@ function Main(props) {
     setHasFetchedDateTimePicker,
   ]);
 
-  const selectSubscription = useCallback(() => {
-    smoothScrollTop();
-    document.title = "WaVer - Subscription";
-    setSelectedTab("Subscription");
-  }, [setSelectedTab]);
-
   const getPushMessageFromChild = useCallback(
     (pushMessage) => {
       setPushMessageToSnackbar(() => pushMessage);
@@ -319,15 +296,9 @@ function Main(props) {
 
   return (
     <Fragment>
-      <LazyLoadAddBalanceDialog
-        open={isAddBalanceDialogOpen}
-        onClose={closeAddBalanceDialog}
-        onSuccess={onPaymentSuccess}
-      />
       <NavBar
         selectedTab={selectedTab}
         messages={messages}
-        openAddBalanceDialog={openAddBalanceDialog}
       />
       <ConsecutiveSnackbarMessages
         getPushMessageFromChild={getPushMessageFromChild}
@@ -348,8 +319,6 @@ function Main(props) {
           targets={targets}
           selectDashboard={selectDashboard}
           selectPosts={selectPosts}
-          selectSubscription={selectSubscription}
-          openAddBalanceDialog={openAddBalanceDialog}
           setTargets={setTargets}
           setPosts={setPosts}
         />
