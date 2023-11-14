@@ -10,7 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 const styles = (theme) => ({
   footerInner: {
-    backgroundColor: theme.palette.common.darkBlack,
+    backgroundColor: theme.palette.common.black,
     paddingTop: theme.spacing(8),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -28,8 +28,8 @@ const styles = (theme) => ({
       paddingBottom: theme.spacing(4),
     },
   },
-  whiteBg: {
-    backgroundColor: theme.palette.common.white,
+  blackBg: {
+    backgroundColor: theme.palette.common.black,
   },
 });
 
@@ -40,8 +40,8 @@ function Footer(props) {
   return (
     <footer className="lg-p-top">
       <WaveBorder
-        upperColor="#FFFFFF"
-        lowerColor={theme.palette.common.darkBlack}
+        upperColor="#0e1111"
+        lowerColor={theme.palette.common.black}
         animationNegativeDelay={4}
       />
       <div className={classes.footerInner}>

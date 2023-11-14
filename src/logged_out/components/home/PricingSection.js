@@ -46,7 +46,7 @@ function PricingSection(props) {
   const width = useWidth();
   const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
-    <div className="lg-p-top" style={{ backgroundColor: "#FFFFFF" }}>
+    <div className="lg-p-top" style={{ backgroundColor: "#0e1111" }}>
       <Typography variant="h3" align="center" className="lg-mg-bottom">
         Pricing
       </Typography>

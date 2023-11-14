@@ -3,8 +3,8 @@ import { createTheme, responsiveFontSizes, adaptV4Theme } from "@mui/material";
 // colors
 const primary = "#c2e8ff";
 const secondary = "#0d97ff";
-const black = "#343a40";
-const darkBlack = "rgb(36, 40, 44)";
+const black = "#232b2b";
+const darkBlack = "#0e1111";
 const background = "#f5f5f5";
 const warningLight = "rgba(253, 200, 69, .3)";
 const warningMain = "rgba(253, 200, 69, .5)";
