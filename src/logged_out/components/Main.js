@@ -38,7 +38,7 @@ function Main(props) {
 
   const selectBlog = useCallback(() => {
     smoothScrollTop();
-    document.title = "WaVer - Blog";
+    document.title = "FitConnect - Blog";
     setSelectedTab("Blog");
   }, [setSelectedTab]);
 

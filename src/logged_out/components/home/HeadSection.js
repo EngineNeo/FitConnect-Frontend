@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Grid, Typography, Card, Box } from "@mui/material";
+import { Grid, Typography, Box, Button } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import WaveBorder from "../../../shared/components/WaveBorder";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -67,8 +67,8 @@ const styles = (theme) => ({
     boxShadow: theme.shadows[4],
   },
   container: {
-    marginTop: theme.spacing(6),
-    marginBottom: theme.spacing(12),
+    marginTop: theme.spacing(20),
+    marginBottom: theme.spacing(20),
     [theme.breakpoints.down("lg")]: {
       marginBottom: theme.spacing(9),
     },
@@ -104,11 +104,16 @@ function HeadSection(props) {
                       <Typography 
                       variant={isWidthUpLg ? "h3" : "h4"}
                       data-aos-delay="200"
-                      data-aos="zoom-in"
+                      data-aos="zoom-out"
                       color="#FFFFFF"
                       textAlign="center">
                         Elevate your fitness journey and connect with one of our expert coaches
                       </Typography>
+                      <Box display="flex" justifyContent="center" marginTop="50px">
+                        <Button variant="outlined">
+                          Learn More
+                        </Button>
+                      </Box>  
                   </Grid>
                 </Box>
               </div>

@@ -1,8 +1,12 @@
 import { createTheme, responsiveFontSizes, adaptV4Theme } from "@mui/material";
 
+// Palettes
+// https://www.color-hex.com/color-palette/1405 {Black}
+// https://www.color-hex.com/color-palette/1023210 {Orange}
+
 // colors
-const primary = "#c2e8ff";
-const secondary = "#0d97ff";
+const primary = "#f23005";
+const secondary = "#f27405";
 const black = "#232b2b";
 const darkBlack = "#0e1111";
 const background = "#f5f5f5";

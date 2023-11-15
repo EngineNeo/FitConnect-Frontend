@@ -39,6 +39,9 @@ const styles = (theme) => ({
       maxWidth: 360,
     },
   },
+  textWhite: {
+    color: "#FFFFFF",
+  }
 });
 
 function PricingSection(props) {
@@ -47,13 +50,14 @@ function PricingSection(props) {
   const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
     <div className="lg-p-top" style={{ backgroundColor: "#0e1111" }}>
-      <Typography variant="h3" align="center" className="lg-mg-bottom">
+      <Typography variant="h3" align="center" className={classNames("lg-mg-bottom", classes.textWhite)}>
         Pricing
       </Typography>
-      <div className={classNames("container-fluid", classes.containerFix)}>
+      <div className={classNames("container-fluid", classes.containerFix, classes.textWhite)}>
         <Grid
           container
           spacing={calculateSpacing(width, theme)}
+          justifyContent={"center"}
           className={classes.gridContainer}
         >
           <Grid
