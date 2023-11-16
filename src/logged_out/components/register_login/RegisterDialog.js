@@ -25,22 +25,21 @@ const styles = (theme) => ({
 });
 
 function RegisterDialog(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordRepeat, setPasswordRepeat] = useState('');
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
-  const registerPassword = useRef();
-  const registerPasswordRepeat = useRef();
 
   const register = useCallback(() => {
     if (!registerTermsCheckbox.current.checked) {
       setHasTermsOfServiceError(true);
       return;
     }
-    if (
-      registerPassword.current.value !== registerPasswordRepeat.current.value
-    ) {
+    if (password !== passwordRepeat) {
       setStatus("passwordsDontMatch");
       return;
     }
@@ -49,12 +48,38 @@ function RegisterDialog(props) {
     setTimeout(() => {
       setIsLoading(false);
     }, 1500);
+
+    const userData = {
+      email: email,
+      password: password,
+    };
+
+    fetch('http://localhost:8000/fitConnect/create_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+      .then(response => response.json())
+      .then(data => {
+        setIsLoading(false);
+        if (data.status === 'success') {
+        } else {
+          setStatus(data.error);
+        }
+      })
+      .catch(error => {
+        setIsLoading(false);
+        setStatus('serverError');
+      });
   }, [
     setIsLoading,
     setStatus,
     setHasTermsOfServiceError,
-    registerPassword,
-    registerPasswordRepeat,
+    email,
+    password,
+    passwordRepeat,
     registerTermsCheckbox,
   ]);
 
@@ -82,11 +107,8 @@ function RegisterDialog(props) {
             autoFocus
             autoComplete="off"
             type="email"
-            onChange={() => {
-              if (status === "invalidEmail") {
-                setStatus(null);
-              }
-            }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             FormHelperTextProps={{ error: true }}
           />
           <VisibilityPasswordTextField
@@ -98,9 +120,10 @@ function RegisterDialog(props) {
               status === "passwordTooShort" || status === "passwordsDontMatch"
             }
             label="Password"
-            inputRef={registerPassword}
             autoComplete="off"
-            onChange={() => {
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
               if (
                 status === "passwordTooShort" ||
                 status === "passwordsDontMatch"
@@ -130,9 +153,10 @@ function RegisterDialog(props) {
               status === "passwordTooShort" || status === "passwordsDontMatch"
             }
             label="Repeat Password"
-            inputRef={registerPasswordRepeat}
             autoComplete="off"
-            onChange={() => {
+            value={passwordRepeat}
+            onChange={(e) => {
+              setPasswordRepeat(e.target.value);
               if (
                 status === "passwordTooShort" ||
                 status === "passwordsDontMatch"
@@ -145,8 +169,9 @@ function RegisterDialog(props) {
                 return "Create a password at least 6 characters long.";
               }
               if (status === "passwordsDontMatch") {
-                return "Your passwords dont match.";
+                return "Your passwords don't match.";
               }
+              return null;
             })()}
             FormHelperTextProps={{ error: true }}
             isVisible={isPasswordVisible}
