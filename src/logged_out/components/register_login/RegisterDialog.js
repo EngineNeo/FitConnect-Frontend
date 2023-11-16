@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { FormHelperText, TextField, Button, Checkbox, Typography, FormControlLabel } from "@mui/material";
 import withStyles from '@mui/styles/withStyles';
 import FormDialog from "../../../shared/components/FormDialog";
-import HighlightedInformation from "../../../shared/components/HighlightedInformation";
+// import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
 
@@ -224,16 +224,12 @@ function RegisterDialog(props) {
               service.
             </FormHelperText>
           )}
-          {status === "accountCreated" ? (
+          {/* {status === "accountCreated" (
             <HighlightedInformation>
               We have created your account. Please click on the link in the
               email we have sent to you before logging in.
             </HighlightedInformation>
-          ) : (
-            <HighlightedInformation>
-              Registration is disabled until we go live.
-            </HighlightedInformation>
-          )}
+          )} */}
         </Fragment>
       }
       actions={
