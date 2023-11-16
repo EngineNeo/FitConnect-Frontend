@@ -1,6 +1,4 @@
 // Add Birth Date Calendar
-// Change text color
-// Complete login implementation
 
 import React, { useState, useCallback, useRef, Fragment } from "react";
 import PropTypes from "prop-types";
@@ -11,6 +9,8 @@ import FormDialog from "../../../shared/components/FormDialog";
 // import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
+import DTPicker from "../../../shared/components/DateTimePicker";
+import classNames from "classnames";
 
 const styles = (theme) => ({
   link: {
@@ -27,8 +27,8 @@ const styles = (theme) => ({
       color: theme.palette.primary.white,
     },
   },
-  textWhite: {
-    color: theme.palette.primary.white,
+  textBlack: {
+    color: theme.palette.common.black,
   },
 });
 
@@ -37,7 +37,7 @@ function RegisterDialog(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [gender, setGender] = useState('');
-  const [birthDate, setBirthDate] = useState('')
+  const [birthDate, setBirthDate] = useState(new Date())
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
@@ -45,6 +45,11 @@ function RegisterDialog(props) {
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
+
+  const handleDateChange = (date) => {
+    const formattedDate = date.toISOString().replace('T', ' ').slice(0, 19);
+    setBirthDate(formattedDate);
+  };
 
   const register = useCallback(() => {
     if (!registerTermsCheckbox.current.checked) {
@@ -159,11 +164,19 @@ function RegisterDialog(props) {
               onChange={(e) => setGender(e.target.value)}
               label="Gender"
             >
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
+              <MenuItem value="male" className={classNames(classes.textBlack)}>Male</MenuItem>
+              <MenuItem value="female" className={classNames(classes.textBlack)}>Female</MenuItem>
+              {/* <MenuItem value="other" className={classNames(classes.textBlack)}>Other</MenuItem> Other not currently available on database */} 
             </Select>
           </FormControl>
+          <Typography variant="subtitle1" gutterBottom>
+            Birth Date
+          </Typography>
+          <DTPicker
+            value={birthDate}
+            onChange={handleDateChange}
+            renderInput={(props) => <TextField {...props} />}
+          />
           <VisibilityPasswordTextField
             variant="outlined"
             margin="normal"

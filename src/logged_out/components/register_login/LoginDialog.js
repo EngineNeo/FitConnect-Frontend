@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useRef, Fragment } from "react";
+import React, { useContext, useState, useCallback, useRef, Fragment } from "react";
+import axios from 'axios';
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { withRouter } from "react-router-dom";
@@ -8,6 +9,7 @@ import FormDialog from "../../../shared/components/FormDialog";
 import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
+import { AuthContext } from "../../../shared/components/AuthContext"
 
 const styles = (theme) => ({
   forgotPassword: {
@@ -43,26 +45,43 @@ function LoginDialog(props) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const loginEmail = useRef();
   const loginPassword = useRef();
+  const { login } = useContext(AuthContext);
 
-  const login = useCallback(() => {
+  const handleLoginRequest = async (email, password) => {
+    try {
+      const response = await axios.get('http://localhost:8000/fitConnect/login', {
+        params: { email, password }
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setStatus("invalidCredentials");
+      } else {
+        console.error("Login Error:", error);
+        setStatus("error");
+      }
+      setIsLoading(false);
+    }
+  };
+
+  const performLogin = useCallback(async () => {
     setIsLoading(true);
     setStatus(null);
-    if (loginEmail.current.value !== "test@web.com") {
-      setTimeout(() => {
-        setStatus("invalidEmail");
-        setIsLoading(false);
-      }, 1500);
-    } else if (loginPassword.current.value !== "HaRzwc") {
-      setTimeout(() => {
-        setStatus("invalidPassword");
-        setIsLoading(false);
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        history.push("/c/dashboard");
-      }, 150);
+    const email = loginEmail.current.value;
+    const password = loginPassword.current.value;
+
+    try {
+      const response = await handleLoginRequest(email, password);
+      if (response && response.token) {
+        localStorage.setItem('userToken', response.token);
+        login();
+        history.push("/c/dashboard"); // Assuming "/c/dashboard" is where LoggedInComponent is rendered
+      }
+    } catch (error) {
+      // Handle errors
+      // ... error handling code
     }
-  }, [setIsLoading, loginEmail, loginPassword, history, setStatus]);
+  }, [history, login]);
 
   return (
     <Fragment>
@@ -72,7 +91,7 @@ function LoginDialog(props) {
         loading={isLoading}
         onFormSubmit={(e) => {
           e.preventDefault();
-          login();
+          performLogin();
         }}
         hideBackdrop
         headline="Login"
@@ -139,11 +158,7 @@ function LoginDialog(props) {
                 email address
               </HighlightedInformation>
             ) : (
-              <HighlightedInformation>
-                Email is: <b>test@web.com</b>
-                <br />
-                Password is: <b>HaRzwc</b>
-              </HighlightedInformation>
+              ""
             )}
           </Fragment>
         }

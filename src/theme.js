@@ -50,6 +50,10 @@ const theme = createTheme(adaptV4Theme({
     background: {
       default: background
     },
+    text: {
+      primary: white, // Set primary text color
+      secondary: 'rgba(255, 255, 255, 0.7)', // Adjust as needed for secondary text
+    },
     spacing
   },
   breakpoints: {
@@ -127,8 +131,13 @@ const theme = createTheme(adaptV4Theme({
     }
   },
   typography: {
-    useNextVariants: true
-  }
+    useNextVariants: true,
+    // Set default color for all text
+    allVariants: {
+      color: white,
+    },
+    // ... other typography settings
+  },
 }));
 
 export default responsiveFontSizes(theme);

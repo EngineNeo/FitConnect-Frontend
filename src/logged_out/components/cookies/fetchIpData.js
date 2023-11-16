@@ -5,7 +5,7 @@ const fetchIpData = new Promise((resolve, reject) => {
      *  Resolve with dummydata, GET call will be rejected,
      *  since ipinfos server is configured that way
      */
-    resolve({ data: { country: "DE" } });
+    resolve({ data: { country: "USs" } });
     return;
   }
   ajax.open("GET", "https://ipinfo.io/json");
