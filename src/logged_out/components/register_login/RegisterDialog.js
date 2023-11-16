@@ -1,6 +1,11 @@
+// Add Birth Date Calendar
+// Change text color
+// Complete login implementation
+
 import React, { useState, useCallback, useRef, Fragment } from "react";
 import PropTypes from "prop-types";
-import { FormHelperText, TextField, Button, Checkbox, Typography, FormControlLabel } from "@mui/material";
+import { FormHelperText, TextField, Button, Checkbox, Typography, 
+        FormControlLabel, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import withStyles from '@mui/styles/withStyles';
 import FormDialog from "../../../shared/components/FormDialog";
 // import HighlightedInformation from "../../../shared/components/HighlightedInformation";
@@ -16,16 +21,23 @@ const styles = (theme) => ({
     cursor: "pointer",
     color: theme.palette.primary.main,
     "&:enabled:hover": {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.white,
     },
     "&:enabled:focus": {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.white,
     },
+  },
+  textWhite: {
+    color: theme.palette.primary.white,
   },
 });
 
 function RegisterDialog(props) {
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [gender, setGender] = useState('');
+  const [birthDate, setBirthDate] = useState('')
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
@@ -51,6 +63,10 @@ function RegisterDialog(props) {
 
     const userData = {
       email: email,
+      first_name: firstName,
+      last_name: lastName,
+      gender: gender,
+      // birth_date: birthDate,
       password: password,
     };
 
@@ -98,6 +114,12 @@ function RegisterDialog(props) {
       content={
         <Fragment>
           <TextField
+            InputLabelProps={{
+              className: classes.textWhite
+            }}
+            InputProps={{
+              className: classes.textWhite
+            }}
             variant="outlined"
             margin="normal"
             required
@@ -111,6 +133,37 @@ function RegisterDialog(props) {
             onChange={(e) => setEmail(e.target.value)}
             FormHelperTextProps={{ error: true }}
           />
+          {/* First Name Field */}
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value.replace(/[^a-zA-Z]/g, ''))}
+          />
+          {/* Last Name Field */}
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value.replace(/[^a-zA-Z]/g, ''))}
+          />
+          {/* Gender Dropdown */}
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Gender</InputLabel>
+            <Select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              label="Gender"
+            >
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+              <MenuItem value="other">Other</MenuItem>
+            </Select>
+          </FormControl>
           <VisibilityPasswordTextField
             variant="outlined"
             margin="normal"

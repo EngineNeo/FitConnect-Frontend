@@ -7,6 +7,7 @@ import { createTheme, responsiveFontSizes, adaptV4Theme } from "@mui/material";
 // colors
 const primary = "#f23005";
 const secondary = "#f27405";
+const white = "#f9eef2";
 const black = "#232b2b";
 const darkBlack = "#0e1111";
 const background = "#f5f5f5";
@@ -33,6 +34,7 @@ const theme = createTheme(adaptV4Theme({
     primary: { main: primary },
     secondary: { main: secondary },
     common: {
+      white,
       black,
       darkBlack
     },
@@ -106,7 +108,8 @@ const theme = createTheme(adaptV4Theme({
         width: "100%",
         maxWidth: 430,
         marginLeft: spacing,
-        marginRight: spacing
+        marginRight: spacing,
+        backgroundColor: black,
       }
     },
     MuiTooltip: {
