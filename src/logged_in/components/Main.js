@@ -45,7 +45,6 @@ function Main(props) {
   );
   const [transactions, setTransactions] = useState([]);
   const [statistics, setStatistics] = useState({ views: [], profit: [] });
-  const [posts, setPosts] = useState([]);
   const [targets, setTargets] = useState([]);
   const [messages, setMessages] = useState([]);
   const [isAccountActivated, setIsAccountActivated] = useState(false);
@@ -174,29 +173,6 @@ function Main(props) {
     setMessages(messages);
   }, [setMessages]);
 
-  const fetchRandomPosts = useCallback(() => {
-    shuffle(persons);
-    const posts = [];
-    const iterations = persons.length;
-    const oneDaySeconds = 60 * 60 * 24;
-    let curUnix = Math.round(
-      new Date().getTime() / 1000 - iterations * oneDaySeconds
-    );
-    for (let i = 0; i < iterations; i += 1) {
-      const person = persons[i];
-      const post = {
-        id: i,
-        src: person.src,
-        timestamp: curUnix,
-        name: person.name,
-      };
-      curUnix += oneDaySeconds;
-      posts.push(post);
-    }
-    posts.reverse();
-    setPosts(posts);
-  }, [setPosts]);
-
   const toggleAccountActivation = useCallback(() => {
     if (pushMessageToSnackbar) {
       if (isAccountActivated) {
@@ -229,50 +205,6 @@ function Main(props) {
     setHasFetchedCardChart,
   ]);
 
-  const selectPosts = useCallback(() => {
-    smoothScrollTop();
-    document.title = "WaVer - Posts";
-    setSelectedTab("Posts");
-    if (!hasFetchedEmojiTextArea) {
-      setHasFetchedEmojiTextArea(true);
-      import("../../shared/components/EmojiTextArea").then((Component) => {
-        setEmojiTextArea(Component.default);
-      });
-    }
-    if (!hasFetchedImageCropper) {
-      setHasFetchedImageCropper(true);
-      import("../../shared/components/ImageCropper").then((Component) => {
-        setImageCropper(Component.default);
-      });
-    }
-    if (!hasFetchedDropzone) {
-      setHasFetchedDropzone(true);
-      import("../../shared/components/Dropzone").then((Component) => {
-        setDropzone(Component.default);
-      });
-    }
-    if (!hasFetchedDateTimePicker) {
-      setHasFetchedDateTimePicker(true);
-      import("../../shared/components/DateTimePicker").then((Component) => {
-        setDateTimePicker(Component.default);
-      });
-    }
-  }, [
-    setSelectedTab,
-    setEmojiTextArea,
-    setImageCropper,
-    setDropzone,
-    setDateTimePicker,
-    hasFetchedEmojiTextArea,
-    setHasFetchedEmojiTextArea,
-    hasFetchedImageCropper,
-    setHasFetchedImageCropper,
-    hasFetchedDropzone,
-    setHasFetchedDropzone,
-    hasFetchedDateTimePicker,
-    setHasFetchedDateTimePicker,
-  ]);
-
   const getPushMessageFromChild = useCallback(
     (pushMessage) => {
       setPushMessageToSnackbar(() => pushMessage);
@@ -285,13 +217,11 @@ function Main(props) {
     fetchRandomStatistics();
     fetchRandomTransactions();
     fetchRandomMessages();
-    fetchRandomPosts();
   }, [
     fetchRandomTargets,
     fetchRandomStatistics,
     fetchRandomTransactions,
     fetchRandomMessages,
-    fetchRandomPosts,
   ]);
 
   return (
@@ -315,12 +245,9 @@ function Main(props) {
           pushMessageToSnackbar={pushMessageToSnackbar}
           transactions={transactions}
           statistics={statistics}
-          posts={posts}
           targets={targets}
           selectDashboard={selectDashboard}
-          selectPosts={selectPosts}
           setTargets={setTargets}
-          setPosts={setPosts}
         />
       </main>
     </Fragment>

@@ -1,16 +1,27 @@
-// Add Birth Date Calendar
-
 import React, { useState, useCallback, useRef, Fragment } from "react";
 import PropTypes from "prop-types";
-import { FormHelperText, TextField, Button, Checkbox, Typography, 
-        FormControlLabel, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
-import withStyles from '@mui/styles/withStyles';
+import {
+  FormHelperText,
+  TextField,
+  Button,
+  Checkbox,
+  Typography,
+  FormControlLabel,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
+import VisibilityPasswordTextField from '../../../shared/components/VisibilityPasswordTextField';
+import HighlightedInformation from '../../../shared/components/HighlightedInformation';
+import withStyles from "@mui/styles/withStyles";
 import FormDialog from "../../../shared/components/FormDialog";
-// import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
-import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
-import DTPicker from "../../../shared/components/DateTimePicker";
 import classNames from "classnames";
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { DateField } from '@mui/x-date-pickers/DateField';
+// import DatePicker from "../../../shared/components/DatePicker";
 
 const styles = (theme) => ({
   link: {
@@ -45,11 +56,19 @@ function RegisterDialog(props) {
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
+  // const [open, setOpen] = useState(false)
 
-  const handleDateChange = (date) => {
-    const formattedDate = date.toISOString().replace('T', ' ').slice(0, 19);
-    setBirthDate(formattedDate);
-  };
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+
+  // const handleBirthDateChange = (newDate) => {
+  //   setBirthDate(newDate);
+  // };
 
   const register = useCallback(() => {
     if (!registerTermsCheckbox.current.checked) {
@@ -94,6 +113,7 @@ function RegisterDialog(props) {
         setIsLoading(false);
         setStatus('serverError');
       });
+      // handleClose();
   }, [
     setIsLoading,
     setStatus,
@@ -113,6 +133,7 @@ function RegisterDialog(props) {
       onFormSubmit={(e) => {
         e.preventDefault();
         register();
+        // onClose
       }}
       hideBackdrop
       hasCloseIcon
@@ -169,14 +190,12 @@ function RegisterDialog(props) {
               {/* <MenuItem value="other" className={classNames(classes.textBlack)}>Other</MenuItem> Other not currently available on database */} 
             </Select>
           </FormControl>
-          <Typography variant="subtitle1" gutterBottom>
-            Birth Date
-          </Typography>
-          <DTPicker
-            value={birthDate}
-            onChange={handleDateChange}
-            renderInput={(props) => <TextField {...props} />}
-          />
+          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateField label="Date of Birth"
+                      value={birthDate}
+                      onChange={(newDate) => handleBirthDateChange(newDate)}
+            />
+          </LocalizationProvider> */}
           <VisibilityPasswordTextField
             variant="outlined"
             margin="normal"
@@ -290,12 +309,6 @@ function RegisterDialog(props) {
               service.
             </FormHelperText>
           )}
-          {/* {status === "accountCreated" (
-            <HighlightedInformation>
-              We have created your account. Please click on the link in the
-              email we have sent to you before logging in.
-            </HighlightedInformation>
-          )} */}
         </Fragment>
       }
       actions={

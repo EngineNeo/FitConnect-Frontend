@@ -175,6 +175,11 @@ function LoginDialog(props) {
               Login
               {isLoading && <ButtonCircularProgress />}
             </Button>
+            {status === "invalidCredentials" && (
+              <Typography color="error" style={{ textAlign: "center" }}>
+                Incorrect email or password, please try again
+              </Typography>
+            )}
             <Typography
               align="center"
               className={classNames(
