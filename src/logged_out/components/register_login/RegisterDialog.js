@@ -1,11 +1,27 @@
 import React, { useState, useCallback, useRef, Fragment } from "react";
 import PropTypes from "prop-types";
-import { FormHelperText, TextField, Button, Checkbox, Typography, FormControlLabel } from "@mui/material";
-import withStyles from '@mui/styles/withStyles';
+import {
+  FormHelperText,
+  TextField,
+  Button,
+  Checkbox,
+  Typography,
+  FormControlLabel,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
+import VisibilityPasswordTextField from '../../../shared/components/VisibilityPasswordTextField';
+import HighlightedInformation from '../../../shared/components/HighlightedInformation';
+import withStyles from "@mui/styles/withStyles";
 import FormDialog from "../../../shared/components/FormDialog";
-import HighlightedInformation from "../../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
-import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
+import classNames from "classnames";
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { DateField } from '@mui/x-date-pickers/DateField';
+// import DatePicker from "../../../shared/components/DatePicker";
 
 const styles = (theme) => ({
   link: {
@@ -16,31 +32,50 @@ const styles = (theme) => ({
     cursor: "pointer",
     color: theme.palette.primary.main,
     "&:enabled:hover": {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.white,
     },
     "&:enabled:focus": {
-      color: theme.palette.primary.dark,
+      color: theme.palette.primary.white,
     },
+  },
+  textBlack: {
+    color: theme.palette.common.black,
   },
 });
 
 function RegisterDialog(props) {
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [gender, setGender] = useState('');
+  const [birthDate, setBirthDate] = useState(new Date())
+  const [password, setPassword] = useState('');
+  const [passwordRepeat, setPasswordRepeat] = useState('');
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
-  const registerPassword = useRef();
-  const registerPasswordRepeat = useRef();
+  // const [open, setOpen] = useState(false)
+
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+
+  // const handleBirthDateChange = (newDate) => {
+  //   setBirthDate(newDate);
+  // };
 
   const register = useCallback(() => {
     if (!registerTermsCheckbox.current.checked) {
       setHasTermsOfServiceError(true);
       return;
     }
-    if (
-      registerPassword.current.value !== registerPasswordRepeat.current.value
-    ) {
+    if (password !== passwordRepeat) {
       setStatus("passwordsDontMatch");
       return;
     }
@@ -49,12 +84,43 @@ function RegisterDialog(props) {
     setTimeout(() => {
       setIsLoading(false);
     }, 1500);
+
+    const userData = {
+      email: email,
+      first_name: firstName,
+      last_name: lastName,
+      gender: gender,
+      // birth_date: birthDate,
+      password: password,
+    };
+
+    fetch('http://localhost:8000/fitConnect/create_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+      .then(response => response.json())
+      .then(data => {
+        setIsLoading(false);
+        if (data.status === 'success') {
+        } else {
+          setStatus(data.error);
+        }
+      })
+      .catch(error => {
+        setIsLoading(false);
+        setStatus('serverError');
+      });
+      // handleClose();
   }, [
     setIsLoading,
     setStatus,
     setHasTermsOfServiceError,
-    registerPassword,
-    registerPasswordRepeat,
+    email,
+    password,
+    passwordRepeat,
     registerTermsCheckbox,
   ]);
 
@@ -67,12 +133,19 @@ function RegisterDialog(props) {
       onFormSubmit={(e) => {
         e.preventDefault();
         register();
+        // onClose
       }}
       hideBackdrop
       hasCloseIcon
       content={
         <Fragment>
           <TextField
+            InputLabelProps={{
+              className: classes.textWhite
+            }}
+            InputProps={{
+              className: classes.textWhite
+            }}
             variant="outlined"
             margin="normal"
             required
@@ -82,13 +155,47 @@ function RegisterDialog(props) {
             autoFocus
             autoComplete="off"
             type="email"
-            onChange={() => {
-              if (status === "invalidEmail") {
-                setStatus(null);
-              }
-            }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             FormHelperTextProps={{ error: true }}
           />
+          {/* First Name Field */}
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value.replace(/[^a-zA-Z]/g, ''))}
+          />
+          {/* Last Name Field */}
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value.replace(/[^a-zA-Z]/g, ''))}
+          />
+          {/* Gender Dropdown */}
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Gender</InputLabel>
+            <Select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              label="Gender"
+            >
+              <MenuItem value="male" className={classNames(classes.textBlack)}>Male</MenuItem>
+              <MenuItem value="female" className={classNames(classes.textBlack)}>Female</MenuItem>
+              {/* <MenuItem value="other" className={classNames(classes.textBlack)}>Other</MenuItem> Other not currently available on database */} 
+            </Select>
+          </FormControl>
+          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateField label="Date of Birth"
+                      value={birthDate}
+                      onChange={(newDate) => handleBirthDateChange(newDate)}
+            />
+          </LocalizationProvider> */}
           <VisibilityPasswordTextField
             variant="outlined"
             margin="normal"
@@ -98,9 +205,10 @@ function RegisterDialog(props) {
               status === "passwordTooShort" || status === "passwordsDontMatch"
             }
             label="Password"
-            inputRef={registerPassword}
             autoComplete="off"
-            onChange={() => {
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
               if (
                 status === "passwordTooShort" ||
                 status === "passwordsDontMatch"
@@ -130,9 +238,10 @@ function RegisterDialog(props) {
               status === "passwordTooShort" || status === "passwordsDontMatch"
             }
             label="Repeat Password"
-            inputRef={registerPasswordRepeat}
             autoComplete="off"
-            onChange={() => {
+            value={passwordRepeat}
+            onChange={(e) => {
+              setPasswordRepeat(e.target.value);
               if (
                 status === "passwordTooShort" ||
                 status === "passwordsDontMatch"
@@ -145,8 +254,9 @@ function RegisterDialog(props) {
                 return "Create a password at least 6 characters long.";
               }
               if (status === "passwordsDontMatch") {
-                return "Your passwords dont match.";
+                return "Your passwords don't match.";
               }
+              return null;
             })()}
             FormHelperTextProps={{ error: true }}
             isVisible={isPasswordVisible}
@@ -198,16 +308,6 @@ function RegisterDialog(props) {
               In order to create an account, you have to accept our terms of
               service.
             </FormHelperText>
-          )}
-          {status === "accountCreated" ? (
-            <HighlightedInformation>
-              We have created your account. Please click on the link in the
-              email we have sent to you before logging in.
-            </HighlightedInformation>
-          ) : (
-            <HighlightedInformation>
-              Registration is disabled until we go live.
-            </HighlightedInformation>
           )}
         </Fragment>
       }

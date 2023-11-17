@@ -39,6 +39,9 @@ const styles = (theme) => ({
       maxWidth: 360,
     },
   },
+  textWhite: {
+    color: "#FFFFFF",
+  }
 });
 
 function PricingSection(props) {
@@ -46,14 +49,15 @@ function PricingSection(props) {
   const width = useWidth();
   const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
-    <div className="lg-p-top" style={{ backgroundColor: "#FFFFFF" }}>
-      <Typography variant="h3" align="center" className="lg-mg-bottom">
+    <div className="lg-p-top" style={{ backgroundColor: "#0e1111" }}>
+      <Typography variant="h3" align="center" className={classNames("lg-mg-bottom", classes.textWhite)}>
         Pricing
       </Typography>
-      <div className={classNames("container-fluid", classes.containerFix)}>
+      <div className={classNames("container-fluid", classes.containerFix, classes.textWhite)}>
         <Grid
           container
           spacing={calculateSpacing(width, theme)}
+          justifyContent={"center"}
           className={classes.gridContainer}
         >
           <Grid
@@ -65,10 +69,10 @@ function PricingSection(props) {
             data-aos="zoom-in-up"
           >
             <PriceCard
-              title="Starter"
+              title="Silver"
               pricing={
                 <span>
-                  $14.99
+                  $2.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
@@ -86,10 +90,10 @@ function PricingSection(props) {
           >
             <PriceCard
               highlighted
-              title="Premium"
+              title="Gold"
               pricing={
                 <span>
-                  $29.99
+                  $9.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
@@ -106,30 +110,10 @@ function PricingSection(props) {
             data-aos-delay={isWidthUpMd ? "400" : "0"}
           >
             <PriceCard
-              title="Business"
+              title="Platinum"
               pricing={
                 <span>
-                  $49.99
-                  <Typography display="inline"> / month</Typography>
-                </span>
-              }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
-            />
-          </Grid>
-          <Grid
-            item
-            className={classes.cardWrapper}
-            xs={12}
-            sm={6}
-            lg={3}
-            data-aos="zoom-in-up"
-            data-aos-delay={isWidthUpMd ? "600" : "200"}
-          >
-            <PriceCard
-              title="Tycoon"
-              pricing={
-                <span>
-                  $99.99
+                  $19.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }

@@ -1,10 +1,15 @@
 import { createTheme, responsiveFontSizes, adaptV4Theme } from "@mui/material";
 
+// Palettes
+// https://www.color-hex.com/color-palette/1405 {Black}
+// https://www.color-hex.com/color-palette/1023210 {Orange}
+
 // colors
-const primary = "#b3294e";
-const secondary = "#4829B2";
-const black = "#343a40";
-const darkBlack = "rgb(36, 40, 44)";
+const primary = "#f23005";
+const secondary = "#f27405";
+const white = "#f9eef2";
+const black = "#232b2b";
+const darkBlack = "#0e1111";
 const background = "#f5f5f5";
 const warningLight = "rgba(253, 200, 69, .3)";
 const warningMain = "rgba(253, 200, 69, .5)";
@@ -29,6 +34,7 @@ const theme = createTheme(adaptV4Theme({
     primary: { main: primary },
     secondary: { main: secondary },
     common: {
+      white,
       black,
       darkBlack
     },
@@ -43,6 +49,10 @@ const theme = createTheme(adaptV4Theme({
     tonalOffset: 0.2,
     background: {
       default: background
+    },
+    text: {
+      primary: white, // Set primary text color
+      secondary: 'rgba(255, 255, 255, 0.7)', // Adjust as needed for secondary text
     },
     spacing
   },
@@ -102,7 +112,8 @@ const theme = createTheme(adaptV4Theme({
         width: "100%",
         maxWidth: 430,
         marginLeft: spacing,
-        marginRight: spacing
+        marginRight: spacing,
+        backgroundColor: black,
       }
     },
     MuiTooltip: {
@@ -120,8 +131,13 @@ const theme = createTheme(adaptV4Theme({
     }
   },
   typography: {
-    useNextVariants: true
-  }
+    useNextVariants: true,
+    // Set default color for all text
+    allVariants: {
+      color: white,
+    },
+    // ... other typography settings
+  },
 }));
 
 export default responsiveFontSizes(theme);

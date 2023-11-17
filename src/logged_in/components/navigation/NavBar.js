@@ -20,13 +20,10 @@ import {
 import withStyles from "@mui/styles/withStyles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ImageIcon from "@mui/icons-material/Image";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import MenuIcon from "@mui/icons-material/Menu";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import MessagePopperButton from "./MessagePopperButton";
 import SideDrawer from "./SideDrawer";
-import Balance from "./Balance";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -126,7 +123,7 @@ const styles = (theme) => ({
 });
 
 function NavBar(props) {
-  const { selectedTab, messages, classes, openAddBalanceDialog, theme } = props;
+  const { selectedTab, messages, classes, theme } = props;
   // Will be use to make website more accessible by screen readers
   const links = useRef([]);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -140,10 +137,6 @@ function NavBar(props) {
   const closeMobileDrawer = useCallback(() => {
     setIsMobileOpen(false);
   }, [setIsMobileOpen]);
-
-  const openDrawer = useCallback(() => {
-    setIsSideDrawerOpen(true);
-  }, [setIsSideDrawerOpen]);
 
   const closeDrawer = useCallback(() => {
     setIsSideDrawerOpen(false);
@@ -164,40 +157,6 @@ function NavBar(props) {
           />
         ),
         mobile: <DashboardIcon className="text-white" />,
-      },
-    },
-    {
-      link: "/c/posts",
-      name: "Posts",
-      onClick: closeMobileDrawer,
-      icon: {
-        desktop: (
-          <ImageIcon
-            className={
-              selectedTab === "Posts" ? classes.textPrimary : "text-white"
-            }
-            fontSize="small"
-          />
-        ),
-        mobile: <ImageIcon className="text-white" />,
-      },
-    },
-    {
-      link: "/c/subscription",
-      name: "Subscription",
-      onClick: closeMobileDrawer,
-      icon: {
-        desktop: (
-          <AccountBalanceIcon
-            className={
-              selectedTab === "Subscription"
-                ? classes.textPrimary
-                : "text-white"
-            }
-            fontSize="small"
-          />
-        ),
-        mobile: <AccountBalanceIcon className="text-white" />,
       },
     },
     {
@@ -235,7 +194,7 @@ function NavBar(props) {
                 display="inline"
                 color="primary"
               >
-                Wa
+                Fit
               </Typography>
               <Typography
                 variant="h4"
@@ -243,7 +202,7 @@ function NavBar(props) {
                 display="inline"
                 color="secondary"
               >
-                Ver
+                Connect
               </Typography>
             </Hidden>
           </Box>
@@ -253,14 +212,6 @@ function NavBar(props) {
             alignItems="center"
             width="100%"
           >
-            {isWidthUpSm && (
-              <Box mr={3}>
-                <Balance
-                  balance={2573}
-                  openAddBalanceDialog={openAddBalanceDialog}
-                />
-              </Box>
-            )}
             <MessagePopperButton messages={messages} />
             <ListItem
               disableGutters
@@ -281,14 +232,6 @@ function NavBar(props) {
               )}
             </ListItem>
           </Box>
-          <IconButton
-            onClick={openDrawer}
-            color="primary"
-            aria-label="Open Sidedrawer"
-            size="large"
-          >
-            <SupervisorAccountIcon />
-          </IconButton>
           <SideDrawer open={isSideDrawerOpen} onClose={closeDrawer} />
         </Toolbar>
       </AppBar>

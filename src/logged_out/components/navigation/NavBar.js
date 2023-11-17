@@ -12,7 +12,7 @@ import NavigationDrawer from "../../../shared/components/NavigationDrawer";
 const styles = theme => ({
   appBar: {
     boxShadow: theme.shadows[6],
-    backgroundColor: theme.palette.common.white
+    backgroundColor: theme.palette.common.darkBlack
   },
   toolbar: {
     display: "flex",
@@ -23,8 +23,9 @@ const styles = theme => ({
     fontWeight: theme.typography.h6.fontWeight
   },
   brandText: {
-    fontFamily: "'Baloo Bhaijaan', cursive",
-    fontWeight: 400
+    fontFamily: "'Roboto', cursive",
+    fontStyle: "bold",
+    fontWeight: 650
   },
   noDecoration: {
     textDecoration: "none !important"
@@ -47,11 +48,6 @@ function NavBar(props) {
       name: "Home",
       icon: <HomeIcon className="text-white" />
     },
-    // {
-    //   link: "/blog",
-    //   name: "Blog",
-    //   icon: <BookIcon className="text-white" />
-    // },
     {
       name: "Register",
       onClick: openRegisterDialog,

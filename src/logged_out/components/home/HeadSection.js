@@ -1,10 +1,9 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { Grid, Typography, Card, Hidden, Box } from "@mui/material";
+import { Grid, Typography, Box, Button } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import WaveBorder from "../../../shared/components/WaveBorder";
-import ZoomImage from "../../../shared/components/ZoomImage";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const styles = (theme) => ({
@@ -58,7 +57,7 @@ const styles = (theme) => ({
   },
   wrapper: {
     position: "relative",
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.common.black,
     paddingBottom: theme.spacing(2),
   },
   image: {
@@ -68,8 +67,8 @@ const styles = (theme) => ({
     boxShadow: theme.shadows[4],
   },
   container: {
-    marginTop: theme.spacing(6),
-    marginBottom: theme.spacing(12),
+    marginTop: theme.spacing(20),
+    marginBottom: theme.spacing(20),
     [theme.breakpoints.down("lg")]: {
       marginBottom: theme.spacing(9),
     },
@@ -99,57 +98,31 @@ function HeadSection(props) {
       <div className={classNames("lg-p-top", classes.wrapper)}>
         <div className={classNames("container-fluid", classes.container)}>
           <Box display="flex" justifyContent="center" className="row">
-            <Card
-              className={classes.card}
-              data-aos-delay="200"
-              data-aos="zoom-in"
-            >
               <div className={classNames(classes.containerFix, "container")}>
                 <Box justifyContent="space-between" className="row">
                   <Grid item xs={12} md={5}>
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="space-between"
-                      height="100%"
-                    >
-                      <Box mb={4}>
-                        <Typography variant={isWidthUpLg ? "h3" : "h4"}>
-                          All in one Fitness Platform
-                        </Typography>
-                      </Box>
-                      <div>
-                        {/* <Button
-                          variant="contained"
-                          color="secondary"
-                          fullWidth
-                          className={classes.extraLargeButton}
-                          classes={{ label: classes.extraLargeButtonLabel }}
-                          href="https://github.com/dunky11/react-saas-template"
-                        >
-                          Download from GitHub
-                        </Button> */}
-                      </div>
-                    </Box>
+                      <Typography 
+                      variant={isWidthUpLg ? "h3" : "h4"}
+                      data-aos-delay="200"
+                      data-aos="zoom-out"
+                      color="#FFFFFF"
+                      textAlign="center">
+                        Elevate your fitness journey and connect with one of our expert coaches
+                      </Typography>
+                      <Box display="flex" justifyContent="center" marginTop="50px">
+                        <Button variant="outlined">
+                          Learn More
+                        </Button>
+                      </Box>  
                   </Grid>
-                  <Hidden mdDown>
-                    <Grid item md={6}>
-                      <ZoomImage
-                        src={`${process.env.PUBLIC_URL}/images/logged_out/headerImage.jpg`}
-                        className={classes.image}
-                        alt="header example"
-                      />
-                    </Grid>
-                  </Hidden>
                 </Box>
               </div>
-            </Card>
           </Box>
         </div>
       </div>
       <WaveBorder
-        upperColor={theme.palette.secondary.main}
-        lowerColor="#FFFFFF"
+        upperColor={theme.palette.common.black}
+        lowerColor="#0e1111"
         className={classes.waveBorder}
         animationNegativeDelay={2}
       />
