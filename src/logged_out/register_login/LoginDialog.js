@@ -5,11 +5,11 @@ import classNames from "classnames";
 import { withRouter } from "react-router-dom";
 import { TextField, Button, Checkbox, Typography, FormControlLabel } from "@mui/material";
 import withStyles from '@mui/styles/withStyles';
-import FormDialog from "../../../shared/components/FormDialog";
-import HighlightedInformation from "../../../shared/components/HighlightedInformation";
-import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
-import VisibilityPasswordTextField from "../../../shared/components/VisibilityPasswordTextField";
-import { AuthContext } from "../../../shared/components/AuthContext"
+import FormDialog from "../../shared/components/FormDialog";
+import HighlightedInformation from "../../shared/components/HighlightedInformation";
+import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
+import VisibilityPasswordTextField from "../../shared/components/VisibilityPasswordTextField";
+import { AuthContext } from "../../shared/components/AuthContext"
 
 const styles = (theme) => ({
   forgotPassword: {

@@ -18,11 +18,11 @@ import PlayCirlceOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EnhancedTableHead from "../../../shared/components/EnhancedTableHead";
-import stableSort from "../../../shared/functions/stableSort";
-import getSorting from "../../../shared/functions/getSorting";
-import HighlightedInformation from "../../../shared/components/HighlightedInformation";
-import ConfirmationDialog from "../../../shared/components/ConfirmationDialog";
+import EnhancedTableHead from "../../shared/components/EnhancedTableHead";
+import stableSort from "../../shared/functions/stableSort";
+import getSorting from "../../shared/functions/getSorting";
+import HighlightedInformation from "../../shared/components/HighlightedInformation";
+import ConfirmationDialog from "../../shared/components/ConfirmationDialog";
 
 const styles = (theme) => ({
   tableWrapper: {
