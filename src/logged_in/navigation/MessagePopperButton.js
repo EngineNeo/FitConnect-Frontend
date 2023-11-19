@@ -38,9 +38,10 @@ const styles = (theme) => ({
 });
 
 function MessagePopperButton(props) {
-  const { classes, messages } = props;
+  const { classes, messages = [] } = props;
   const anchorEl = useRef();
   const [isOpen, setIsOpen] = useState(false);
+  
 
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen);
@@ -109,6 +110,10 @@ function MessagePopperButton(props) {
 MessagePopperButton.propTypes = {
   classes: PropTypes.object.isRequired,
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
+MessagePopperButton.defaultProps = {
+  messages: [],
 };
 
 export default withStyles(styles, { withTheme: true })(MessagePopperButton);

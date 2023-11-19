@@ -4,8 +4,7 @@ import { Grid } from "@mui/material";
 
 import withTheme from '@mui/styles/withTheme';
 
-function StatisticsArea(props) {
-  const { theme, CardChart, data } = props;
+function StatisticsArea({ theme, CardChart, data = { profit: [], views: [] } }) {
   return (
     CardChart &&
     data.profit.length >= 2 &&
@@ -50,7 +49,10 @@ function StatisticsArea(props) {
 
 StatisticsArea.propTypes = {
   theme: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.shape({
+    profit: PropTypes.array.isRequired,
+    views: PropTypes.array.isRequired
+  }).isRequired,
   CardChart: PropTypes.elementType
 };
 
