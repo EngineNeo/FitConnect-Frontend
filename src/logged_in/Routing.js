@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
-import PropsRoute from "../../shared/components/PropsRoute";
-import useLocationBlocker from "../../shared/functions/useLocationBlocker";
+import PropsRoute from "../shared/components/PropsRoute";
+import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
 const styles = (theme) => ({
   wrapper: {

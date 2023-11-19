@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import NavigationDrawer from "../../../shared/components/NavigationDrawer";
+import NavigationDrawer from "../../shared/components/NavigationDrawer";
 
 const styles = theme => ({
   appBar: {

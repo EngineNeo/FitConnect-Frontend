@@ -18,8 +18,8 @@ import {
 } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Bordered from "../../../shared/components/Bordered";
-import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
+import Bordered from "../../shared/components/Bordered";
+import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
 
 const styles = (theme) => ({
   numberInput: {

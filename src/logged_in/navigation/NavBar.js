@@ -19,12 +19,11 @@ import {
 } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ImageIcon from "@mui/icons-material/Image";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import MenuIcon from "@mui/icons-material/Menu";
 import MessagePopperButton from "./MessagePopperButton";
 import SideDrawer from "./SideDrawer";
-import NavigationDrawer from "../../../shared/components/NavigationDrawer";
+import NavigationDrawer from "../../shared/components/NavigationDrawer";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const styles = (theme) => ({

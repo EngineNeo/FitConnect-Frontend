@@ -5,7 +5,7 @@ import { withStyles } from "@mui/styles";
 import PriceCard from "./PriceCard";
 import calculateSpacing from "./calculateSpacing";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import useWidth from "../../../shared/functions/useWidth";
+import useWidth from "../../shared/functions/useWidth";
 
 const styles = (theme) => ({
   containerFix: {

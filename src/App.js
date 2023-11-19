@@ -6,9 +6,9 @@ import GlobalStyles from "./GlobalStyles";
 import Pace from "./shared/components/Pace";
 import { AuthProvider } from "./shared/components/AuthContext";
 
-const LoggedInComponent = lazy(() => import("./logged_in/components/Main"));
+const LoggedInComponent = lazy(() => import("./logged_in/Main"));
 
-const LoggedOutComponent = lazy(() => import("./logged_out/components/Main"));
+const LoggedOutComponent = lazy(() => import("./logged_out/Main"));
 
 function App() {
   return (

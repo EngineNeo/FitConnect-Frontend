@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useCallback } from "react";
+import React, { memo, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import AOS from "aos/dist/aos";
 import withStyles from '@mui/styles/withStyles';
@@ -9,7 +9,7 @@ import CookieRulesDialog from "./cookies/CookieRulesDialog";
 import CookieConsent from "./cookies/CookieConsent";
 import DialogSelector from "./register_login/DialogSelector";
 import Routing from "./Routing";
-import smoothScrollTop from "../../shared/functions/smoothScrollTop";
+import smoothScrollTop from "../shared/functions/smoothScrollTop";
 
 AOS.init({ once: true });
 

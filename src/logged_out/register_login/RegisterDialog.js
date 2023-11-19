@@ -12,11 +12,10 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import VisibilityPasswordTextField from '../../../shared/components/VisibilityPasswordTextField';
-import HighlightedInformation from '../../../shared/components/HighlightedInformation';
+import VisibilityPasswordTextField from '../../shared/components/VisibilityPasswordTextField';
 import withStyles from "@mui/styles/withStyles";
-import FormDialog from "../../../shared/components/FormDialog";
-import ButtonCircularProgress from "../../../shared/components/ButtonCircularProgress";
+import FormDialog from "../../shared/components/FormDialog";
+import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
 import classNames from "classnames";
 // import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
