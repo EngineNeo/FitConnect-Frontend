@@ -11,9 +11,9 @@ import NavigationDrawer from "../../shared/components/NavigationDrawer";
 
 const styles = theme => ({
   appBar: {
-    boxShadow: 'none', // No box shadow by default
-    backgroundColor: 'transparent', // Transparent by default
-    transition: 'all 0.3s ease-in-out', // Smooth transition for background and box shadow
+    boxShadow: 'none',
+    backgroundColor: 'transparent',
+    transition: 'all 0.3s ease-in-out',
     '&.scrolled': {
       boxShadow: theme.shadows[6],
       backgroundColor: theme.palette.common.darkBlack
