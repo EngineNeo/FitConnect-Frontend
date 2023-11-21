@@ -2,20 +2,20 @@ import React from "react";
 import { Typography } from "@mui/material";
 import { withTheme } from "@mui/styles";
 
-function TopCoachesSection(props) {
+function FeaturesSection(props) {
   // const { theme } = props;
 
   return (
-    <div id="TopCoachesSection" style={{ backgroundColor: "#0e1111" }}>
+    <div id="FeaturesSection" style={{ backgroundColor: "#0e1111" }}>
       <div className="container-fluid lg-p-top">
         <Typography variant="h3" align="center" className="lg-mg-bottom" color="#FFFFFF">
-          Our Top Coaches
+          Features
         </Typography>
       </div>
     </div>
   );
 }
 
-TopCoachesSection.propTypes = {};
+FeaturesSection.propTypes = {};
 
-export default withTheme(TopCoachesSection);
+export default withTheme(FeaturesSection);

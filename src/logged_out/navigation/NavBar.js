@@ -5,7 +5,7 @@ import { AppBar, Toolbar, Typography, Button, Hidden, IconButton } from "@mui/ma
 import withStyles from '@mui/styles/withStyles';
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
+import HowToRegIcon from "@mui/icons-material/HowToReg"; 
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import NavigationDrawer from "../../shared/components/NavigationDrawer";
 
@@ -43,7 +43,7 @@ function NavBar(props) {
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
-      const scrolled = offset > 600;
+      const scrolled = offset > 200;
       setIsScrolled(scrolled);
     };
 
@@ -86,6 +86,7 @@ function NavBar(props) {
       <AppBar
         position="fixed"
         className={`${classes.appBar} ${isScrolled ? 'scrolled' : ''}`}
+        color="transparent"
       >
         <Toolbar className={classes.toolbar}>
           <div>

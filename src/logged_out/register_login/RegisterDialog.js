@@ -17,10 +17,8 @@ import withStyles from "@mui/styles/withStyles";
 import FormDialog from "../../shared/components/FormDialog";
 import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
 import classNames from "classnames";
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { DateField } from '@mui/x-date-pickers/DateField';
-// import DatePicker from "../../../shared/components/DatePicker";
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const styles = (theme) => ({
   link: {
@@ -89,7 +87,7 @@ function RegisterDialog(props) {
       first_name: firstName,
       last_name: lastName,
       gender: gender,
-      // birth_date: birthDate,
+      birth_date: birthDate,
       password: password,
     };
 
@@ -189,12 +187,14 @@ function RegisterDialog(props) {
               {/* <MenuItem value="other" className={classNames(classes.textBlack)}>Other</MenuItem> Other not currently available on database */} 
             </Select>
           </FormControl>
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateField label="Date of Birth"
-                      value={birthDate}
-                      onChange={(newDate) => handleBirthDateChange(newDate)}
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date of Birth"
+              value={birthDate}
+              onChange={(newDate) => setBirthDate(newDate)}
+              slotProps={{ textField: { fullWidth: true } }}
             />
-          </LocalizationProvider> */}
+          </LocalizationProvider>
           <VisibilityPasswordTextField
             variant="outlined"
             margin="normal"

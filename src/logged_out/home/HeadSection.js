@@ -5,6 +5,7 @@ import { Grid, Typography, Box, Button } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 // import WaveBorder from "../../shared/components/WaveBorder";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { Link } from 'react-scroll';
 
 const gifFiles = [
   "/images/logged_out/DumbbellOpt.gif",
@@ -94,11 +95,10 @@ const styles = (theme) => ({
   },
   activeGif: {
     opacity: 0.5,
-    objectFit: "contain", // Same as above, consider removing or adjusting this
   },
   container: {
-    marginTop: theme.spacing(30),
-    marginBottom: theme.spacing(30),
+    marginTop: theme.spacing(20),
+    marginBottom: theme.spacing(40),
     [theme.breakpoints.down("lg")]: {
       marginBottom: theme.spacing(9),
     },
@@ -154,9 +154,11 @@ function HeadSection(props) {
                         Elevate your fitness journey and connect with one of our expert coaches
                       </Typography>
                       <Box display="flex" justifyContent="center" marginTop="50px">
-                        <Button variant="contained">
-                          Learn More
-                        </Button>
+                        <Link to="FeaturesSection" smooth={true} duration={500}>
+                          <Button variant="contained">
+                            Learn More
+                          </Button>
+                        </Link>
                       </Box>  
                   </Grid>
                 </Box>
