@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button, Hidden, IconButton } from "@mui/material";
@@ -11,8 +11,13 @@ import NavigationDrawer from "../../shared/components/NavigationDrawer";
 
 const styles = theme => ({
   appBar: {
-    boxShadow: theme.shadows[6],
-    backgroundColor: theme.palette.common.darkBlack
+    boxShadow: 'none', // No box shadow by default
+    backgroundColor: 'transparent', // Transparent by default
+    transition: 'all 0.3s ease-in-out', // Smooth transition for background and box shadow
+    '&.scrolled': {
+      boxShadow: theme.shadows[6],
+      backgroundColor: theme.palette.common.darkBlack
+    }
   },
   toolbar: {
     display: "flex",
@@ -33,6 +38,23 @@ const styles = theme => ({
 });
 
 function NavBar(props) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      const scrolled = offset > 600;
+      setIsScrolled(scrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+
   const {
     classes,
     openRegisterDialog,
@@ -61,7 +83,10 @@ function NavBar(props) {
   ];
   return (
     <div className={classes.root}>
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar
+        position="fixed"
+        className={`${classes.appBar} ${isScrolled ? 'scrolled' : ''}`}
+      >
         <Toolbar className={classes.toolbar}>
           <div>
             <Typography
