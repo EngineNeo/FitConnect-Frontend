@@ -10,6 +10,8 @@ const LoggedInComponent = lazy(() => import("./logged_in/Main"));
 
 const LoggedOutComponent = lazy(() => import("./logged_out/Main"));
 
+const LoggedInCoachComponent = lazy(() => import("./logged_in_coach/Main"));
+
 function App() {
   return (
     <BrowserRouter>
@@ -25,7 +27,7 @@ function App() {
                   <LoggedInComponent />
                 </Route>
                 <Route>
-                  <LoggedOutComponent />
+                  <LoggedInCoachComponent />
                 </Route>
               </Switch>
             </Suspense>
