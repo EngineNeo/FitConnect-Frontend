@@ -58,7 +58,32 @@ function Routing(props) {
     <div className={classes.wrapper}>
       <Switch>
         <PropsRoute
-          path="/c/dashboard" component={Dashboard}
+          exact path="/" component={Dashboard}
+          key="dashboard"
+          toggleAccountActivation={toggleAccountActivation}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          CardChart={CardChart}
+          statistics={statistics}
+          targets={targets}
+          setTargets={setTargets}
+          isAccountActivated={isAccountActivated}
+          selectDashboard={selectDashboard}
+        />
+        <PropsRoute
+          path="/c/my-requests" component={Dashboard}
+          key="my-requests"
+          toggleAccountActivation={toggleAccountActivation}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          CardChart={CardChart}
+          statistics={statistics}
+          targets={targets}
+          setTargets={setTargets}
+          isAccountActivated={isAccountActivated}
+          selectDashboard={selectDashboard}
+        />
+        <PropsRoute
+          path="/c/my-clients" component={Dashboard}
+          key="my-clients"
           toggleAccountActivation={toggleAccountActivation}
           pushMessageToSnackbar={pushMessageToSnackbar}
           CardChart={CardChart}

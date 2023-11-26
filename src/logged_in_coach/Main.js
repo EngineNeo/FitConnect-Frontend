@@ -176,7 +176,7 @@ function Main(props) {
 
   const selectDashboard = useCallback(() => {
     smoothScrollTop();
-    document.title = "FitConnect - User Dashsboard";
+    document.title = "FitConnect - Coach Dashsboard";
     setSelectedTab("Dashboard");
     if (!hasFetchedCardChart) {
       setHasFetchedCardChart(true);
@@ -198,6 +198,10 @@ function Main(props) {
     [setPushMessageToSnackbar]
   );
 
+  const handleTabChange = useCallback((newTab) => {
+    setSelectedTab(newTab);
+  }, []);
+
   // useEffect(() => {
   //   fetchRandomTargets();
   //   fetchRandomStatistics();
@@ -214,6 +218,7 @@ function Main(props) {
     <Fragment>
       <NavBar
         selectedTab={selectedTab}
+        onTabChange={handleTabChange}
       />
       <ConsecutiveSnackbarMessages
         getPushMessageFromChild={getPushMessageFromChild}
