@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
+import MyRequests from "./dashboard/MyRequests";
 import PropsRoute from "../shared/components/PropsRoute";
 import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
@@ -70,7 +71,7 @@ function Routing(props) {
           selectDashboard={selectDashboard}
         />
         <PropsRoute
-          path="/c/my-requests" component={Dashboard}
+          path="/my-requests" component={MyRequests}
           key="my-requests"
           toggleAccountActivation={toggleAccountActivation}
           pushMessageToSnackbar={pushMessageToSnackbar}
@@ -82,7 +83,7 @@ function Routing(props) {
           selectDashboard={selectDashboard}
         />
         <PropsRoute
-          path="/c/my-clients" component={Dashboard}
+          path="/my-clients" component={Dashboard}
           key="my-clients"
           toggleAccountActivation={toggleAccountActivation}
           pushMessageToSnackbar={pushMessageToSnackbar}
@@ -116,3 +117,5 @@ Routing.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(memo(Routing));
+// what is /c/ when creating paths?
+// the highlight around dashboard tab

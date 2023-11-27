@@ -152,9 +152,9 @@ function NavBar(props) {
 
   const menuItems = [
   {
-    link: "",
+    link: "/",
     name: "Dashboard",
-    onClick: closeMobileDrawer,
+    onClick: () => handleTabChange("Dashboard"),
     icon: {
       desktop: (
         <DashboardIcon
@@ -168,7 +168,7 @@ function NavBar(props) {
     },
   },
   {
-    link: "/c/my-requests",
+    link: "/my-requests",
     name: "My Requests",
     onClick: () => handleTabChange("My Requests"),
     icon: {
@@ -184,7 +184,7 @@ function NavBar(props) {
     },
   },
   {
-    link: "/c/my-clients",
+    link: "/my-clients",
     name: "My Clients",
     onClick: () => handleTabChange("My Clients"),
     icon: {
