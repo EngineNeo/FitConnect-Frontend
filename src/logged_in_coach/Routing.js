@@ -4,6 +4,7 @@ import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
 import MyRequests from "./dashboard/MyRequests";
+import MyClients from "./dashboard/MyClients";
 import PropsRoute from "../shared/components/PropsRoute";
 import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
@@ -83,7 +84,7 @@ function Routing(props) {
           selectDashboard={selectDashboard}
         />
         <PropsRoute
-          path="/my-clients" component={Dashboard}
+          path="/my-clients" component={MyClients}
           key="my-clients"
           toggleAccountActivation={toggleAccountActivation}
           pushMessageToSnackbar={pushMessageToSnackbar}
