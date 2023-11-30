@@ -152,7 +152,7 @@ function NavBar(props) {
 
   const menuItems = [
   {
-    link: "/",
+    link: "/admin",
     name: "Dashboard",
     onClick: () => handleTabChange("Dashboard"),
     icon: {
@@ -165,38 +165,6 @@ function NavBar(props) {
         />
       ),
       mobile: <DashboardIcon className="text-white" />,
-    },
-  },
-  {
-    link: "/my-requests",
-    name: "My Requests",
-    onClick: () => handleTabChange("My Requests"),
-    icon: {
-      desktop: (
-        <Email
-          className={
-            selectedTab === "My Requests" ? classes.textPrimary : "text-white"
-          }
-          fontSize="small"
-        />
-      ),
-      mobile: <Email className="text-white" />,
-    },
-  },
-  {
-    link: "/my-clients",
-    name: "My Clients",
-    onClick: () => handleTabChange("My Clients"),
-    icon: {
-      desktop: (
-        <RecentActors
-          className={
-            selectedTab === "My Clients" ? classes.textPrimary : "text-white"
-          }
-          fontSize="small"
-        />
-      ),
-      mobile: <RecentActors className="text-white" />,
     },
   },
   {
