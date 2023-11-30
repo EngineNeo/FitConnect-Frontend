@@ -52,6 +52,7 @@ function LoginDialog(props) {
       const response = await axios.get('http://localhost:8000/fitConnect/login', {
         params: { email, password }
       });
+      console.log(response.data)
       return response.data;
     } catch (error) {
       if (error.response && error.response.status === 400) {

@@ -114,6 +114,9 @@ const getDesignTokens = (mode) => ({
           paddingRight: spacing
         }
       }
+    },
+    MuiSnackbar: {
+        backgroundColor: black,
     }
   },
   spacing: 8

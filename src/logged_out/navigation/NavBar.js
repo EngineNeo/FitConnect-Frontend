@@ -19,9 +19,16 @@ const styles = theme => ({
       backgroundColor: theme.palette.common.darkBlack
     }
   },
+  // sectionContainer: {
+  //   position: 'relative',
+  //   zIndex: 1,
+  //   display: 'flex',
+  //   justifyContent: 'center',
+  //   // margin: "auto 0",
+  // },
   toolbar: {
-    display: "flex",
-    justifyContent: "space-between"
+    // display: "flex",
+    justifyContent: "space-between",
   },
   menuButtonText: {
     fontSize: theme.typography.body1.fontSize,
