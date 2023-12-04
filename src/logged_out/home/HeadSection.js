@@ -1,10 +1,17 @@
-import React, { Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { Grid, Typography, Box, Button } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
-import WaveBorder from "../../shared/components/WaveBorder";
+// import WaveBorder from "../../shared/components/WaveBorder";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { Link } from 'react-scroll';
+
+const gifFiles = [
+  "/images/logged_out/DumbbellOpt.gif",
+  "/images/logged_out/JumpRopeOpt.gif",
+  "/images/logged_out/RunningOpt.gif",
+];
 
 const styles = (theme) => ({
   extraLargeButtonLabel: {
@@ -59,16 +66,39 @@ const styles = (theme) => ({
     position: "relative",
     backgroundColor: theme.palette.common.black,
     paddingBottom: theme.spacing(2),
+    overflow: "hidden",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: "50px",
+      backgroundColor: "#0e1111",
+      transform: "skewY(-1deg)",
+      transformOrigin: "100%",
+      zIndex: 3
+    },
   },
-  image: {
-    maxWidth: "100%",
-    verticalAlign: "middle",
-    borderRadius: theme.shape.borderRadius,
-    boxShadow: theme.shadows[4],
+  backgroundGif: {
+    position: "absolute",
+    width: "100%",
+    left: 0,
+    top: 0,
+    height: "100%",
+    zIndex: 1,
+    opacity: 0,
+    transition: "opacity 2s ease-in-out",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  },
+  activeGif: {
+    opacity: 0.5,
   },
   container: {
     marginTop: theme.spacing(20),
-    marginBottom: theme.spacing(20),
+    marginBottom: theme.spacing(40),
     [theme.breakpoints.down("lg")]: {
       marginBottom: theme.spacing(9),
     },
@@ -84,14 +114,28 @@ const styles = (theme) => ({
       maxWidth: "none !important",
     },
   },
-  waveBorder: {
-    paddingTop: theme.spacing(4),
-  },
+  grid: {
+    zIndex: 3,
+  }
+  // waveBorder: {
+  //   paddingTop: theme.spacing(4),
+  // },
 });
 
 function HeadSection(props) {
   const { classes, theme } = props;
   const isWidthUpLg = useMediaQuery(theme.breakpoints.up("lg"));
+  const [currentGif, setCurrentGif] = useState(0);
+  const [nextGif, setNextGif] = useState(1);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentGif(nextGif);
+      setNextGif((prevNextGif) => (prevNextGif + 1) % gifFiles.length);
+    }, 9000);
+
+    return () => clearInterval(interval);
+  }, [nextGif]);
 
   return (
     <Fragment>
@@ -99,8 +143,8 @@ function HeadSection(props) {
         <div className={classNames("container-fluid", classes.container)}>
           <Box display="flex" justifyContent="center" className="row">
               <div className={classNames(classes.containerFix, "container")}>
-                <Box justifyContent="space-between" className="row">
-                  <Grid item xs={12} md={5}>
+              <Box justifyContent="space-between" className= "row">
+                  <Grid item xs={12} md={5} className={classNames(classes.grid)}>
                       <Typography 
                       variant={isWidthUpLg ? "h3" : "h4"}
                       data-aos-delay="200"
@@ -110,22 +154,32 @@ function HeadSection(props) {
                         Elevate your fitness journey and connect with one of our expert coaches
                       </Typography>
                       <Box display="flex" justifyContent="center" marginTop="50px">
-                        <Button variant="outlined">
-                          Learn More
-                        </Button>
+                        <Link to="FeaturesSection" smooth={true} duration={500}>
+                          <Button variant="contained">
+                            Learn More
+                          </Button>
+                        </Link>
                       </Box>  
                   </Grid>
                 </Box>
               </div>
           </Box>
         </div>
+        {gifFiles.map((gif, index) => (
+          <div
+            key={gif}
+            className={`${classes.backgroundGif} ${index === currentGif ? classes.activeGif : ""
+              }`}
+            style={{ backgroundImage: `url(${gif})` }}
+          />
+        ))}
       </div>
-      <WaveBorder
+      {/* <WaveBorder
         upperColor={theme.palette.common.black}
         lowerColor="#0e1111"
         className={classes.waveBorder}
         animationNegativeDelay={2}
-      />
+      /> */}
     </Fragment>
   );
 }

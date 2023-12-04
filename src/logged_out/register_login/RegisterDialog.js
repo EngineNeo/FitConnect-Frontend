@@ -17,10 +17,9 @@ import withStyles from "@mui/styles/withStyles";
 import FormDialog from "../../shared/components/FormDialog";
 import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
 import classNames from "classnames";
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { DateField } from '@mui/x-date-pickers/DateField';
-// import DatePicker from "../../../shared/components/DatePicker";
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format } from 'date-fns';
 
 const styles = (theme) => ({
   link: {
@@ -47,7 +46,7 @@ function RegisterDialog(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [gender, setGender] = useState('');
-  const [birthDate, setBirthDate] = useState(new Date())
+  const [birthDate, setBirthDate] = useState('')
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
@@ -55,19 +54,14 @@ function RegisterDialog(props) {
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
-  // const [open, setOpen] = useState(false)
+  const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState(false);
 
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
+  const showSuccessMessage = () => {
+    setIsRegistrationSuccessful(true);
 
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
+    setTimeout(() => setIsRegistrationSuccessful(false), 5000);
+  };
 
-  // const handleBirthDateChange = (newDate) => {
-  //   setBirthDate(newDate);
-  // };
 
   const register = useCallback(() => {
     if (!registerTermsCheckbox.current.checked) {
@@ -88,10 +82,16 @@ function RegisterDialog(props) {
       email: email,
       first_name: firstName,
       last_name: lastName,
-      gender: gender,
-      // birth_date: birthDate,
       password: password,
     };
+
+    if (gender) {
+      userData.gender = gender;
+    }
+
+    if (birthDate) {
+      userData.birth_date = birthDate
+    }
 
     fetch('http://localhost:8000/fitConnect/create_user', {
       method: 'POST',
@@ -103,16 +103,19 @@ function RegisterDialog(props) {
       .then(response => response.json())
       .then(data => {
         setIsLoading(false);
-        if (data.status === 'success') {
+        console.log(data)
+        if (data.user_id) {
+          showSuccessMessage();
+          onClose();
         } else {
           setStatus(data.error);
+          console.log(userData.birth_date)
         }
       })
       .catch(error => {
         setIsLoading(false);
         setStatus('serverError');
       });
-      // handleClose();
   }, [
     setIsLoading,
     setStatus,
@@ -132,7 +135,6 @@ function RegisterDialog(props) {
       onFormSubmit={(e) => {
         e.preventDefault();
         register();
-        // onClose
       }}
       hideBackdrop
       hasCloseIcon
@@ -189,12 +191,14 @@ function RegisterDialog(props) {
               {/* <MenuItem value="other" className={classNames(classes.textBlack)}>Other</MenuItem> Other not currently available on database */} 
             </Select>
           </FormControl>
-          {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateField label="Date of Birth"
-                      value={birthDate}
-                      onChange={(newDate) => handleBirthDateChange(newDate)}
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date of Birth"
+              onChange={(newDate) => setBirthDate(format(newDate, 'yyyy-MM-dd'))}
+              outputFormat="yyyy-MM-dd"
+              slotProps={{ textField: { fullWidth: true } }}
             />
-          </LocalizationProvider> */}
+          </LocalizationProvider>
           <VisibilityPasswordTextField
             variant="outlined"
             margin="normal"
@@ -307,6 +311,11 @@ function RegisterDialog(props) {
               In order to create an account, you have to accept our terms of
               service.
             </FormHelperText>
+          )}
+          {isRegistrationSuccessful && (
+            <Typography color="primary" align="center">
+              Registration Successful!
+            </Typography>
           )}
         </Fragment>
       }

@@ -88,7 +88,7 @@ function CookieConsent(props) {
       className={classes.snackbarContent}
       open={isVisible}
       message={
-        <Typography className="text-white">
+        <Typography>
           We use cookies to ensure you get the best experience on our website.{" "}
         </Typography>
       }

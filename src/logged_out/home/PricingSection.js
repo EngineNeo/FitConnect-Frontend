@@ -76,7 +76,6 @@ function PricingSection(props) {
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
             />
           </Grid>
           <Grid
@@ -93,11 +92,10 @@ function PricingSection(props) {
               title="Gold"
               pricing={
                 <span>
-                  $9.99
+                  $5.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
             />
           </Grid>
           <Grid
@@ -113,11 +111,10 @@ function PricingSection(props) {
               title="Platinum"
               pricing={
                 <span>
-                  $19.99
+                  $9.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
             />
           </Grid>
         </Grid>

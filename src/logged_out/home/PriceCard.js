@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Typography, Box } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
-import CheckIcon from "@mui/icons-material/Check";
+// import CheckIcon from "@mui/icons-material/Check";
 
 const styles = (theme) => ({
   card: {
@@ -32,7 +32,7 @@ const styles = (theme) => ({
 });
 
 function PriceCard(props) {
-  const { classes, theme, title, pricing, features, highlighted } = props;
+  const { classes, title, pricing, highlighted } = props;
   return (
     <div className={highlighted ? classes.cardHightlighted : classes.card}>
       <Box mb={2}>
@@ -51,7 +51,7 @@ function PriceCard(props) {
           {pricing}
         </Typography>
       </Box>
-      {features.map((feature, index) => (
+      {/* {features.map((feature, index) => (
         <Box display="flex" alignItems="center" mb={1} key={index}>
           <CheckIcon
             style={{
@@ -69,7 +69,7 @@ function PriceCard(props) {
             </Typography>
           </Box>
         </Box>
-      ))}
+      ))} */}
     </div>
   );
 }
