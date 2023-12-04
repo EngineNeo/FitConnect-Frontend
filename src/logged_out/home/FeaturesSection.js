@@ -5,6 +5,8 @@ import FeatureCard from "./FeatureCard";
 import ArticleIcon from '@mui/icons-material/Article';
 import SportsIcon from '@mui/icons-material/Sports';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
+// import useWidth from "../../shared/functions/useWidth";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const iconSize = 80;
 
@@ -35,6 +37,9 @@ const features = [
   }
 ];
 function FeaturesSection(props) {
+  const { theme } = props;
+  // const width = useWidth();
+  const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <div id="FeaturesSection" style={{ backgroundColor: "#0e1111" }}>
@@ -43,8 +48,15 @@ function FeaturesSection(props) {
           Features
         </Typography>
         <Grid container spacing={4} justifyContent="center">
-          {features.map((feature, index) => (
-            <Grid item xs={12} md={4} key={index}>
+          {features.map((feature) => (
+            <Grid 
+              item 
+              xs={12} 
+              md={4} 
+              data-aos="zoom-in-up"
+              data-aos-delay={isWidthUpMd ? feature.mdDelay : feature.smDelay}
+              key={feature.headline}
+            >
               <FeatureCard
                 Icon={feature.icon}
                 color={feature.color}

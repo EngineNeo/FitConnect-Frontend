@@ -3,9 +3,12 @@ import { Typography } from "@mui/material";
 import { withTheme } from "@mui/styles";
 import axios from 'axios';
 import TopCoachesCard from './TopCoachesCard';
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-function TopCoachesSection() {
+function TopCoachesSection(props) {
   const [coaches, setCoaches] = useState([]);
+  const { theme } = props;
+  const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
     axios.get('http://localhost:8000/fitConnect/coaches')
@@ -25,13 +28,18 @@ function TopCoachesSection() {
           Our Top Coaches
         </Typography>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
-          {coaches.map(coach => (
-            <TopCoachesCard
+          {coaches.map((coach, index) => (
+            <div
               key={coach.coach_id}
-              image="images/ProfilePic/JohnSmith.jpg"
-              headline={`${coach.first_name} ${coach.last_name}`}
-              text={coach.bio}
-            />
+              data-aos="flip-right"
+              data-aos-delay={isWidthUpMd ? (index * 200).toString() : "0"}
+            >
+              <TopCoachesCard
+                image="images/ProfilePic/JohnSmith.jpg"
+                headline={`${coach.first_name} ${coach.last_name}`}
+                text={coach.bio}
+              />
+            </div>
           ))}
         </div>
       </div>
