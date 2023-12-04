@@ -9,6 +9,8 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import NavigationDrawer from "../../shared/components/NavigationDrawer";
 
+const logo = "/images/logged_out/FitConnectLogo.png"
+
 const styles = theme => ({
   appBar: {
     boxShadow: 'none',
@@ -19,16 +21,12 @@ const styles = theme => ({
       backgroundColor: theme.palette.common.darkBlack
     }
   },
-  // sectionContainer: {
-  //   position: 'relative',
-  //   zIndex: 1,
-  //   display: 'flex',
-  //   justifyContent: 'center',
-  //   // margin: "auto 0",
-  // },
   toolbar: {
-    // display: "flex",
     justifyContent: "space-between",
+  },
+  logoContainer: {
+    display: 'flex',
+    alignItems: 'center',
   },
   menuButtonText: {
     fontSize: theme.typography.body1.fontSize,
@@ -37,7 +35,8 @@ const styles = theme => ({
   brandText: {
     fontFamily: "'Roboto', cursive",
     fontStyle: "bold",
-    fontWeight: 650
+    fontWeight: 650,
+    marginLeft: "10px"
   },
   noDecoration: {
     textDecoration: "none !important"
@@ -96,22 +95,15 @@ function NavBar(props) {
         color="transparent"
       >
         <Toolbar className={classes.toolbar}>
-          <div>
-            <Typography
-              variant="h4"
-              className={classes.brandText}
-              display="inline"
-              color="primary"
-            >
-              Fit
-            </Typography>
+          <div className={classes.logoContainer}>
+            <img alt="FitConnect" src={logo} style={{ width: "50px" }} />
             <Typography
               variant="h4"
               className={classes.brandText}
               display="inline"
               color="secondary"
             >
-              Connect
+              FitConnect
             </Typography>
           </div>
           <div>

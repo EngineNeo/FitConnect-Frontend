@@ -7,14 +7,15 @@ import {
 import withStyles from "@mui/styles/withStyles";
 import WaveBorder from "../../shared/components/WaveBorder";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import classNames from "classnames";
 
 const styles = (theme) => ({
   footerInner: {
     backgroundColor: theme.palette.common.black,
-    paddingTop: theme.spacing(8),
+    paddingTop: theme.spacing(4),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
-    paddingBottom: theme.spacing(6),
+    paddingBottom: theme.spacing(4),
     [theme.breakpoints.up("sm")]: {
       paddingTop: theme.spacing(10),
       paddingLeft: theme.spacing(16),
@@ -31,6 +32,24 @@ const styles = (theme) => ({
   blackBg: {
     backgroundColor: theme.palette.common.black,
   },
+  wrapper: {
+    position: "relative",
+    backgroundColor: theme.palette.common.black,
+    paddingBottom: theme.spacing(2),
+    overflow: "hidden",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      height: "100px",
+      backgroundColor: "#0e1111",
+      transform: "skewY(1deg)",
+      transformOrigin: "100%",
+      zIndex: 3
+    },
+  },
 });
 
 function Footer(props) {
@@ -38,12 +57,12 @@ function Footer(props) {
   const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
-    <footer className="lg-p-top">
-      <WaveBorder
+    <footer className={classNames("lg-p-top", classes.wrapper)}>
+      {/* <WaveBorder
         upperColor="#0e1111"
         lowerColor={theme.palette.common.black}
         animationNegativeDelay={4}
-      />
+      /> */}
       <div className={classes.footerInner}>
         <Grid container spacing={isWidthUpMd ? 10 : 5} alignItems="center" justifyContent="center">
           <Grid item xs={12} md={6} lg={4}>

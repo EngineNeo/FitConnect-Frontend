@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import { withTheme } from "@mui/styles";
-import axios from 'axios'; // assuming you're using axios for HTTP requests
-import TopCoachesCard from './TopCoachesCard'; // import your card component
+import axios from 'axios';
+import TopCoachesCard from './TopCoachesCard';
 
 function TopCoachesSection() {
   const [coaches, setCoaches] = useState([]);
@@ -10,7 +10,6 @@ function TopCoachesSection() {
   useEffect(() => {
     axios.get('http://localhost:8000/fitConnect/coaches')
       .then(response => {
-        // Taking only the first 5 coaches
         const topCoaches = response.data.slice(0, 5);
         setCoaches(topCoaches);
       })
