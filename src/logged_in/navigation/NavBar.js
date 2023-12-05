@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useCallback, useState } from "react";
+import React, { useEffect, Fragment, useRef, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -137,6 +137,15 @@ function NavBar(props) {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   const isWidthUpSm = useMediaQuery(theme.breakpoints.up("sm"));
 
+  const [firstName, setFirstName] = useState('');
+
+  useEffect(() => {
+    const storedFirstName = localStorage.getItem('first_name'); // Adjust 'first_name' if needed
+    if (storedFirstName) {
+      setFirstName(storedFirstName);
+    }
+  }, []);
+
   const openMobileDrawer = useCallback(() => {
     setIsMobileOpen(true);
   }, [setIsMobileOpen]);
@@ -196,7 +205,7 @@ function NavBar(props) {
             </Hidden>
             <Hidden smDown>
               <div className={classes.logoContainer}>
-                <img alt="FitConnect" src={logo} style={{ width: "50px" }} />
+                <img alt="FitConnect" src={logo} style={{ width: "40px" }} />
                 <Typography
                   variant="h4"
                   className={classes.brandText}
@@ -228,7 +237,7 @@ function NavBar(props) {
                 <ListItemText
                   className={classes.username}
                   primary={
-                    <Typography color="textPrimary">Username</Typography>
+                    <Typography color="textPrimary">{firstName || 'Username'}</Typography>
                   }
                 />
               )}

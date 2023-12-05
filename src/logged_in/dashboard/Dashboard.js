@@ -1,9 +1,9 @@
 import React, { Fragment, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Typography, Box } from "@mui/material";
-import SettingsArea from "./SettingsArea";
-import UserDataArea from "./UserDataArea";
-import AccountInformationArea from "./AccountInformationArea";
+// import { Typography, Box } from "@mui/material";
+// import SettingsArea from "./SettingsArea";
+// import UserDataArea from "./UserDataArea";
+// import AccountInformationArea from "./AccountInformationArea";
 import StatisticsArea from "./StatisticsArea";
 
 function Dashboard(props) {
@@ -11,11 +11,11 @@ function Dashboard(props) {
     selectDashboard,
     CardChart,
     statistics,
-    toggleAccountActivation,
-    pushMessageToSnackbar,
-    targets,
-    setTargets,
-    isAccountActivated,
+    // toggleAccountActivation,
+    // pushMessageToSnackbar,
+    // targets,
+    // setTargets,
+    // isAccountActivated,
   } = props;
 
   useEffect(selectDashboard, [selectDashboard]);
@@ -23,26 +23,6 @@ function Dashboard(props) {
   return (
     <Fragment>
       <StatisticsArea CardChart={CardChart} data={statistics} />
-      <Box mt={4}>
-        <Typography variant="subtitle1" gutterBottom>
-          Your Account
-        </Typography>
-      </Box>
-      <AccountInformationArea
-        isAccountActivated={isAccountActivated}
-        toggleAccountActivation={toggleAccountActivation}
-      />
-      <Box mt={4}>
-        <Typography variant="subtitle1" gutterBottom>
-          Settings
-        </Typography>
-      </Box>
-      <SettingsArea pushMessageToSnackbar={pushMessageToSnackbar} />
-      <UserDataArea
-        pushMessageToSnackbar={pushMessageToSnackbar}
-        targets={targets}
-        setTargets={setTargets}
-      />
     </Fragment>
   );
 }
