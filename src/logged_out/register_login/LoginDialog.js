@@ -75,6 +75,7 @@ function LoginDialog(props) {
       const response = await handleLoginRequest(email, password);
       if (response && response.token) {
         localStorage.setItem('userToken', response.token);
+        console.log(response.token)
         login();
         history.push("/c/dashboard"); // Assuming "/c/dashboard" is where LoggedInComponent is rendered
       }

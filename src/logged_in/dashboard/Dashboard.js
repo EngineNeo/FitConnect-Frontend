@@ -49,7 +49,7 @@ function Dashboard(props) {
 
 Dashboard.propTypes = {
   CardChart: PropTypes.elementType,
-  statistics: PropTypes.object.isRequired,
+  // statistics: PropTypes.object.isRequired,
   toggleAccountActivation: PropTypes.func,
   pushMessageToSnackbar: PropTypes.func,
   targets: PropTypes.arrayOf(PropTypes.object).isRequired,

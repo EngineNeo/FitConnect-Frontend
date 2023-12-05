@@ -182,7 +182,7 @@ function Settings1(props) {
                       input={
                         <OutlinedInput
                           name={element.stateName}
-                          labelWidth={0}
+                          labelwidth={0}
                           className={classes.numberInput}
                           classes={{ input: classes.numberInputInput }}
                         />
@@ -213,7 +213,7 @@ function Settings1(props) {
                     input={
                       <OutlinedInput
                         name="option5"
-                        labelWidth={0}
+                        labelwidth={0}
                         className={classes.numberInput}
                         classes={{ input: classes.numberInputInput }}
                       />
@@ -246,7 +246,7 @@ function Settings1(props) {
                   className={classes.ListItemSecondaryAction}
                 >
                   <OutlinedInput
-                    labelWidth={0}
+                    labelwidth={0}
                     name="option6"
                     value={option6}
                     type="number"

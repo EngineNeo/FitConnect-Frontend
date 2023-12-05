@@ -216,7 +216,7 @@ function Settings2(props) {
           input={
             <OutlinedInput
               onChange={handleInputChange}
-              labelWidth={0}
+              labelwidth={0}
               className={classes.numberInput}
               classes={{ input: classes.numberInputInput }}
               name="option6"
@@ -240,7 +240,7 @@ function Settings2(props) {
           input={
             <OutlinedInput
               onChange={handleInputChange}
-              labelWidth={0}
+              labelwidth={0}
               className={classes.numberInput}
               classes={{ input: classes.numberInputInput }}
               name="option7"

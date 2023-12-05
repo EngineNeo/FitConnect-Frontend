@@ -39,7 +39,7 @@ const styles = (theme) => ({
 
 function MessagePopperButton(props) {
   const { classes, messages = [] } = props;
-  const anchorEl = useRef();
+  const anchorEl = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   
 
@@ -56,7 +56,6 @@ function MessagePopperButton(props) {
     <Fragment>
       <IconButton
         onClick={handleClick}
-        buttonRef={anchorEl}
         aria-label="Open Messages"
         aria-describedby={id}
         color="primary"

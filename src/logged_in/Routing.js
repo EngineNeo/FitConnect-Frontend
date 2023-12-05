@@ -84,11 +84,10 @@ Routing.propTypes = {
   setTargets: PropTypes.func.isRequired,
   toggleAccountActivation: PropTypes.func,
   CardChart: PropTypes.elementType,
-  statistics: PropTypes.object.isRequired,
+  // statistics: PropTypes.object.isRequired,
   targets: PropTypes.arrayOf(PropTypes.object).isRequired,
   isAccountActivated: PropTypes.bool.isRequired,
   selectDashboard: PropTypes.func.isRequired,
-  openAddBalanceDialog: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(memo(Routing));
