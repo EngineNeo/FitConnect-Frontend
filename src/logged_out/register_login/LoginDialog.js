@@ -61,8 +61,12 @@ function LoginDialog(props) {
     const password = loginPassword.current.value;
 
     try {
-      const response = await axios.get('http://localhost:8000/fitConnect/login', {
-        params: { email, password }
+      const response = await axios.post('http://localhost:8000/fitConnect/login', {
+        email, password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (isMountedRef.current) {
