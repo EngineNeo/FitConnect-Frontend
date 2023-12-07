@@ -68,20 +68,27 @@ function LoginDialog(props) {
   const performLogin = useCallback(async () => {
     setIsLoading(true);
     setStatus(null);
-    const email = loginEmail.current.value;
-    const password = loginPassword.current.value;
-
-    try {
-      const response = await handleLoginRequest(email, password);
-      if (response && response.token) {
-        localStorage.setItem('userToken', response.token);
-        login();
-        history.push("/c/dashboard"); // Assuming "/c/dashboard" is where LoggedInComponent is rendered
-      }
-    } catch (error) {
-      // Handle errors
-      // ... error handling code
-    }
+    // const email = loginEmail.current.value;
+    // const password = loginPassword.current.value;
+  
+    // try {
+    //   const response = await handleLoginRequest(email, password);
+    //   if (response && response.token) {
+    //     localStorage.setItem('userToken', response.token);
+    //     login();
+    //     history.push("/c/dashboard"); // Assuming "/c/dashboard" is where LoggedInComponent is rendered
+    //   }
+    // } catch (error) {
+    //   // Handle errors
+    //   // ... error handling code
+    // }
+  
+    // Bypass the actual login process
+    // Assume the user is logged in after clicking the login button
+    localStorage.setItem('userToken', 'dummy_token');
+    login();
+    history.push("/c/dashboard"); // Assuming "/c/dashboard" is where LoggedInComponent is rendered
+    setIsLoading(false);
   }, [history, login]);
 
   return (

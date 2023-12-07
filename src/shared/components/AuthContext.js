@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         Cookies.remove('authToken');
-        setAuthenticated(false);
+        setAuthenticated(true);
     };
 
     return (
