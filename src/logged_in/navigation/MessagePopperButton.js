@@ -47,8 +47,16 @@ const mockUsers = [
 const fetchMessageHistory = (userId) => {
   // Mock data
   const mockMessageHistory = {
-      1: [{ id: 1, text: 'Hi there!', sender: 'Alice', date: new Date() }],
-      2: [{ id: 2, text: 'Hello!', sender: 'Bob', date: new Date() }],
+    1: [
+      { id: 1, text: 'Hi there!', sender: 'Alice', date: new Date() },
+      { id: 2, text: 'Hey Alice, how are you?', sender: 'You', date: new Date() },
+      // ... more messages
+    ],
+    2: [
+      { id: 3, text: 'Hello!', sender: 'Bob', date: new Date() },
+      { id: 4, text: 'Hi Bob, you good?', sender: 'You', date: new Date() },
+      // ... more messages
+    ],
       // ... other histories
   };
   return mockMessageHistory[userId] || [];
@@ -65,7 +73,6 @@ function MessagePopperButton(props) {
     const history = fetchMessageHistory(userId);
     setSelectedUser(userId);
     setMessageHistory(history);
-    // Close the popover
     setIsOpen(false);
   };
 
@@ -76,6 +83,11 @@ function MessagePopperButton(props) {
   const handleClickAway = useCallback(() => {
     setIsOpen(false);
   }, [setIsOpen]);
+
+  const handleBackToUsers = () => {
+    setSelectedUser(null);
+    setMessageHistory([]);
+  };
 
   const id = isOpen ? "scroll-playground" : null;
   return (
@@ -114,13 +126,13 @@ function MessagePopperButton(props) {
         <List dense className={classes.tabContainer}>
           {/* Conditional rendering based on selectedUser */}
           {selectedUser === null ? (
-            mockUsers.map((user) => (
-              <ListItem key={user.id} button onClick={() => handleUserSelect(user.id)}>
-                <ListItemText primary={user.name} />
-              </ListItem>
-            ))
-          ) : (
-            <MessageHistory history={messageHistory} />
+                mockUsers.map((user) => (
+                    <ListItem key={user.id} button onClick={() => handleUserSelect(user.id)}>
+                        <ListItemText primary={user.name} />
+                    </ListItem>
+                ))
+            ) : (
+                <MessageHistory history={messageHistory} onBack={handleBackToUsers} />
           )}
         </List>
       </Popover>

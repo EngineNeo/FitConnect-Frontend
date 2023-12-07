@@ -1,8 +1,8 @@
-// MessageHistory.js
 import React, { useState } from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import { List, ListItem, TextField, Button } from "@mui/material";
 
-const MessageHistory = ({ history }) => {
+const MessageHistory = ({ history, onBack }) => { // Include onBack in the function arguments
     const [newMessage, setNewMessage] = useState('');
 
     const handleSendMessage = () => {
@@ -13,7 +13,7 @@ const MessageHistory = ({ history }) => {
 
     return (
         <div>
-            
+            <Button onClick={onBack}>Back to Users</Button> {/* Use onBack here */}
             <List>
                 {history.map((message, index) => (
                     <ListItem key={index}>
@@ -33,6 +33,11 @@ const MessageHistory = ({ history }) => {
             </Button>
         </div>
     );
+};
+
+MessageHistory.propTypes = {
+    history: PropTypes.array.isRequired, // Use PropTypes for type checking
+    onBack: PropTypes.func.isRequired, // Define PropTypes for onBack
 };
 
 export default MessageHistory;
