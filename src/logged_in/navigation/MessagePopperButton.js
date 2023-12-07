@@ -73,14 +73,16 @@ function MessagePopperButton(props) {
     const history = fetchMessageHistory(userId);
     setSelectedUser(userId);
     setMessageHistory(history);
-    setIsOpen(false);
   };
 
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen);
   }, [isOpen, setIsOpen]);
 
-  const handleClickAway = useCallback(() => {
+  const handleClickAway = useCallback((event) => {
+    if (anchorEl.current && (anchorEl.current.contains(event.target) || event.target === anchorEl.current)) {
+      return;
+    }
     setIsOpen(false);
   }, [setIsOpen]);
 
