@@ -3,6 +3,9 @@ import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
+import Coach from "./dashboard/Coach"
+import WorkoutPlan from "./dashboard/WorkoutPlan"
+import UserLogs from "./dashboard/UserLogs"
 import PropsRoute from "../shared/components/PropsRoute";
 import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
@@ -45,13 +48,14 @@ function Routing(props) {
   const {
     classes,
     pushMessageToSnackbar,
-    toggleAccountActivation,
     CardChart,
     statistics,
     targets,
     setTargets,
-    isAccountActivated,
     selectDashboard,
+    selectCoach,
+    selectWorkoutPlan,
+    selectUserLogs
   } = props;
   useLocationBlocker();
   return (
@@ -60,14 +64,42 @@ function Routing(props) {
         <PropsRoute
           path=""
           component={Dashboard}
-          toggleAccountActivation={toggleAccountActivation}
           pushMessageToSnackbar={pushMessageToSnackbar}
           CardChart={CardChart}
           statistics={statistics}
           targets={targets}
           setTargets={setTargets}
-          isAccountActivated={isAccountActivated}
           selectDashboard={selectDashboard}
+        />
+        <PropsRoute
+          path=""
+          component={Coach}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          CardChart={CardChart}
+          statistics={statistics}
+          targets={targets}
+          setTargets={setTargets}
+          selectCoach={selectCoach}
+        />
+        <PropsRoute
+          path=""
+          component={WorkoutPlan}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          CardChart={CardChart}
+          statistics={statistics}
+          targets={targets}
+          setTargets={setTargets}
+          selectWorkoutPlan={selectWorkoutPlan}
+        />
+        <PropsRoute
+          path=""
+          component={UserLogs}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          CardChart={CardChart}
+          statistics={statistics}
+          targets={targets}
+          setTargets={setTargets}
+          selectUserLogs={selectUserLogs}
         />
       </Switch>
     </div>
@@ -88,6 +120,9 @@ Routing.propTypes = {
   targets: PropTypes.arrayOf(PropTypes.object).isRequired,
   isAccountActivated: PropTypes.bool.isRequired,
   selectDashboard: PropTypes.func.isRequired,
+  selectCoach: PropTypes.func.isRequired,
+  selectWorkoutPlan: PropTypes.func.isRequired,
+  selectUserLogs: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(memo(Routing));

@@ -19,8 +19,10 @@ import {
 } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import MenuIcon from "@mui/icons-material/Menu";
+import SportsIcon from '@mui/icons-material/Sports';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import NotesIcon from '@mui/icons-material/Notes';
 import MessagePopperButton from "./MessagePopperButton";
 import SideDrawer from "./SideDrawer";
 import NavigationDrawer from "../../shared/components/NavigationDrawer";
@@ -176,13 +178,51 @@ function NavBar(props) {
       },
     },
     {
-      link: "/",
-      name: "Logout",
+      link: "/c/coaches",
+      name: "Coaches",
+      onClick: closeMobileDrawer,
       icon: {
         desktop: (
-          <PowerSettingsNewIcon className="text-white" fontSize="small" />
+          <SportsIcon
+            className={
+              selectedTab === "Coaches" ? classes.textPrimary : "text-white"
+            }
+            fontSize="small"
+          />
         ),
-        mobile: <PowerSettingsNewIcon className="text-white" />,
+        mobile: <SportsIcon className="text-white" />,
+      },
+    },
+    {
+      link: "/c/workoutplan",
+      name: "Workout Plan",
+      onClick: closeMobileDrawer,
+      icon: {
+        desktop: (
+          <FitnessCenterIcon
+            className={
+              selectedTab === "Workout Plan" ? classes.textPrimary : "text-white"
+            }
+            fontSize="small"
+          />
+        ),
+        mobile: <FitnessCenterIcon className="text-white" />,
+      },
+    },
+    {
+      link: "/c/userlogs",
+      name: "User Logs",
+      onClick: closeMobileDrawer,
+      icon: {
+        desktop: (
+          <NotesIcon
+            className={
+              selectedTab === "User Logs" ? classes.textPrimary : "text-white"
+            }
+            fontSize="small"
+          />
+        ),
+        mobile: <NotesIcon className="text-white" />,
       },
     },
   ];
@@ -237,7 +277,7 @@ function NavBar(props) {
                 <ListItemText
                   className={classes.username}
                   primary={
-                    <Typography color="textPrimary">{firstName || 'Username'}</Typography>
+                    <Typography color="textPrimary">{firstName || 'User'}</Typography>
                   }
                 />
               )}
