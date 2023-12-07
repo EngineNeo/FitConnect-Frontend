@@ -346,13 +346,13 @@ function RegisterDialog(props) {
         onChange={(e) => setCoachBio(e.target.value)}
       />
       <Box display="flex" justifyContent="center" alignItems="center" margin="normal">
-        <Button style={experienceButtonStyle('novice')} onClick={() => handleExperienceSelect('novice')}>
+        <Button style={experienceButtonStyle('novice')} onClick={() => handleExperienceSelect(1)}>
           Novice
         </Button>
-        <Button style={experienceButtonStyle('intermediate')} onClick={() => handleExperienceSelect('intermediate')}>
+        <Button style={experienceButtonStyle('intermediate')} onClick={() => handleExperienceSelect(2)}>
           Intermediate
         </Button>
-        <Button style={experienceButtonStyle('expert')} onClick={() => handleExperienceSelect('expert')}>
+        <Button style={experienceButtonStyle('expert')} onClick={() => handleExperienceSelect(3)}>
           Expert
         </Button>
       </Box>
@@ -384,19 +384,19 @@ function RegisterDialog(props) {
   };
 
   const register = useCallback(() => {
+    // Check for terms of service agreement
     if (registerTermsCheckbox.current && !registerTermsCheckbox.current.checked) {
       setHasTermsOfServiceError(true);
       return;
     }
+
     if (password !== passwordRepeat) {
       setStatus("passwordsDontMatch");
       return;
     }
+
     setStatus(null);
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
 
     const userData = {
       email: email,
@@ -413,6 +413,39 @@ function RegisterDialog(props) {
       userData.birth_date = birthDate
     }
 
+    const handleCoachRegistration = (userId) => {
+      const coachData = {
+        user: userId,
+        goal: parseInt(coachGoal),
+        experience: parseInt(coachExperience),
+        cost: parseFloat(coachCost),
+        bio: coachBio,
+      };
+
+      fetch('http://localhost:8000/fitConnect/become_coach', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(coachData),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            setIsLoading(false);
+            showSuccessMessage();
+            onClose();
+          } else {
+            setIsLoading(false);
+            setStatus('coachRegistrationError');
+          }
+        })
+        .catch(error => {
+          setIsLoading(false);
+          setStatus('serverError');
+        });
+    };
+
     fetch('http://localhost:8000/fitConnect/create_user', {
       method: 'POST',
       headers: {
@@ -422,14 +455,17 @@ function RegisterDialog(props) {
     })
       .then(response => response.json())
       .then(data => {
-        setIsLoading(false);
-        console.log(data)
         if (data.user_id) {
-          showSuccessMessage();
-          onClose();
+          if (selectedUserType === 'coach') {
+            handleCoachRegistration(data.user_id);
+          } else {
+            setIsLoading(false);
+            showSuccessMessage();
+            onClose();
+          }
         } else {
+          setIsLoading(false);
           setStatus(data.error);
-          console.log(userData.birth_date)
         }
       })
       .catch(error => {
@@ -437,12 +473,8 @@ function RegisterDialog(props) {
         setStatus('serverError');
       });
   }, [
-    setStatus,
-    setHasTermsOfServiceError,
-    email,
-    password,
-    passwordRepeat,
-    registerTermsCheckbox,
+    email, firstName, lastName, password, passwordRepeat, gender, birthDate,
+    selectedUserType, coachGoal, coachBio, coachExperience, coachCost
   ]);
 
   return (

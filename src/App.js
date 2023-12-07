@@ -4,9 +4,9 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import theme from "./theme";
 import GlobalStyles from "./GlobalStyles";
 import Pace from "./shared/components/Pace";
-import { AuthProvider } from "./shared/components/AuthContext";
+import withAuth from "./shared/components/WithAuth"
 
-const LoggedInComponent = lazy(() => import("./logged_in/Main"));
+const LoggedInComponent = withAuth(lazy(() => import("./logged_in/Main")));
 
 const LoggedOutComponent = lazy(() => import("./logged_out/Main"));
 
@@ -18,7 +18,6 @@ function App() {
           <CssBaseline />
           <GlobalStyles />
           <Pace color={theme.palette.primary.light} />
-          <AuthProvider>
             <Suspense fallback={<Fragment />}>
               <Switch>
                 <Route path="/c">
@@ -29,7 +28,6 @@ function App() {
                 </Route>
               </Switch>
             </Suspense>
-          </AuthProvider>
         </ThemeProvider>
       </StyledEngineProvider>
     </BrowserRouter>
