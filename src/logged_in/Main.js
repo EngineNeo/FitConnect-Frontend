@@ -25,23 +25,7 @@ function Main(props) {
   const [CardChart, setCardChart] = useState(null);
   const [hasFetchedCardChart, setHasFetchedCardChart] = useState(false);
   const [targets, setTargets] = useState([]);
-  const [isAccountActivated, setIsAccountActivated] = useState(false);
   const [pushMessageToSnackbar, setPushMessageToSnackbar] = useState(null);
-
-  const toggleAccountActivation = useCallback(() => {
-    if (pushMessageToSnackbar) {
-      if (isAccountActivated) {
-        pushMessageToSnackbar({
-          text: "Your account is now deactivated.",
-        });
-      } else {
-        pushMessageToSnackbar({
-          text: "Your account is now activated.",
-        });
-      }
-    }
-    setIsAccountActivated(!isAccountActivated);
-  }, [pushMessageToSnackbar, isAccountActivated, setIsAccountActivated]);
 
   const selectDashboard = useCallback(() => {
     smoothScrollTop();
@@ -77,9 +61,7 @@ function Main(props) {
       />
       <main className={classNames(classes.main)}>
         <Routing
-          isAccountActivated={isAccountActivated}
           CardChart={CardChart}
-          toggleAccountActivation={toggleAccountActivation}
           pushMessageToSnackbar={pushMessageToSnackbar}
           targets={targets}
           selectDashboard={selectDashboard}

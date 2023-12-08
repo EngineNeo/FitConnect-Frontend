@@ -1,9 +1,5 @@
 import React, { Fragment, useEffect } from "react";
 import PropTypes from "prop-types";
-// import { Typography, Box } from "@mui/material";
-// import SettingsArea from "./SettingsArea";
-// import UserDataArea from "./UserDataArea";
-// import AccountInformationArea from "./AccountInformationArea";
 import StatisticsArea from "./StatisticsArea";
 
 function Dashboard(props) {
@@ -11,11 +7,6 @@ function Dashboard(props) {
     selectDashboard,
     CardChart,
     statistics,
-    // toggleAccountActivation,
-    // pushMessageToSnackbar,
-    // targets,
-    // setTargets,
-    // isAccountActivated,
   } = props;
 
   useEffect(selectDashboard, [selectDashboard]);
