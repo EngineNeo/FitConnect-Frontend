@@ -51,7 +51,7 @@ function SearchBar() {
 }
 
 function ExerciseBox({ exercise, classes }) {
-  const Icon = getIconForEquipmentId(exercise.equipment_id);
+  const Icon = getIconForEquipmentName(exercise.equipment_name);
 
   return (
     <Grid item xs={6} sm={4} md={2} lg={1.714}>
@@ -63,15 +63,15 @@ function ExerciseBox({ exercise, classes }) {
   );
 }
 
-function getIconForEquipmentId(equipmentId) {
-  switch (equipmentId) {
-    case 1: return DirectionsRunIcon;
-    case 2:
-    case 3: return FitnessCenterIcon;
-    case 4: return CableIcon;
-    case 5: return LineWeightIcon;
-    case 6: return LocalMallIcon;
-    case 7: return AdjustIcon;
+function getIconForEquipmentName(equipmentName) {
+  switch (equipmentName.toLowerCase()) {
+    case 'none': return DirectionsRunIcon;
+    case 'barbell': return FitnessCenterIcon;
+    case 'dumbbell': return FitnessCenterIcon;
+    case 'cable': return CableIcon;
+    case 'band': return LineWeightIcon;
+    case 'kettlebell': return LocalMallIcon;
+    case 'plate': return AdjustIcon;
     default: return DirectionsRunIcon;
   }
 }
@@ -86,6 +86,7 @@ function ExerciseBankSection(props) {
     axios.get('http://localhost:8000/fitConnect/exercises')
       .then(response => {
         setExercises(response.data);
+        console.log(response.data)
       })
       .catch(error => console.log(error));
   }, []);
