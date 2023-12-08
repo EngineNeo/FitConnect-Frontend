@@ -16,7 +16,7 @@ import VisibilityPasswordTextField from '../../shared/components/VisibilityPassw
 import withStyles from "@mui/styles/withStyles";
 import FormDialog from "../../shared/components/FormDialog";
 import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
-import classNames from "classnames";
+// import classNames from "classnames";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format } from 'date-fns';
@@ -186,9 +186,9 @@ function RegisterDialog(props) {
               onChange={(e) => setGender(e.target.value)}
               label="Gender"
             >
-              <MenuItem value="male" className={classNames(classes.textBlack)}>Male</MenuItem>
-              <MenuItem value="female" className={classNames(classes.textBlack)}>Female</MenuItem>
-              {/* <MenuItem value="other" className={classNames(classes.textBlack)}>Other</MenuItem> Other not currently available on database */} 
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+              {/* <MenuItem value="other">Other</MenuItem> Other not currently available on database */} 
             </Select>
           </FormControl>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
