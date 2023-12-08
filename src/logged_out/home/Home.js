@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import HeadSection from "./HeadSection";
 import TopCoachesSection from "./TopCoachesSection";
 import FeaturesSection from "./FeaturesSection";
-import PricingSection from "./PricingSection";
+import ExerciseBankSection from "./ExerciseBankSection";
 
 function Home(props) {
   const { selectHome } = props;
@@ -15,7 +15,7 @@ function Home(props) {
       <HeadSection />
       <FeaturesSection />
       <TopCoachesSection />
-      <PricingSection />
+      <ExerciseBankSection />
     </Fragment>
   );
 }
