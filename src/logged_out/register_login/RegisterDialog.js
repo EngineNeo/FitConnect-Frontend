@@ -321,12 +321,12 @@ function RegisterDialog(props) {
   const renderCoachSurveyStep = () => (
     <Fragment>
       <FormControl fullWidth margin="normal">
-        <InputLabel id="coach-goal-label">Goal</InputLabel>
+        <InputLabel id="coach-specialization-label">Specialization</InputLabel>
         <Select
-          labelId="coach-goal-label"
+          labelId="coach-specialization-label"
           value={coachGoal}
           onChange={(e) => setCoachGoal(e.target.value)}
-          label="Goal"
+          label="Specialization"
         >
           <MenuItem value={1}>Lose Weight</MenuItem>
           <MenuItem value={2}>Gain Muscle</MenuItem>
