@@ -49,10 +49,10 @@ function StatisticsArea({ theme, CardChart, data = { profit: [], views: [] } }) 
 
 StatisticsArea.propTypes = {
   theme: PropTypes.object.isRequired,
-  data: PropTypes.shape({
-    profit: PropTypes.array.isRequired,
-    views: PropTypes.array.isRequired
-  }).isRequired,
+  // data: PropTypes.shape({
+  //   profit: PropTypes.array.isRequired,
+  //   views: PropTypes.array.isRequired
+  // }).isRequired,
   CardChart: PropTypes.elementType
 };
 

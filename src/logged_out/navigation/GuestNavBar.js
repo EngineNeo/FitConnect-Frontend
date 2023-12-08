@@ -96,15 +96,26 @@ function NavBar(props) {
       >
         <Toolbar className={classes.toolbar}>
           <div className={classes.logoContainer}>
-            <img alt="FitConnect" src={logo} style={{ width: "50px" }} />
-            <Typography
-              variant="h4"
-              className={classes.brandText}
-              display="inline"
-              color="secondary"
+            <Link
+              key="Home"
+              to="/"
             >
-              FitConnect
-            </Typography>
+              <img alt="FitConnect" src={logo} style={{ width: "40px" }} />
+            </Link>
+            <Link
+              key="Home"
+              to="/"
+              style={{ textDecoration: 'none' }}
+            >
+              <Typography
+                variant="h4"
+                className={classes.brandText}
+                display="inline"
+                color="secondary"
+              >
+                FitConnect
+              </Typography>
+            </Link>
           </div>
           <div>
             <Hidden mdUp>

@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useCallback, useState } from "react";
+import React, { useEffect, Fragment, useRef, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -19,17 +19,21 @@ import {
 } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import MenuIcon from "@mui/icons-material/Menu";
+import SportsIcon from '@mui/icons-material/Sports';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import NotesIcon from '@mui/icons-material/Notes';
 import MessagePopperButton from "./MessagePopperButton";
 import SideDrawer from "./SideDrawer";
 import NavigationDrawer from "../../shared/components/NavigationDrawer";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+const logo = "/images/logged_out/FitConnectLogo.png"
+
 const styles = (theme) => ({
   appBar: {
     boxShadow: theme.shadows[6],
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.common.darkBlack,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -57,10 +61,14 @@ const styles = (theme) => ({
       paddingRight: theme.spacing(4),
     },
   },
+  logoContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   accountAvatar: {
     backgroundColor: theme.palette.secondary.main,
-    height: 24,
-    width: 24,
+    height: 42,
+    width: 42,
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
@@ -104,8 +112,10 @@ const styles = (theme) => ({
     backgroundColor: `${theme.palette.primary.main} !important`,
   },
   brandText: {
-    fontFamily: "'Baloo Bhaijaan', cursive",
-    fontWeight: 400,
+    fontFamily: "'Roboto', cursive",
+    fontStyle: "bold",
+    fontWeight: 650,
+    marginLeft: "10px"
   },
   username: {
     paddingLeft: 0,
@@ -128,6 +138,15 @@ function NavBar(props) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   const isWidthUpSm = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const [firstName, setFirstName] = useState('');
+
+  useEffect(() => {
+    const storedFirstName = localStorage.getItem('first_name'); // Adjust 'first_name' if needed
+    if (storedFirstName) {
+      setFirstName(storedFirstName);
+    }
+  }, []);
 
   const openMobileDrawer = useCallback(() => {
     setIsMobileOpen(true);
@@ -159,13 +178,51 @@ function NavBar(props) {
       },
     },
     {
-      link: "/",
-      name: "Logout",
+      link: "/c/coaches",
+      name: "Coaches",
+      onClick: closeMobileDrawer,
       icon: {
         desktop: (
-          <PowerSettingsNewIcon className="text-white" fontSize="small" />
+          <SportsIcon
+            className={
+              selectedTab === "Coaches" ? classes.textPrimary : "text-white"
+            }
+            fontSize="small"
+          />
         ),
-        mobile: <PowerSettingsNewIcon className="text-white" />,
+        mobile: <SportsIcon className="text-white" />,
+      },
+    },
+    {
+      link: "/c/workoutplan",
+      name: "Workout Plan",
+      onClick: closeMobileDrawer,
+      icon: {
+        desktop: (
+          <FitnessCenterIcon
+            className={
+              selectedTab === "Workout Plan" ? classes.textPrimary : "text-white"
+            }
+            fontSize="small"
+          />
+        ),
+        mobile: <FitnessCenterIcon className="text-white" />,
+      },
+    },
+    {
+      link: "/c/userlogs",
+      name: "User Logs",
+      onClick: closeMobileDrawer,
+      icon: {
+        desktop: (
+          <NotesIcon
+            className={
+              selectedTab === "User Logs" ? classes.textPrimary : "text-white"
+            }
+            fontSize="small"
+          />
+        ),
+        mobile: <NotesIcon className="text-white" />,
       },
     },
   ];
@@ -187,22 +244,28 @@ function NavBar(props) {
               </Box>
             </Hidden>
             <Hidden smDown>
-              <Typography
-                variant="h4"
-                className={classes.brandText}
-                display="inline"
-                color="primary"
-              >
-                Fit
-              </Typography>
-              <Typography
-                variant="h4"
-                className={classes.brandText}
-                display="inline"
-                color="secondary"
-              >
-                Connect
-              </Typography>
+              <div className={classes.logoContainer}>
+                <Link
+                  key="Home"
+                  to="/"
+                >
+                  <img alt="FitConnect" src={logo} style={{ width: "40px" }} />
+                </Link>
+                <Link
+                  key="Home"
+                  to="/"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <Typography
+                    variant="h4"
+                    className={classes.brandText}
+                    display="inline"
+                    color="secondary"
+                  >
+                  FitConnect
+                  </Typography>
+                </Link>
+              </div>
             </Hidden>
           </Box>
           <Box
@@ -218,14 +281,14 @@ function NavBar(props) {
             >
               <Avatar
                 alt="profile picture"
-                src={`${process.env.PUBLIC_URL}/images/logged_in/profilePicture.jpg`}
+                src={`${process.env.PUBLIC_URL}/images/ProfilePic/JohnSmith.jpg`}
                 className={classNames(classes.accountAvatar)}
               />
               {isWidthUpSm && (
                 <ListItemText
                   className={classes.username}
                   primary={
-                    <Typography color="textPrimary">Username</Typography>
+                    <Typography color="textPrimary">{firstName || 'User'}</Typography>
                   }
                 />
               )}
@@ -299,10 +362,9 @@ function NavBar(props) {
 }
 
 NavBar.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.object).isRequired,
-  selectedTab: PropTypes.string.isRequired,
+  // messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  // selectedTab: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
-  openAddBalanceDialog: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(NavBar);

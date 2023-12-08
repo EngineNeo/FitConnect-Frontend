@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useRef, Fragment } from "react";
+import React, { useState, useEffect, useCallback, useRef, Fragment } from "react";
 import axios from 'axios';
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -9,7 +9,7 @@ import FormDialog from "../../shared/components/FormDialog";
 import HighlightedInformation from "../../shared/components/HighlightedInformation";
 import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../shared/components/VisibilityPasswordTextField";
-import { AuthContext } from "../../shared/components/AuthContext"
+import Cookies from 'js-cookie';
 
 const styles = (theme) => ({
   forgotPassword: {
@@ -41,48 +41,62 @@ function LoginDialog(props) {
     openChangePasswordDialog,
     status,
   } = props;
+
   const [isLoading, setIsLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const loginEmail = useRef();
   const loginPassword = useRef();
-  const { login } = useContext(AuthContext);
+  const isMountedRef = useRef(true);
 
-  const handleLoginRequest = async (email, password) => {
-    try {
-      const response = await axios.get('http://localhost:8000/fitConnect/login', {
-        params: { email, password }
-      });
-      console.log(response.data)
-      return response.data;
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setStatus("invalidCredentials");
-      } else {
-        console.error("Login Error:", error);
-        setStatus("error");
-      }
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
-  const performLogin = useCallback(async () => {
+  const handleLogin = useCallback(async () => {
     setIsLoading(true);
     setStatus(null);
     const email = loginEmail.current.value;
     const password = loginPassword.current.value;
 
     try {
-      const response = await handleLoginRequest(email, password);
-      if (response && response.token) {
-        localStorage.setItem('userToken', response.token);
-        login();
-        history.push("/c/dashboard"); // Assuming "/c/dashboard" is where LoggedInComponent is rendered
+      const response = await axios.post('http://localhost:8000/fitConnect/login', {
+        email, password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (isMountedRef.current) {
+        if (response && response.data) {
+          const { token, ...otherData } = response.data;
+
+          Cookies.set('authToken', token, { expires: 7 }); // Expires in 7 days
+
+          Object.entries(otherData).forEach(([key, value]) => {
+            localStorage.setItem(key, value);
+          });
+
+          history.push("/c/dashboard");
+        }
       }
     } catch (error) {
-      // Handle errors
-      // ... error handling code
+      if (isMountedRef.current) {
+        if (error.response && error.response.status === 400) {
+          setStatus("invalidCredentials");
+        } else {
+          console.error("Login Error:", error);
+          setStatus("error");
+        }
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
-  }, [history, login]);
+  }, [history, setStatus]);
 
   return (
     <Fragment>
@@ -92,7 +106,7 @@ function LoginDialog(props) {
         loading={isLoading}
         onFormSubmit={(e) => {
           e.preventDefault();
-          performLogin();
+          handleLogin();
         }}
         hideBackdrop
         headline="Login"
