@@ -245,15 +245,26 @@ function NavBar(props) {
             </Hidden>
             <Hidden smDown>
               <div className={classes.logoContainer}>
-                <img alt="FitConnect" src={logo} style={{ width: "40px" }} />
-                <Typography
-                  variant="h4"
-                  className={classes.brandText}
-                  display="inline"
-                  color="secondary"
+                <Link
+                  key="Home"
+                  to="/"
                 >
+                  <img alt="FitConnect" src={logo} style={{ width: "40px" }} />
+                </Link>
+                <Link
+                  key="Home"
+                  to="/"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <Typography
+                    variant="h4"
+                    className={classes.brandText}
+                    display="inline"
+                    color="secondary"
+                  >
                   FitConnect
-                </Typography>
+                  </Typography>
+                </Link>
               </div>
             </Hidden>
           </Box>
