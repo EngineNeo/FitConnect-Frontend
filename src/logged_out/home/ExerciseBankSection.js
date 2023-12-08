@@ -30,25 +30,38 @@ const styles = (theme) => ({
   gridContainer: {
     maxWidth: 'calc(100% - 16px)',
     margin: 'auto',
-  }
+  },
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: theme.spacing(2),
+  },
 });
 
-function SearchBar() {
-  return (
-    <Paper className={styles.searchContainer}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs>
-          <TextField fullWidth label="Search Exercises" variant="outlined" />
-        </Grid>
-        <Grid item>
-          <Button variant="contained" color="primary" startIcon={<SearchIcon />}>
-            Search
-          </Button>
-        </Grid>
-      </Grid>
-    </Paper>
-  );
-}
+// function SearchBar({ onSearchChange }) {
+//   const [searchInput, setSearchInput] = useState('');
+
+//   const handleSearchChange = (event) => {
+//     setSearchInput(event.target.value);
+//     onSearchChange(event.target.value);
+//   };
+
+//   return (
+//     <Paper className={styles.searchContainer}>
+//       <Grid container spacing={2} alignItems="center">
+//         <Grid item xs>
+//           <TextField
+//             fullWidth
+//             label="Search Exercises"
+//             variant="outlined"
+//             value={searchInput}
+//             onChange={handleSearchChange}
+//           />
+//         </Grid>
+//       </Grid>
+//     </Paper>
+//   );
+// }
 
 function ExerciseBox({ exercise, classes }) {
   const Icon = getIconForEquipmentName(exercise.equipment_name);
@@ -68,7 +81,7 @@ function getIconForEquipmentName(equipmentName) {
     case 'none': return DirectionsRunIcon;
     case 'barbell': return FitnessCenterIcon;
     case 'dumbbell': return FitnessCenterIcon;
-    case 'cable': return CableIcon;
+    case 'cables': return CableIcon;
     case 'band': return LineWeightIcon;
     case 'kettlebell': return LocalMallIcon;
     case 'plate': return AdjustIcon;
@@ -79,25 +92,42 @@ function getIconForEquipmentName(equipmentName) {
 function ExerciseBankSection(props) {
   const { classes } = props;
   const [exercises, setExercises] = useState([]);
+  const [filteredExercises, setFilteredExercises] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const exercisesPerPage = 14;
 
   useEffect(() => {
     axios.get('http://localhost:8000/fitConnect/exercises')
       .then(response => {
         setExercises(response.data);
-        console.log(response.data)
+        setFilteredExercises(response.data);
       })
       .catch(error => console.log(error));
   }, []);
 
+  useEffect(() => {
+    const filtered = exercises.filter(exercise =>
+      exercise.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      exercise.muscle_group_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      exercise.equipment_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredExercises(filtered);
+    setCurrentPage(1); // Reset to first page on new search
+  }, [searchTerm, exercises]);
+
   const indexOfLastExercise = currentPage * exercisesPerPage;
   const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
-  const currentExercises = exercises.slice(indexOfFirstExercise, indexOfLastExercise);
+  const currentExercises = filteredExercises.slice(indexOfFirstExercise, indexOfLastExercise);
 
   const paginate = (event, value) => {
     setCurrentPage(value);
   };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
 
   return (
     <div className="lg-p-top" style={{ backgroundColor: "#0e1111" }}>
@@ -105,19 +135,37 @@ function ExerciseBankSection(props) {
         Exercises
       </Typography>
       <div className={classNames("container-fluid", classes.containerFix, classes.textWhite)}>
-        <SearchBar />
+        <Paper className={classes.searchContainer}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs>
+              <TextField
+                fullWidth
+                label="Search Exercises"
+                variant="outlined"
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </Grid>
+            <Grid item>
+              <Button variant="contained" color="primary" startIcon={<SearchIcon />}>
+                Search
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
         <Grid container spacing={3} className={classes.gridContainer}>
           {currentExercises.map(exercise => (
             <ExerciseBox key={exercise.id} exercise={exercise} classes={classes} />
           ))}
         </Grid>
-        <Pagination
-          count={Math.ceil(exercises.length / exercisesPerPage)}
-          page={currentPage}
-          onChange={paginate}
-          color="primary"
-          style={{ paddingTop: '1rem' }}
-        />
+        <div className={classes.paginationContainer}>
+          <Pagination
+            count={Math.ceil(filteredExercises.length / exercisesPerPage)}
+            page={currentPage}
+            onChange={paginate}
+            color="primary"
+          />
+        </div>
       </div>
     </div>
   );
