@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { withStyles } from '@mui/styles';
-import { Grid, Paper, Typography, TextField, Button, Pagination } from '@mui/material';
+import { 
+  Grid, Paper, Typography, TextField, Button, Pagination,
+  Dialog, DialogActions, DialogContent, DialogContentText
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
@@ -23,6 +26,16 @@ const styles = (theme) => ({
     border: '1px solid #ddd',
     backgroundColor: 'transparent',
     margin: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'transform 0.2s ease-in-out',
+    cursor: 'default',
+    '&:hover': {
+      transform: 'scale(1.05)',
+      cursor: 'pointer',
+    },
   },
   icon: {
     fontSize: 40,
@@ -38,39 +51,14 @@ const styles = (theme) => ({
   },
 });
 
-// function SearchBar({ onSearchChange }) {
-//   const [searchInput, setSearchInput] = useState('');
-
-//   const handleSearchChange = (event) => {
-//     setSearchInput(event.target.value);
-//     onSearchChange(event.target.value);
-//   };
-
-//   return (
-//     <Paper className={styles.searchContainer}>
-//       <Grid container spacing={2} alignItems="center">
-//         <Grid item xs>
-//           <TextField
-//             fullWidth
-//             label="Search Exercises"
-//             variant="outlined"
-//             value={searchInput}
-//             onChange={handleSearchChange}
-//           />
-//         </Grid>
-//       </Grid>
-//     </Paper>
-//   );
-// }
-
-function ExerciseBox({ exercise, classes }) {
+function ExerciseBox({ exercise, classes, onExerciseClick }) {
   const Icon = getIconForEquipmentName(exercise.equipment_name);
 
   return (
     <Grid item xs={6} sm={4} md={2} lg={1.714}>
-      <Paper className={classes.exerciseBox}>
+      <Paper className={classes.exerciseBox} onClick={() => onExerciseClick(exercise)}>
         <Icon className={classes.icon} />
-        <Typography variant="subtitle1">{exercise.name}</Typography>
+        <Typography variant="subtitle1" style={{ marginTop: "10px" }}>{exercise.name}</Typography>
       </Paper>
     </Grid>
   );
@@ -80,7 +68,7 @@ function getIconForEquipmentName(equipmentName) {
   switch (equipmentName.toLowerCase()) {
     case 'none': return DirectionsRunIcon;
     case 'barbell': return FitnessCenterIcon;
-    case 'dumbbell': return FitnessCenterIcon;
+    case 'dumbbells': return FitnessCenterIcon;
     case 'cables': return CableIcon;
     case 'band': return LineWeightIcon;
     case 'kettlebell': return LocalMallIcon;
@@ -96,6 +84,19 @@ function ExerciseBankSection(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const exercisesPerPage = 14;
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedExercise, setSelectedExercise] = useState(null);
+
+  const handleExerciseClick = (exercise) => {
+    setSelectedExercise(exercise);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedExercise(null);
+  };
+
 
   useEffect(() => {
     axios.get('http://localhost:8000/fitConnect/exercises')
@@ -131,6 +132,23 @@ function ExerciseBankSection(props) {
 
   return (
     <div className="lg-p-top" style={{ backgroundColor: "#0e1111" }}>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="exercise-dialog-title"
+        aria-describedby="exercise-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText id="exercise-dialog-description">
+            {selectedExercise ? selectedExercise.description : ''}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Typography variant="h3" align="center" className={classNames("lg-mg-bottom", classes.textWhite)}>
         Exercises
       </Typography>
@@ -140,7 +158,7 @@ function ExerciseBankSection(props) {
             <Grid item xs>
               <TextField
                 fullWidth
-                label="Search Exercises"
+                label="Search for exercises by name, muscle group, or equipment type"
                 variant="outlined"
                 value={searchTerm}
                 onChange={handleSearchChange}
@@ -155,7 +173,12 @@ function ExerciseBankSection(props) {
         </Paper>
         <Grid container spacing={3} className={classes.gridContainer}>
           {currentExercises.map(exercise => (
-            <ExerciseBox key={exercise.id} exercise={exercise} classes={classes} />
+            <ExerciseBox 
+            key={exercise.name} 
+            exercise={exercise} 
+            classes={classes} 
+            onExerciseClick={handleExerciseClick} 
+            />
           ))}
         </Grid>
         <div className={classes.paginationContainer}>

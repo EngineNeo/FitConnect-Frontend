@@ -97,13 +97,11 @@ function NavBar(props) {
         <Toolbar className={classes.toolbar}>
           <div className={classes.logoContainer}>
             <Link
-              key="Home"
               to="/"
             >
               <img alt="FitConnect" src={logo} style={{ width: "40px" }} />
             </Link>
             <Link
-              key="Home"
               to="/"
               style={{ textDecoration: 'none' }}
             >

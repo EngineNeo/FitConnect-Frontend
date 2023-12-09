@@ -27,6 +27,7 @@ import MessagePopperButton from "./MessagePopperButton";
 import SideDrawer from "./SideDrawer";
 import NavigationDrawer from "../../shared/components/NavigationDrawer";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useLocation } from "react-router-dom";
 
 const logo = "/images/logged_out/FitConnectLogo.png"
 
@@ -141,8 +142,10 @@ function NavBar(props) {
 
   const [firstName, setFirstName] = useState('');
 
+  const location = useLocation();
+
   useEffect(() => {
-    const storedFirstName = localStorage.getItem('first_name'); // Adjust 'first_name' if needed
+    const storedFirstName = localStorage.getItem('first_name');
     if (storedFirstName) {
       setFirstName(storedFirstName);
     }
@@ -298,6 +301,7 @@ function NavBar(props) {
         </Toolbar>
       </AppBar>
       <Hidden smDown>
+        {location.pathname !== "/" && (
         <Drawer //  both drawers can be combined into one for performance
           variant="permanent"
           classes={{
@@ -344,6 +348,7 @@ function NavBar(props) {
             ))}
           </List>
         </Drawer>
+          )}
       </Hidden>
       <NavigationDrawer
         menuItems={menuItems.map((element) => ({
@@ -362,8 +367,8 @@ function NavBar(props) {
 }
 
 NavBar.propTypes = {
-  // messages: PropTypes.arrayOf(PropTypes.object).isRequired,
-  // selectedTab: PropTypes.string.isRequired,
+  messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  selectedTab: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import withStyles from '@mui/styles/withStyles';
 import Routing from "./Routing";
+import NavBar from "./navigation/UserNavBar";
 import ConsecutiveSnackbarMessages from "../shared/components/ConsecutiveSnackbarMessages";
 import smoothScrollTop from "../shared/functions/smoothScrollTop";
 
@@ -52,6 +53,9 @@ function Main(props) {
 
   return (
     <Fragment>
+      <NavBar
+        selectedTab={selectedTab}
+      />
       <ConsecutiveSnackbarMessages
         getPushMessageFromChild={getPushMessageFromChild}
       />

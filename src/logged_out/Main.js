@@ -1,7 +1,9 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import AOS from "aos/dist/aos";
 import withStyles from '@mui/styles/withStyles';
+import GuestNavBar from "./navigation/GuestNavBar";
+import UserNavBar from "../logged_in/navigation/UserNavBar";
 import Footer from "./footer/Footer";
 import "aos/dist/aos.css";
 import CookieRulesDialog from "./cookies/CookieRulesDialog";
@@ -9,6 +11,7 @@ import CookieConsent from "./cookies/CookieConsent";
 import DialogSelector from "./register_login/DialogSelector";
 import Routing from "./Routing";
 import smoothScrollTop from "../shared/functions/smoothScrollTop";
+import Cookies from 'js-cookie';
 
 AOS.init({ once: true });
 
@@ -18,13 +21,20 @@ const styles = (theme) => ({
     overflowX: "hidden",
   },
 });
-
 function Main(props) {
   const { classes } = props;
   const [selectedTab, setSelectedTab] = useState(null);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(null);
   const [isCookieRulesDialogOpen, setIsCookieRulesDialogOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check for authToken in cookies
+  useEffect(() => {
+    const authToken = Cookies.get('authToken');
+    setIsAuthenticated(!!authToken);
+  }, []);
+
 
   const selectHome = useCallback(() => {
     smoothScrollTop();
@@ -90,6 +100,21 @@ function Main(props) {
         open={isCookieRulesDialogOpen}
         onClose={handleCookieRulesDialogClose}
       />
+      {isAuthenticated ? (
+        <UserNavBar
+          selectedTab={selectedTab}
+        />
+      ) : (
+      <GuestNavBar
+        selectedTab={selectedTab}
+        selectTab={setSelectedTab}
+        openLoginDialog={openLoginDialog}
+        openRegisterDialog={openRegisterDialog}
+        mobileDrawerOpen={isMobileDrawerOpen}
+        handleMobileDrawerOpen={handleMobileDrawerOpen}
+        handleMobileDrawerClose={handleMobileDrawerClose}
+      />
+      )}
       <Routing
         selectHome={selectHome}
       />
