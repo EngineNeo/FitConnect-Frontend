@@ -103,6 +103,7 @@ function Main(props) {
       {isAuthenticated ? (
         <UserNavBar
           selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
         />
       ) : (
       <GuestNavBar

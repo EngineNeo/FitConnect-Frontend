@@ -8,7 +8,7 @@ const withAuth = (WrappedComponent) => {
         const isAuthenticated = authToken !== undefined;
 
         if (!isAuthenticated) {
-            return <Redirect to="/c/login" />; // Redirect to login page
+            return <Redirect to="/login" />; // Redirect to login page
         }
 
         return <WrappedComponent {...props} />;

@@ -22,27 +22,31 @@ const styles = (theme) => ({
 function Main(props) {
   const { classes } = props;
   const [selectedTab, setSelectedTab] = useState(null);
-  const [CardChart, setCardChart] = useState(null);
-  const [hasFetchedCardChart, setHasFetchedCardChart] = useState(false);
-  const [targets, setTargets] = useState([]);
   const [pushMessageToSnackbar, setPushMessageToSnackbar] = useState(null);
 
   const selectDashboard = useCallback(() => {
     smoothScrollTop();
     document.title = "FitConnect - User Dashboard";
     setSelectedTab("Dashboard");
-    if (!hasFetchedCardChart) {
-      setHasFetchedCardChart(true);
-      import("../shared/components/CardChart").then((Component) => {
-        setCardChart(Component.default);
-      });
-    }
-  }, [
-    setSelectedTab,
-    setCardChart,
-    hasFetchedCardChart,
-    setHasFetchedCardChart,
-  ]);
+  }, [setSelectedTab]);
+
+  const selectCoach = useCallback(() => {
+    smoothScrollTop();
+    document.title = "FitConnect - Coaches";
+    setSelectedTab("Coaches");
+  }, [setSelectedTab]);
+
+  const selectWorkoutPlan = useCallback(() => {
+    smoothScrollTop();
+    document.title = "FitConnect - Workout Plan";
+    setSelectedTab("WorkoutPlan");
+  }, [setSelectedTab]);
+  
+  const selectUserLogs = useCallback(() => {
+    smoothScrollTop();
+    document.title = "FitConnect - User Logs";
+    setSelectedTab("UserLogs");
+  }, [setSelectedTab]);
 
   const getPushMessageFromChild = useCallback(
     (pushMessage) => {
@@ -55,17 +59,19 @@ function Main(props) {
     <Fragment>
       <NavBar
         selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
+        messages={[]}
       />
       <ConsecutiveSnackbarMessages
         getPushMessageFromChild={getPushMessageFromChild}
       />
       <main className={classNames(classes.main)}>
         <Routing
-          CardChart={CardChart}
           pushMessageToSnackbar={pushMessageToSnackbar}
-          targets={targets}
           selectDashboard={selectDashboard}
-          setTargets={setTargets}
+          selectCoach={selectCoach}
+          selectWorkoutPlan={selectWorkoutPlan}
+          selectUserLogs={selectUserLogs}
         />
       </main>
     </Fragment>

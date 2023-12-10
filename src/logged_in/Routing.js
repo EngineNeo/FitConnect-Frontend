@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
@@ -48,57 +48,44 @@ function Routing(props) {
   const {
     classes,
     pushMessageToSnackbar,
-    CardChart,
-    statistics,
-    targets,
-    setTargets,
     selectDashboard,
     selectCoach,
     selectWorkoutPlan,
     selectUserLogs
   } = props;
   useLocationBlocker();
+  const [storedUserId, setStoredUserId] = useState(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem('user_id');
+    setStoredUserId(userId);
+  }, []);
+
   return (
     <div className={classes.wrapper}>
       <Switch>
         <PropsRoute
-          path=""
+          path="/c/dashboard"
+          user_id={storedUserId}
           component={Dashboard}
-          pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
           selectDashboard={selectDashboard}
         />
         <PropsRoute
-          path=""
+          path="/c/coaches"
           component={Coach}
           pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
           selectCoach={selectCoach}
         />
         <PropsRoute
-          path=""
+          path="/c/workoutplan"
           component={WorkoutPlan}
           pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
           selectWorkoutPlan={selectWorkoutPlan}
         />
         <PropsRoute
-          path=""
+          path="/c/userlogs"
           component={UserLogs}
           pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
           selectUserLogs={selectUserLogs}
         />
       </Switch>
@@ -113,12 +100,7 @@ Routing.propTypes = {
   Dropzone: PropTypes.elementType,
   DateTimePicker: PropTypes.elementType,
   pushMessageToSnackbar: PropTypes.func,
-  setTargets: PropTypes.func.isRequired,
   toggleAccountActivation: PropTypes.func,
-  CardChart: PropTypes.elementType,
-  // statistics: PropTypes.object.isRequired,
-  targets: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isAccountActivated: PropTypes.bool.isRequired,
   selectDashboard: PropTypes.func.isRequired,
   selectCoach: PropTypes.func.isRequired,
   selectWorkoutPlan: PropTypes.func.isRequired,

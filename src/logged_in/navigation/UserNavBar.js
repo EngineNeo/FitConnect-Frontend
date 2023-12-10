@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment, useRef, useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import {
@@ -16,18 +16,23 @@ import {
   Hidden,
   Tooltip,
   Box,
+  Menu,
+  MenuItem
 } from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
+import MessagePopperButton from "./MessagePopperButton";
+import SideDrawer from "./SideDrawer";
+import NavigationDrawer from "../../shared/components/NavigationDrawer";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import Cookies from 'js-cookie';
+
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import MenuIcon from "@mui/icons-material/Menu";
 import SportsIcon from '@mui/icons-material/Sports';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import NotesIcon from '@mui/icons-material/Notes';
-import MessagePopperButton from "./MessagePopperButton";
-import SideDrawer from "./SideDrawer";
-import NavigationDrawer from "../../shared/components/NavigationDrawer";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useLocation } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const logo = "/images/logged_out/FitConnectLogo.png"
 
@@ -47,6 +52,7 @@ const styles = (theme) => ({
   appBarToolbar: {
     display: "flex",
     justifyContent: "space-between",
+    backgroundColor: theme.palette.common.darkBlack,
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     [theme.breakpoints.up("sm")]: {
@@ -133,16 +139,71 @@ const styles = (theme) => ({
 });
 
 function NavBar(props) {
-  const { selectedTab, messages, classes, theme } = props;
+  const { selectedTab, setSelectedTab, messages, classes, theme } = props;
   // Will be use to make website more accessible by screen readers
   const links = useRef([]);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   const isWidthUpSm = useMediaQuery(theme.breakpoints.up("sm"));
-
   const [firstName, setFirstName] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const location = useLocation();
+  const currentPathname = location.pathname;
+
+  const history = useHistory();
+
+  useEffect(() => {
+    const tabMap = {
+      "/c/dashboard": "Dashboard",
+      "/c/coaches": "Coaches",
+      "/c/workoutplan": "Workout Plan",
+      "/c/userlogs": "User Logs",
+    };
+
+    setSelectedTab(tabMap[currentPathname]);
+  }, [currentPathname]);
+
+  const navigate = useCallback((path) => {
+    history.push(path);
+    handleMenuClose();
+  }, [history]);
+
+  const handleLogout = useCallback(async () => {
+    const userId = localStorage.getItem('user_id');
+
+    if (userId) {
+      try {
+        const response = await fetch('http://localhost:8000/fitConnect/logout/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+
+        if (response.ok) {
+          // Clearing local storage and cookies
+          localStorage.clear();
+          Cookies.remove('authToken');
+          history.push('/login');
+        } else {
+          console.error('Logout failed');
+          console.log(response)
+        }
+      } catch (error) {
+        console.error('Error during logout:', error);
+      }
+    }
+  }, [history]);
 
   useEffect(() => {
     const storedFirstName = localStorage.getItem('first_name');
@@ -229,9 +290,39 @@ function NavBar(props) {
       },
     },
   ];
+
+  const accountItems = [
+    {
+      link: "/c/dashboard",
+      name: "Dashboard",
+      onClick: () => navigate("/c/dashboard"),
+      icon: {
+        desktop: <DashboardIcon className="text-white" fontSize="small" />,
+        mobile: <DashboardIcon className="text-white" />,
+      },
+    },
+    {
+      link: "/c/account",
+      name: "Account",
+      onClick: () => navigate("/c/account"),
+      icon: {
+        desktop: <AccountCircleIcon className="text-white" fontSize="small" />,
+        mobile: <AccountCircleIcon className="text-white" />,
+      },
+    },
+    {
+      name: "Logout",
+      onClick: handleLogout,
+      icon: {
+        desktop: <ExitToAppIcon className="text-white" fontSize="small" />,
+        mobile: <ExitToAppIcon className="text-white" />,
+      },
+    },
+  ];
+
   return (
     <Fragment>
-      <AppBar position="sticky" className={classes.appBar}>
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className={classes.appBarToolbar}>
           <Box display="flex" alignItems="center">
             <Hidden smUp>
@@ -249,13 +340,11 @@ function NavBar(props) {
             <Hidden smDown>
               <div className={classes.logoContainer}>
                 <Link
-                  key="Home"
                   to="/"
                 >
                   <img alt="FitConnect" src={logo} style={{ width: "40px" }} />
                 </Link>
                 <Link
-                  key="Home"
                   to="/"
                   style={{ textDecoration: 'none' }}
                 >
@@ -278,9 +367,12 @@ function NavBar(props) {
             width="100%"
           >
             <MessagePopperButton messages={messages} />
-            <ListItem
-              disableGutters
-              className={classNames(classes.iconListItem, classes.smBordered)}
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenuOpen}
+              color="inherit"
             >
               <Avatar
                 alt="profile picture"
@@ -295,13 +387,38 @@ function NavBar(props) {
                   }
                 />
               )}
-            </ListItem>
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              style={{ marginTop: '45px' }}
+            >
+              {accountItems.map((item) => (
+                <MenuItem key={item.name} onClick={item.onClick}>
+                  <ListItemIcon>
+                    {item.icon.desktop}
+                  </ListItemIcon>
+                  <Typography variant="inherit">{item.name}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
           </Box>
           <SideDrawer open={isSideDrawerOpen} onClose={closeDrawer} />
         </Toolbar>
       </AppBar>
       <Hidden smDown>
-        {location.pathname !== "/" && (
+        {location.pathname !== "/" && location.pathname !== "/login" && (
         <Drawer //  both drawers can be combined into one for performance
           variant="permanent"
           classes={{
@@ -309,44 +426,39 @@ function NavBar(props) {
           }}
           open={false}
         >
-          <List>
-            {menuItems.map((element, index) => (
-              <Link
-                to={element.link}
-                className={classes.menuLink}
-                onClick={element.onClick}
-                key={index}
-                ref={(node) => {
-                  links.current[index] = node;
-                }}
-              >
-                <Tooltip
-                  title={element.name}
-                  placement="right"
-                  key={element.name}
+            <List>
+              {menuItems.map((element, index) => (
+                <Link
+                  to={element.link}
+                  className={classes.menuLink}
+                  onClick={() => {
+                    element.onClick();
+                    props.setSelectedTab(element.name);
+                  }}
+                  key={index}
+                  ref={(node) => {
+                    links.current[index] = node;
+                  }}
                 >
-                  <ListItem
-                    selected={selectedTab === element.name}
-                    button
-                    divider={index !== menuItems.length - 1}
-                    className={classes.permanentDrawerListItem}
-                    onClick={() => {
-                      links.current[index].click();
-                    }}
-                    aria-label={
-                      element.name === "Logout"
-                        ? "Logout"
-                        : `Go to ${element.name}`
-                    }
+                  <Tooltip
+                    title={element.name}
+                    placement="right"
+                    key={element.name}
                   >
-                    <ListItemIcon className={classes.justifyCenter}>
-                      {element.icon.desktop}
-                    </ListItemIcon>
-                  </ListItem>
-                </Tooltip>
-              </Link>
-            ))}
-          </List>
+                    <ListItem
+                      selected={selectedTab === element.name}
+                      button
+                      divider={index !== menuItems.length - 1}
+                      className={classes.permanentDrawerListItem}
+                    >
+                      <ListItemIcon className={classes.justifyCenter}>
+                        {element.icon.desktop}
+                      </ListItemIcon>
+                    </ListItem>
+                  </Tooltip>
+                </Link>
+              ))}
+            </List>
         </Drawer>
           )}
       </Hidden>
@@ -368,7 +480,6 @@ function NavBar(props) {
 
 NavBar.propTypes = {
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
-  selectedTab: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
