@@ -14,6 +14,7 @@ import {
 import withStyles from '@mui/styles/withStyles';
 import MessageIcon from "@mui/icons-material/Message";
 import MessageListItem from "./MessageListItem";
+import MessageHistory from "./MessageHistory";
 
 const styles = (theme) => ({
   tabContainer: {
@@ -37,19 +38,58 @@ const styles = (theme) => ({
   },
 });
 
+const mockUsers = [
+  { id: 1, name: 'Alice', avatar: 'path/to/alice.jpg' },
+  { id: 2, name: 'Bob', avatar: 'path/to/bob.jpg' },
+  // ... more users
+];
+
+const fetchMessageHistory = (userId) => {
+  // Mock data
+  const mockMessageHistory = {
+    1: [
+      { id: 1, text: 'Hi there!', sender: 'Alice', date: new Date() },
+      { id: 2, text: 'Hey Alice, how are you?', sender: 'You', date: new Date() },
+      // ... more messages
+    ],
+    2: [
+      { id: 3, text: 'Hello!', sender: 'Bob', date: new Date() },
+      { id: 4, text: 'Hi Bob, you good?', sender: 'You', date: new Date() },
+      // ... more messages
+    ],
+      // ... other histories
+  };
+  return mockMessageHistory[userId] || [];
+};
+
 function MessagePopperButton(props) {
   const { classes, messages = [] } = props;
   const anchorEl = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  const handleUserSelect = (userId) => {
+    const history = fetchMessageHistory(userId);
+    setSelectedUser(userId);
+    setMessageHistory(history);
+  };
 
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen);
   }, [isOpen, setIsOpen]);
 
-  const handleClickAway = useCallback(() => {
+  const handleClickAway = useCallback((event) => {
+    if (anchorEl.current && (anchorEl.current.contains(event.target) || event.target === anchorEl.current)) {
+      return;
+    }
     setIsOpen(false);
   }, [setIsOpen]);
+
+  const handleBackToUsers = () => {
+    setSelectedUser(null);
+    setMessageHistory([]);
+  };
 
   const id = isOpen ? "scroll-playground" : null;
   return (
@@ -85,20 +125,15 @@ function MessagePopperButton(props) {
           <Divider className={classes.divider} />
         </AppBar>
         <List dense className={classes.tabContainer}>
-          {messages.length === 0 ? (
-            <ListItem>
-              <ListItemText>
-                You haven&apos;t received any messages yet.
-              </ListItemText>
-            </ListItem>
-          ) : (
-            messages.map((element, index) => (
-              <MessageListItem
-                key={index}
-                message={element}
-                divider={index !== messages.length - 1}
-              />
-            ))
+          {/* Conditional rendering based on selectedUser */}
+          {selectedUser === null ? (
+                mockUsers.map((user) => (
+                    <ListItem key={user.id} button onClick={() => handleUserSelect(user.id)}>
+                        <ListItemText primary={user.name} />
+                    </ListItem>
+                ))
+            ) : (
+                <MessageHistory history={messageHistory} onBack={handleBackToUsers} />
           )}
         </List>
       </Popover>
