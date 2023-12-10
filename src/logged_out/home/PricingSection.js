@@ -49,7 +49,7 @@ function PricingSection(props) {
   const width = useWidth();
   const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
   return (
-    <div className="lg-p-top" style={{ backgroundColor: "#0e1111" }}>
+    <div className="lg-p-top" style={{ backgroundColor: "#0e1111", marginBottom: "150px" }}>
       <Typography variant="h3" align="center" className={classNames("lg-mg-bottom", classes.textWhite)}>
         Pricing
       </Typography>
@@ -76,7 +76,6 @@ function PricingSection(props) {
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
             />
           </Grid>
           <Grid
@@ -93,11 +92,10 @@ function PricingSection(props) {
               title="Gold"
               pricing={
                 <span>
-                  $9.99
+                  $5.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
             />
           </Grid>
           <Grid
@@ -113,11 +111,10 @@ function PricingSection(props) {
               title="Platinum"
               pricing={
                 <span>
-                  $19.99
+                  $9.99
                   <Typography display="inline"> / month</Typography>
                 </span>
               }
-              features={["Feature 1", "Feature 2", "Feature 3"]}
             />
           </Grid>
         </Grid>
@@ -129,3 +126,4 @@ function PricingSection(props) {
 PricingSection.propTypes = {};
 
 export default withStyles(styles, { withTheme: true })(PricingSection);
+

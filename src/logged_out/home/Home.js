@@ -2,7 +2,8 @@ import React, { Fragment, useEffect } from "react";
 import PropTypes from "prop-types";
 import HeadSection from "./HeadSection";
 import TopCoachesSection from "./TopCoachesSection";
-import PricingSection from "./PricingSection";
+import FeaturesSection from "./FeaturesSection";
+import ExerciseBankSection from "./ExerciseBankSection";
 
 function Home(props) {
   const { selectHome } = props;
@@ -12,8 +13,9 @@ function Home(props) {
   return (
     <Fragment>
       <HeadSection />
+      <FeaturesSection />
       <TopCoachesSection />
-      <PricingSection />
+      <ExerciseBankSection />
     </Fragment>
   );
 }

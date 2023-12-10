@@ -1,10 +1,6 @@
-import { createTheme, responsiveFontSizes, adaptV4Theme } from "@mui/material";
+import { createTheme, responsiveFontSizes } from "@mui/material";
 
-// Palettes
-// https://www.color-hex.com/color-palette/1405 {Black}
-// https://www.color-hex.com/color-palette/1023210 {Orange}
-
-// colors
+// Custom colors
 const primary = "#f23005";
 const secondary = "#f27405";
 const white = "#f9eef2";
@@ -14,23 +10,22 @@ const background = "#f5f5f5";
 const warningLight = "rgba(253, 200, 69, .3)";
 const warningMain = "rgba(253, 200, 69, .5)";
 const warningDark = "rgba(253, 200, 69, .7)";
-
-// border
-const borderWidth = 2;
 const borderColor = "rgba(0, 0, 0, 0.13)";
 
-// breakpoints
+// Custom breakpoints
 const xl = 1920;
 const lg = 1280;
 const md = 960;
 const sm = 600;
 const xs = 0;
 
-// spacing
+// Spacing
 const spacing = 8;
 
-const theme = createTheme(adaptV4Theme({
+// Function to return design tokens based on mode
+const getDesignTokens = (mode) => ({
   palette: {
+    mode,
     primary: { main: primary },
     secondary: { main: secondary },
     common: {
@@ -43,25 +38,16 @@ const theme = createTheme(adaptV4Theme({
       main: warningMain,
       dark: warningDark
     },
-    // Used to shift a color's luminance by approximately
-    // two indexes within its tonal palette.
-    // E.g., shift from Red 500 to Red 300 or Red 700.
-    tonalOffset: 0.2,
     background: {
-      default: background
+      default: mode === 'light' ? background : darkBlack,
     },
     text: {
-      primary: white, // Set primary text color
-      secondary: 'rgba(255, 255, 255, 0.7)', // Adjust as needed for secondary text
+      primary: mode === 'light' ? black : white,
+      secondary: 'rgba(255, 255, 255, 0.7)',
     },
-    spacing
+    tonalOffset: 0.2,
   },
   breakpoints: {
-    // Define custom breakpoint values.
-    // These will apply to Material-UI components that use responsive
-    // breakpoints, such as `Grid` and `Hidden`. You can also use the
-    // theme breakpoint functions `up`, `down`, and `between` to create
-    // media queries for these breakpoints
     values: {
       xl,
       lg,
@@ -72,7 +58,7 @@ const theme = createTheme(adaptV4Theme({
   },
   border: {
     borderColor: borderColor,
-    borderWidth: borderWidth
+    borderWidth: 2
   },
   overrides: {
     MuiExpansionPanel: {
@@ -84,7 +70,7 @@ const theme = createTheme(adaptV4Theme({
       root: {
         paddingLeft: spacing * 2,
         paddingRight: spacing * 2,
-        borderBottom: `${borderWidth}px solid ${borderColor}`,
+        borderBottom: `2px solid ${borderColor}`,
         [`@media (max-width:  ${sm}px)`]: {
           paddingLeft: spacing,
           paddingRight: spacing
@@ -94,17 +80,17 @@ const theme = createTheme(adaptV4Theme({
     MuiDivider: {
       root: {
         backgroundColor: borderColor,
-        height: borderWidth
+        height: 2
       }
     },
     MuiPrivateNotchedOutline: {
       root: {
-        borderWidth: borderWidth
+        borderWidth: 2
       }
     },
     MuiListItem: {
       divider: {
-        borderBottom: `${borderWidth}px solid ${borderColor}`
+        borderBottom: `2px solid ${borderColor}`
       }
     },
     MuiDialog: {
@@ -128,16 +114,15 @@ const theme = createTheme(adaptV4Theme({
           paddingRight: spacing
         }
       }
+    },
+    MuiSnackbar: {
+        backgroundColor: black,
     }
   },
-  typography: {
-    useNextVariants: true,
-    // Set default color for all text
-    allVariants: {
-      color: white,
-    },
-    // ... other typography settings
-  },
-}));
+  spacing: 8
+});
 
-export default responsiveFontSizes(theme);
+// Create a theme instance with the dark mode
+const theme = responsiveFontSizes(createTheme(getDesignTokens('dark')));
+
+export default theme;

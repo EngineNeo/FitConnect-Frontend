@@ -1,8 +1,11 @@
-import React, { memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
+import Coach from "./dashboard/Coach"
+import WorkoutPlan from "./dashboard/WorkoutPlan"
+import UserLogs from "./dashboard/UserLogs"
 import PropsRoute from "../shared/components/PropsRoute";
 import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
@@ -45,29 +48,45 @@ function Routing(props) {
   const {
     classes,
     pushMessageToSnackbar,
-    toggleAccountActivation,
-    CardChart,
-    statistics,
-    targets,
-    setTargets,
-    isAccountActivated,
     selectDashboard,
+    selectCoach,
+    selectWorkoutPlan,
+    selectUserLogs
   } = props;
   useLocationBlocker();
+  const [storedUserId, setStoredUserId] = useState(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem('user_id');
+    setStoredUserId(userId);
+  }, []);
+
   return (
     <div className={classes.wrapper}>
       <Switch>
         <PropsRoute
-          path=""
+          path="/c/dashboard"
+          user_id={storedUserId}
           component={Dashboard}
-          toggleAccountActivation={toggleAccountActivation}
-          pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
-          isAccountActivated={isAccountActivated}
           selectDashboard={selectDashboard}
+        />
+        <PropsRoute
+          path="/c/coaches"
+          component={Coach}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          selectCoach={selectCoach}
+        />
+        <PropsRoute
+          path="/c/workoutplan"
+          component={WorkoutPlan}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          selectWorkoutPlan={selectWorkoutPlan}
+        />
+        <PropsRoute
+          path="/c/userlogs"
+          component={UserLogs}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          selectUserLogs={selectUserLogs}
         />
       </Switch>
     </div>
@@ -81,14 +100,11 @@ Routing.propTypes = {
   Dropzone: PropTypes.elementType,
   DateTimePicker: PropTypes.elementType,
   pushMessageToSnackbar: PropTypes.func,
-  setTargets: PropTypes.func.isRequired,
   toggleAccountActivation: PropTypes.func,
-  CardChart: PropTypes.elementType,
-  statistics: PropTypes.object.isRequired,
-  targets: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isAccountActivated: PropTypes.bool.isRequired,
   selectDashboard: PropTypes.func.isRequired,
-  openAddBalanceDialog: PropTypes.func.isRequired,
+  selectCoach: PropTypes.func.isRequired,
+  selectWorkoutPlan: PropTypes.func.isRequired,
+  selectUserLogs: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(memo(Routing));

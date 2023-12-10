@@ -85,11 +85,13 @@ function CardChart(props) {
     }
     const minSeconds = new Date() / 1000 - seconds;
     const arr = [];
-    for (let i = 0; i < data.length; i += 1) {
-      if (minSeconds < data[i].timestamp) {
-        arr.unshift(data[i]);
+    if (data && data.length) {
+      for (let i = 0; i < data.length; i += 1) {
+        if (minSeconds < data[i].timestamp) {
+          arr.unshift(data[i]);
+        }
       }
-    }
+   }
     return arr;
   }, [data, selectedOption]);
 
