@@ -29,7 +29,7 @@ function MyRequests() {
   );
 
   return (
-    <Container maxWidth="md" sx={{ bgcolor: 'black', color: 'white', minHeight: '100vh', py: 3 }}>
+    <Container maxWidth="md" sx={{ bgcolor: 'black', color: 'white', minHeight: '100vh', minWidth: '100%', py: 3 }}>
       <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
         Client Requests
       </Typography>

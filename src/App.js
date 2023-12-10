@@ -29,7 +29,7 @@ function App() {
                   <LoggedInComponent />
                 </Route>
                 <Route>
-                  <LoggedInAdminComponent />
+                  <LoggedInCoachComponent />
                 </Route>
               </Switch>
             </Suspense>

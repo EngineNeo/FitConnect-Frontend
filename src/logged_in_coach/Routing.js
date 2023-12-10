@@ -10,36 +10,11 @@ import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
 const styles = (theme) => ({
   wrapper: {
-    margin: theme.spacing(1),
-    width: "auto",
-    [theme.breakpoints.up("xs")]: {
-      width: "95%",
-      marginLeft: "auto",
-      marginRight: "auto",
-      marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(4),
-    },
-    [theme.breakpoints.up("sm")]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      width: "90%",
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    [theme.breakpoints.up("md")]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      width: "82.5%",
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
-    [theme.breakpoints.up("lg")]: {
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(6),
-      width: "70%",
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
+    width: '100%',
+    height: '100vh', 
+    margin: 0, 
+    padding: 0, 
+    overflow: 'hidden',
   },
 });
 
