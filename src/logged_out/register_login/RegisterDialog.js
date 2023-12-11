@@ -16,11 +16,9 @@ import {
 import VisibilityPasswordTextField from '../../shared/components/VisibilityPasswordTextField';
 import withStyles from "@mui/styles/withStyles";
 import FormDialog from "../../shared/components/FormDialog";
-// import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
-// import classNames from "classnames";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsIcon from '@mui/icons-material/Sports';
 
@@ -59,12 +57,14 @@ function RegisterDialog(props) {
   const registerTermsCheckbox = useRef();
   const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  // const [userType, setUserType] = useState('');
   const [selectedUserType, setSelectedUserType] = useState('');
   const [coachGoal, setCoachGoal] = useState('');
   const [coachBio, setCoachBio] = useState('');
   const [coachExperience, setCoachExperience] = useState('');
   const [coachCost, setCoachCost] = useState('');
+  const [goalId, setGoalId] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
 
   const handleUserTypeSelect = (type) => {
     setSelectedUserType(type);
@@ -160,7 +160,11 @@ function RegisterDialog(props) {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DatePicker
           label="Date of Birth"
-          onChange={(newDate) => setBirthDate(format(newDate, 'yyyy-MM-dd'))}
+          onChange={(newDate) => {
+            if (isValid(newDate)) {
+              setBirthDate(format(newDate, 'yyyy-MM-dd'));
+            }
+          }}
           outputFormat="yyyy-MM-dd"
           slotProps={{ textField: { fullWidth: true } }}
         />
@@ -286,6 +290,48 @@ function RegisterDialog(props) {
     </Fragment>
   );
 
+  const renderInitialSurvey = () => (
+    <Fragment>
+      {/* Weight Field (in pounds) */}
+      <TextField
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        label="Weight (lbs)"
+        placeholder="Enter your weight in pounds"
+        value={weight}
+        onChange={(e) => setWeight(e.target.value)}
+        helperText="Example: 150"
+      />
+      {/* Height Field (in feet and inches) */}
+      <TextField
+        variant="outlined"
+        margin="normal"
+        fullWidth
+        label="Height (cm)"
+        placeholder="Enter your height in centimeters"
+        value={height}
+        onChange={(e) => setHeight(e.target.value)}
+        helperText="Example: 175"
+      />
+      {/* Goal Dropdown */}
+      <FormControl fullWidth margin="normal">
+        <InputLabel>Goal</InputLabel>
+        <Select
+          value={goalId}
+          onChange={(e) => setGoalId(e.target.value)}
+          label="Goal"
+        >
+          <MenuItem value={1}>Lose Weight</MenuItem>
+          <MenuItem value={2}>Gain Muscle</MenuItem>
+          <MenuItem value={3}>Flexibility</MenuItem>
+          <MenuItem value={4}>Increase Stamina</MenuItem>
+          <MenuItem value={5}>Reduce Stress</MenuItem>
+        </Select>
+      </FormControl>
+    </Fragment>
+  );
+
   const renderUserTypeStep = () => (
     <Fragment>
       <Box display="flex" justifyContent="center" alignItems="center">
@@ -375,11 +421,13 @@ function RegisterDialog(props) {
       case 1:
         return renderRegistrationForm();
       case 2:
-        return renderUserTypeStep();
+        return renderInitialSurvey();
       case 3:
+        return renderUserTypeStep();
+      case 4:
         return renderCoachSurveyStep();
       default:
-        return 'Default Step';
+        return 'Unknown Step';
     }
   };
 
@@ -477,12 +525,20 @@ function RegisterDialog(props) {
     selectedUserType, coachGoal, coachBio, coachExperience, coachCost
   ]);
 
+  // Adjusted dialog title based on the current step
+  const getDialogTitle = () => {
+    if (currentStep === 2) {
+      return "Initial Survey";
+    }
+    return "Register";
+  };
+
   return (
     <FormDialog
       loading={isLoading}
       onClose={props.onClose}
       open
-      headline="Register"
+      headline={getDialogTitle()}
       onFormSubmit={(e) => {
         e.preventDefault();
         register();
