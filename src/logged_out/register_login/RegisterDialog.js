@@ -53,6 +53,7 @@ function RegisterDialog(props) {
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
   const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState(false);
@@ -90,12 +91,29 @@ function RegisterDialog(props) {
   };
 
   const handleNextOrSubmit = () => {
-    if (registerTermsCheckbox.current && !registerTermsCheckbox.current.checked) {
-      setHasTermsOfServiceError(true);
-      return;
+    let isValidStep = false;
+
+    switch (currentStep) {
+      case 1:
+        isValidStep = validateRegistrationForm();
+        break;
+      case 2:
+        isValidStep = validateInitialSurvey();
+        break;
+      case 3:
+        isValidStep = validateUserTypeSelection();
+        break;
+      case 4:
+        isValidStep = validateCoachSurvey();
+        break;
+      default:
+        isValidStep = true;
     }
 
-    if (currentStep === 3 && selectedUserType === 'user') {
+    if (!isValidStep) return;
+
+    // Proceed to next step or registration
+    if (currentStep === 4 && selectedUserType === 'user') {
       register();
     } else if (currentStep <= 4) {
       setCurrentStep(currentStep + 1);
@@ -118,6 +136,44 @@ function RegisterDialog(props) {
     }
     return null;
   };
+
+  const validateRegistrationForm = () => {
+    if (!email || !firstName || !lastName || !password || !passwordRepeat) {
+      setErrorMessage('Please fill all the required (*) fields.');
+      return false;
+    }
+    if (password !== passwordRepeat) {
+      setErrorMessage('Passwords do not match.');
+      return false;
+    }
+    setErrorMessage('');
+    return true;
+  };
+
+  const validateInitialSurvey = () => {
+    if (!weight || !height || !goalId) {
+      setErrorMessage('Please complete the initial survey.');
+      return false;
+    }
+    return true;
+  };
+
+  const validateUserTypeSelection = () => {
+    if (!selectedUserType) {
+      setErrorMessage('Please select a user type.');
+      return false;
+    }
+    return true;
+  };
+
+  const validateCoachSurvey = () => {
+    if (!coachGoal || !coachBio || !coachExperience || !coachCost) {
+      setErrorMessage('Please complete the coach survey.');
+      return false;
+    }
+    return true;
+  };
+
 
   const handleBack = () => setCurrentStep(currentStep - 1);
 
@@ -613,6 +669,11 @@ function RegisterDialog(props) {
               <Button onClick={handleBack} variant="contained">
                 Back
               </Button>
+            )}
+            {errorMessage && (
+              <Typography color="error" align="center">
+                {errorMessage}
+              </Typography>
             )}
             {renderActionButton()}
           </Box>
