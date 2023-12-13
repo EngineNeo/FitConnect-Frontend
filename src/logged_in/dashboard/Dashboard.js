@@ -51,11 +51,25 @@ function Dashboard(props) {
       processedMoodData.push({ date: recorded_date, mood: moodValue });
     });
 
-    // Update the state with the processed data
+    // Sorting function
+    const sortByDate = (a, b) => new Date(a.date) - new Date(b.date);
+
+    // Sort each array
+    processedWeightData.sort(sortByDate);
+    processedCalorieData.sort(sortByDate);
+    processedWaterData.sort(sortByDate);
+    processedMoodData.sort(sortByDate);
+
+    // Update the state with the processed and sorted data
     setWeightData(processedWeightData);
     setCalorieData(processedCalorieData);
     setWaterData(processedWaterData);
     setMoodData(processedMoodData);
+  };
+
+  const getLastFiveEntries = (dataArray) => {
+    if (dataArray.length <= 5) return dataArray;
+    return dataArray.slice(-5); // Get last 5 elements
   };
   
   const formatDate = (dateString) => {
@@ -90,7 +104,7 @@ function Dashboard(props) {
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Weight Tracker</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={weightData}>
+            <LineChart data={getLastFiveEntries(weightData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis>
@@ -104,7 +118,7 @@ function Dashboard(props) {
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Calorie Tracker</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={calorieData}>
+            <LineChart data={getLastFiveEntries(calorieData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis>
@@ -120,7 +134,7 @@ function Dashboard(props) {
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Water Intake</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={waterData}>
+            <LineChart data={getLastFiveEntries(waterData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis>
@@ -134,7 +148,7 @@ function Dashboard(props) {
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Mood Tracker</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={moodData}>
+            <LineChart data={getLastFiveEntries(moodData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis domain={[-1, 1]} tickFormatter={moodFormatter}/>
