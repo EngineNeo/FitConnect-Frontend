@@ -163,10 +163,10 @@ function Dashboard(props) {
 }
 
 Dashboard.propTypes = {
-  weightData: PropTypes.array.isRequired,
-  calorieData: PropTypes.array.isRequired,
-  waterData: PropTypes.array.isRequired,
-  moodData: PropTypes.array.isRequired,
+  // weightData: PropTypes.array.isRequired,
+  // calorieData: PropTypes.array.isRequired,
+  // waterData: PropTypes.array.isRequired,
+  // moodData: PropTypes.array.isRequired,
   selectDashboard: PropTypes.func.isRequired,
 };
 
