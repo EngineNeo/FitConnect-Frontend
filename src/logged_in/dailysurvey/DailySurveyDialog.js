@@ -78,7 +78,7 @@ const DailySurveyDialog = ({ userId, open, onClose, onUpdate }) => {
                             sx={styles.textField}
                         />
                         <TextField
-                            label="Water Amount (ml)"
+                            label="Water Amount (Oz)"
                             type="number"
                             name="water_amount"
                             value={surveyData.water_amount}
@@ -113,7 +113,7 @@ const DailySurveyDialog = ({ userId, open, onClose, onUpdate }) => {
                             </Button>
                         </Box>
                         <TextField
-                            label="Weight"
+                            label="Weight (lbs)"
                             type="number"
                             name="weight"
                             value={surveyData.weight}

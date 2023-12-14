@@ -172,7 +172,7 @@ function Dashboard(props) {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis>
-                <Label angle={-90} value="Water (mL)" position="insideLeft" style={{ textAnchor: 'middle' }} />
+                <Label angle={-90} value="Water (Oz)" position="insideLeft" style={{ textAnchor: 'middle' }} />
               </YAxis>
               <Tooltip contentStyle={customTooltipStyle} />
               <Line type="monotone" dataKey="water" stroke="#8884d8" activeDot={{ r: 8 }} />

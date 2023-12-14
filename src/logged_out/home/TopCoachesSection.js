@@ -36,7 +36,7 @@ function TopCoachesSection(props) {
               data-aos-delay={isWidthUpMd ? (index * 200).toString() : "0"}
             >
               <TopCoachesCard
-                image={<UserImage iconSize={50} />}
+                image={<UserImage iconSize={50} name={`${coach.first_name} ${coach.last_name}`} />}
                 headline={`${coach.first_name} ${coach.last_name}`}
                 text={coach.bio}
               />
