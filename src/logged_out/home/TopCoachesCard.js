@@ -35,7 +35,7 @@ function TopCoachesCard(props) {
         <Fragment>
             <div className={classes.cardWrapper}>
                 <div className={classes.imageWrapper}>
-                    <img src={image} alt="Coach" className={classes.image} />
+                    {image}
                 </div>
                 <Typography variant="h5" paragraph className={classes.centeredText}>
                     {headline}
@@ -50,7 +50,7 @@ function TopCoachesCard(props) {
 
 TopCoachesCard.propTypes = {
     classes: PropTypes.object.isRequired,
-    image: PropTypes.string.isRequired, // URL of the image
+    image: PropTypes.object.isRequired,
     headline: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
 };

@@ -1,12 +1,10 @@
 import React, { useEffect, Fragment, useRef, useCallback, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
-import classNames from "classnames";
 import {
   AppBar,
   Toolbar,
   Typography,
-  Avatar,
   Drawer,
   List,
   IconButton,
@@ -26,7 +24,9 @@ import NavigationDrawer from "../../shared/components/NavigationDrawer";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Cookies from 'js-cookie';
+import UserImage from "../../shared/components/UserImage";
 
+// Icons
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import MenuIcon from "@mui/icons-material/Menu";
 import SportsIcon from '@mui/icons-material/Sports';
@@ -73,7 +73,6 @@ const styles = (theme) => ({
     alignItems: 'center',
   },
   accountAvatar: {
-    backgroundColor: theme.palette.secondary.main,
     height: 42,
     width: 42,
     marginLeft: theme.spacing(2),
@@ -374,11 +373,7 @@ function NavBar(props) {
               onClick={handleMenuOpen}
               color="inherit"
             >
-              <Avatar
-                alt="profile picture"
-                src={`${process.env.PUBLIC_URL}/images/ProfilePic/JohnSmith.jpg`}
-                className={classNames(classes.accountAvatar)}
-              />
+            <UserImage className={classes.accountAvatar} iconSize={23}/>
               {isWidthUpSm && (
                 <ListItemText
                   className={classes.username}
