@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
-import Coach from "./dashboard/Coach"
+import Coach from "./coach/Coach";
 import WorkoutPlan from "./dashboard/WorkoutPlan"
 import UserLogs from "./dashboard/UserLogs"
 import PropsRoute from "../shared/components/PropsRoute";

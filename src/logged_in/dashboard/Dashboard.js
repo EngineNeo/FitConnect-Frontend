@@ -4,12 +4,6 @@ import axios from 'axios';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
 import { Typography, Alert, Button } from '@mui/material';
 import DailySurveyDialog from '../dailysurvey/DailySurveyDialog';
-
-const styles = {
-  contentContainer: {
-    marginTop: '100px'
-  }
-};
 function Dashboard(props) {
   const { selectDashboard, user_id } = props;
   const [weightData, setWeightData] = useState([]);
@@ -127,7 +121,6 @@ function Dashboard(props) {
 
   return (
     <Fragment>
-      <div style={styles.contentContainer}>
       {showSurveyAlert && (
         <Alert severity="info" style={{ marginTop: '80px' }}>
           You haven't completed today's survey. <Button color="primary" onClick={openSurveyDialog}>Fill Survey</Button>
@@ -198,7 +191,6 @@ function Dashboard(props) {
           onClose={closeSurveyDialog}
           onUpdate={fetchDataAndUpdateCharts}
         />
-      </div>
     </Fragment>
   );
 }

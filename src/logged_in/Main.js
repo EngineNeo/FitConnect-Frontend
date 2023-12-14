@@ -9,6 +9,7 @@ import smoothScrollTop from "../shared/functions/smoothScrollTop";
 
 const styles = (theme) => ({
   main: {
+    marginTop: '100px',
     marginLeft: theme.spacing(9),
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
