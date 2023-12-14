@@ -35,6 +35,8 @@ const getExperienceLevel = (level) => {
 
 const CoachCards = ({ coach }) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarErrorOpen, setSnackbarErrorOpen] = useState(false);
+    const [snackbarErrorMessage, setSnackbarErrorMessage] = useState('');
 
     const handleRequestCoach = async (coachId) => {
         const userId = localStorage.getItem('user_id');
@@ -56,7 +58,9 @@ const CoachCards = ({ coach }) => {
                 console.log("Requested coach successfully");
                 setSnackbarOpen(true);
             } else {
-                console.error("Failed to request coach");
+                const errorData = await response.json();
+                setSnackbarErrorMessage(errorData.message || "Failed to request coach");
+                setSnackbarErrorOpen(true);
             }
         } catch (error) {
             console.error("Error making request:", error);
@@ -65,6 +69,10 @@ const CoachCards = ({ coach }) => {
 
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
+    };
+
+    const handleCloseErrorSnackbar = () => {
+        setSnackbarErrorOpen(false);
     };
 
     return (
@@ -117,9 +125,17 @@ const CoachCards = ({ coach }) => {
                     </AccordionDetails>
                 </Accordion>
             </Card>
+            {/* Success Snackbar */}
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
                     Requested coach successfully
+                </Alert>
+            </Snackbar>
+
+            {/* Error Snackbar */}
+            <Snackbar open={snackbarErrorOpen} autoHideDuration={6000} onClose={handleCloseErrorSnackbar}>
+                <Alert onClose={handleCloseErrorSnackbar} severity="error" sx={{ width: '100%' }}>
+                    {snackbarErrorMessage}
                 </Alert>
             </Snackbar>
         </Fragment>
