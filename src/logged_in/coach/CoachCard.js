@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import { Card, CardContent, Typography, Accordion, AccordionSummary, AccordionDetails, Button } from '@mui/material';
+import React, { Fragment, useState } from 'react';
+import { Card, CardContent, Typography, Accordion, AccordionSummary, AccordionDetails, Button, Snackbar, Alert } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SendIcon from '@mui/icons-material/Send';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -23,7 +23,50 @@ const styles = {
     }
 };
 
+// Function to map experience level to description
+const getExperienceLevel = (level) => {
+    const levels = {
+        1: 'Novice',
+        2: 'Intermediate',
+        3: 'Expert'
+    };
+    return levels[level] || 'Unknown';
+};
+
 const CoachCards = ({ coach }) => {
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    const handleRequestCoach = async (coachId) => {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+            console.error("User ID not found in local storage.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8000/fitConnect/requestCoach/", {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user: userId, coach: coachId })
+            });
+
+            if (response.ok) {
+                console.log("Requested coach successfully");
+                setSnackbarOpen(true);
+            } else {
+                console.error("Failed to request coach");
+            }
+        } catch (error) {
+            console.error("Error making request:", error);
+        }
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
+
     return (
         <Fragment>
             <Card style={styles.card}>
@@ -38,10 +81,10 @@ const CoachCards = ({ coach }) => {
                         {coach.first_name} {coach.last_name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" style={styles.typography}>
-                        Experience: {coach.experience}
+                        Experience: {getExperienceLevel(coach.experience)}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" style={styles.typography}>
-                        Goal: {coach.goal}
+                        Specialization: {coach.goal}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" style={styles.typography}>
                         Price: ${coach.cost}
@@ -59,7 +102,13 @@ const CoachCards = ({ coach }) => {
                         <Typography>More Options</Typography>
                     </AccordionSummary>
                     <AccordionDetails style={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button variant="outlined" color="primary" style={styles.button} startIcon={<PersonAddIcon />}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            style={styles.button}
+                            startIcon={<PersonAddIcon />}
+                            onClick={() => handleRequestCoach(coach.coach_id)}
+                        >
                             Request Coach
                         </Button>
                         <Button variant="outlined" color="primary" style={styles.button} startIcon={<SendIcon />}>
@@ -68,6 +117,11 @@ const CoachCards = ({ coach }) => {
                     </AccordionDetails>
                 </Accordion>
             </Card>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                    Requested coach successfully
+                </Alert>
+            </Snackbar>
         </Fragment>
     );
 };
