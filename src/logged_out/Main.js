@@ -31,8 +31,22 @@ function Main(props) {
 
   // Check for authToken in cookies
   useEffect(() => {
-    const authToken = Cookies.get('authToken');
-    setIsAuthenticated(!!authToken);
+    const checkAuthStatus = () => {
+      const authToken = Cookies.get('authToken');
+      setIsAuthenticated(!!authToken);
+    };
+
+    const handleAuthChange = () => {
+      checkAuthStatus();
+    };
+
+    window.addEventListener('authChange', handleAuthChange);
+
+    checkAuthStatus();
+    
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange);
+    };
   }, []);
 
 
