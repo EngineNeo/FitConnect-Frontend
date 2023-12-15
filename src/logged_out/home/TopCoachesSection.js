@@ -4,6 +4,7 @@ import { withTheme } from "@mui/styles";
 import axios from 'axios';
 import TopCoachesCard from './TopCoachesCard';
 import useMediaQuery from "@mui/material/useMediaQuery";
+import UserImage from "../../shared/components/UserImage";
 
 function TopCoachesSection(props) {
   const [coaches, setCoaches] = useState([]);
@@ -35,7 +36,7 @@ function TopCoachesSection(props) {
               data-aos-delay={isWidthUpMd ? (index * 200).toString() : "0"}
             >
               <TopCoachesCard
-                image="images/ProfilePic/JohnSmith.jpg"
+                image={<UserImage iconSize={50} />}
                 headline={`${coach.first_name} ${coach.last_name}`}
                 text={coach.bio}
               />

@@ -2,13 +2,31 @@ import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
-import { Typography } from '@mui/material';
+import { Typography, Alert, Button } from '@mui/material';
+import DailySurveyDialog from '../dailysurvey/DailySurveyDialog';
+
+const styles = {
+  contentContainer: {
+    marginTop: '100px'
+  }
+};
 function Dashboard(props) {
   const { selectDashboard, user_id } = props;
   const [weightData, setWeightData] = useState([]);
   const [calorieData, setCalorieData] = useState([]);
   const [waterData, setWaterData] = useState([]);
   const [moodData, setMoodData] = useState([]);
+  const [showSurveyAlert, setShowSurveyAlert] = useState(false);
+  const [showSurveyDialog, setShowSurveyDialog] = useState(false);
+
+  // Handlers to open and close daily survey
+  const openSurveyDialog = () => {
+    setShowSurveyDialog(true);
+  };
+
+  const closeSurveyDialog = () => {
+    setShowSurveyDialog(false);
+  };
 
   const firstName = localStorage.getItem('first_name');
 
@@ -23,11 +41,21 @@ function Dashboard(props) {
     try {
       const response = await axios.get(`http://localhost:8000/fitConnect/daily_survey/${user_id}/`);
       processResponseData(response.data);
+      checkForTodaysSurvey(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
+  const checkForTodaysSurvey = (data) => {
+    const today = new Date().toISOString().split('T')[0];
+    const hasTodaySurvey = data.some(entry => entry.recorded_date === today);
+    setShowSurveyAlert(!hasTodaySurvey);
+  };
+
+  const fetchDataAndUpdateCharts = async () => {
+    await fetchData();
+  };
 
   const processResponseData = (data) => {
     // Initialize arrays for each type of data
@@ -51,11 +79,25 @@ function Dashboard(props) {
       processedMoodData.push({ date: recorded_date, mood: moodValue });
     });
 
-    // Update the state with the processed data
+    // Sorting function
+    const sortByDate = (a, b) => new Date(a.date) - new Date(b.date);
+
+    // Sort each array
+    processedWeightData.sort(sortByDate);
+    processedCalorieData.sort(sortByDate);
+    processedWaterData.sort(sortByDate);
+    processedMoodData.sort(sortByDate);
+
+    // Update the state with the processed and sorted data
     setWeightData(processedWeightData);
     setCalorieData(processedCalorieData);
     setWaterData(processedWaterData);
     setMoodData(processedMoodData);
+  };
+
+  const getLastFiveEntries = (dataArray) => {
+    if (dataArray.length <= 5) return dataArray;
+    return dataArray.slice(-5); // Get last 5 elements
   };
   
   const formatDate = (dateString) => {
@@ -85,12 +127,18 @@ function Dashboard(props) {
 
   return (
     <Fragment>
-      <Typography variant="h4" style={{ marginTop: '120px', marginBottom: '40px' }}>Welcome back, {firstName}</Typography>
+      <div style={styles.contentContainer}>
+      {showSurveyAlert && (
+        <Alert severity="info" style={{ marginTop: '80px' }}>
+          You haven't completed today's survey. <Button color="primary" onClick={openSurveyDialog}>Fill Survey</Button>
+        </Alert>
+      )}
+      <Typography variant="h4" style={{ marginTop: '40px', marginBottom: '40px' }}>Welcome back, {firstName}</Typography>
       <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px' }}>
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Weight Tracker</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={weightData}>
+            <LineChart data={getLastFiveEntries(weightData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis>
@@ -104,7 +152,7 @@ function Dashboard(props) {
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Calorie Tracker</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={calorieData}>
+            <LineChart data={getLastFiveEntries(calorieData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis>
@@ -120,7 +168,7 @@ function Dashboard(props) {
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Water Intake</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={waterData}>
+            <LineChart data={getLastFiveEntries(waterData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis>
@@ -134,7 +182,7 @@ function Dashboard(props) {
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Mood Tracker</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={moodData}>
+            <LineChart data={getLastFiveEntries(moodData)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tickFormatter={formatDate} />
               <YAxis domain={[-1, 1]} tickFormatter={moodFormatter}/>
@@ -144,15 +192,22 @@ function Dashboard(props) {
           </ResponsiveContainer>
         </div>
       </div>
+        <DailySurveyDialog
+          userId={user_id}
+          open={showSurveyDialog}
+          onClose={closeSurveyDialog}
+          onUpdate={fetchDataAndUpdateCharts}
+        />
+      </div>
     </Fragment>
   );
 }
 
 Dashboard.propTypes = {
-  weightData: PropTypes.array.isRequired,
-  calorieData: PropTypes.array.isRequired,
-  waterData: PropTypes.array.isRequired,
-  moodData: PropTypes.array.isRequired,
+  // weightData: PropTypes.array.isRequired,
+  // calorieData: PropTypes.array.isRequired,
+  // waterData: PropTypes.array.isRequired,
+  // moodData: PropTypes.array.isRequired,
   selectDashboard: PropTypes.func.isRequired,
 };
 

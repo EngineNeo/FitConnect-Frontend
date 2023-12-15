@@ -158,7 +158,8 @@ function ExerciseBankSection(props) {
             <Grid item xs>
               <TextField
                 fullWidth
-                label="Search for exercises by name, muscle group, or equipment type"
+                label="Find an exercise"
+                placeholder="Search for exercises by name, muscle group, or equipment type"
                 variant="outlined"
                 value={searchTerm}
                 onChange={handleSearchChange}

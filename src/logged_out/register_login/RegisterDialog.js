@@ -53,6 +53,7 @@ function RegisterDialog(props) {
   const { setStatus, theme, onClose, openTermsDialog, status, classes } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [hasTermsOfServiceError, setHasTermsOfServiceError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerTermsCheckbox = useRef();
   const [isRegistrationSuccessful, setIsRegistrationSuccessful] = useState(false);
@@ -90,17 +91,89 @@ function RegisterDialog(props) {
   };
 
   const handleNextOrSubmit = () => {
-    if (registerTermsCheckbox.current && !registerTermsCheckbox.current.checked) {
-      setHasTermsOfServiceError(true);
-      return;
+    let isValidStep = false;
+
+    switch (currentStep) {
+      case 1:
+        isValidStep = validateRegistrationForm();
+        break;
+      case 2:
+        isValidStep = validateInitialSurvey();
+        break;
+      case 3:
+        isValidStep = validateUserTypeSelection();
+        break;
+      case 4:
+        isValidStep = validateCoachSurvey();
+        break;
+      default:
+        isValidStep = true;
     }
 
-    if (currentStep === 2 && selectedUserType === 'user') {
+    if (!isValidStep) return;
+
+    // Proceed to next step or registration
+    if (currentStep === 4 && selectedUserType === 'user') {
       register();
-    } else {
+    } else if (currentStep <= 4) {
       setCurrentStep(currentStep + 1);
     }
   };
+
+    const renderActionButton = () => {
+    if (currentStep === 3 && selectedUserType === 'user') {
+      return (
+        <Button onClick={register} color="primary" variant="contained">
+          Submit
+        </Button>
+      );
+    } else if (currentStep <= 4) {
+      return (
+        <Button onClick={handleNextOrSubmit} color="primary" variant="contained">
+          Next
+        </Button>
+      );
+    }
+    return null;
+  };
+
+  const validateRegistrationForm = () => {
+    if (!email || !firstName || !lastName || !password || !passwordRepeat) {
+      setErrorMessage('Please fill all the required (*) fields.');
+      return false;
+    }
+    if (password !== passwordRepeat) {
+      setErrorMessage('Passwords do not match.');
+      return false;
+    }
+    setErrorMessage('');
+    return true;
+  };
+
+  const validateInitialSurvey = () => {
+    if (!weight || !height || !goalId) {
+      setErrorMessage('Please complete the initial survey.');
+      return false;
+    }
+    return true;
+  };
+
+  const validateUserTypeSelection = () => {
+    if (!selectedUserType) {
+      setErrorMessage('Please select a user type.');
+      return false;
+    }
+    return true;
+  };
+
+  const validateCoachSurvey = () => {
+    if (!coachGoal || !coachBio || !coachExperience || !coachCost) {
+      setErrorMessage('Please complete the coach survey.');
+      return false;
+    }
+    return true;
+  };
+
 
   const handleBack = () => setCurrentStep(currentStep - 1);
 
@@ -340,7 +413,7 @@ function RegisterDialog(props) {
           style={userTypeButtonStyle('user')}
         >
           <PersonIcon fontSize="large" />
-          <Box mt={1}>User</Box>
+          <Box mt={1}>Client</Box>
         </Button>
         <Button 
           onClick={() => handleUserTypeSelect('coach')} 
@@ -461,6 +534,35 @@ function RegisterDialog(props) {
       userData.birth_date = birthDate
     }
 
+    // Function to handle initial survey submission
+    const handleInitialSurveySubmission = (userId) => {
+      const surveyData = {
+        user_id: userId,
+        goal_id: goalId,
+        weight: weight,
+        height: height,
+      };
+
+      return fetch('http://localhost:8000/fitConnect/initial_survey', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(surveyData),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            return { success: true, userId: userId };
+          } else {
+            return { success: false, error: 'surveySubmissionError' };
+          }
+        })
+        .catch(error => {
+          return { success: false, error: 'serverError' };
+        });
+    };
+
     const handleCoachRegistration = (userId) => {
       const coachData = {
         user: userId,
@@ -504,13 +606,21 @@ function RegisterDialog(props) {
       .then(response => response.json())
       .then(data => {
         if (data.user_id) {
-          if (selectedUserType === 'coach') {
-            handleCoachRegistration(data.user_id);
-          } else {
-            setIsLoading(false);
-            showSuccessMessage();
-            onClose();
-          }
+          handleInitialSurveySubmission(data.user_id)
+            .then(surveyResult => {
+              if (surveyResult.success) {
+                if (selectedUserType === 'coach') {
+                  handleCoachRegistration(surveyResult.userId);
+                } else {
+                  setIsLoading(false);
+                  showSuccessMessage();
+                  onClose();
+                }
+              } else {
+                setIsLoading(false);
+                setStatus(surveyResult.error);
+              }
+            });
         } else {
           setIsLoading(false);
           setStatus(data.error);
@@ -527,10 +637,16 @@ function RegisterDialog(props) {
 
   // Adjusted dialog title based on the current step
   const getDialogTitle = () => {
-    if (currentStep === 2) {
-      return "Initial Survey";
+    switch (currentStep) {
+      case 2:
+        return "Initial Survey";
+      case 3:
+        return "User Type";
+      case 4:
+        return selectedUserType === 'coach' ? "Coach Survey" : "Complete Registration";
+      default:
+        return "Register";
     }
-    return "Register";
   };
 
   return (
@@ -554,16 +670,12 @@ function RegisterDialog(props) {
                 Back
               </Button>
             )}
-            {(currentStep === 1 || (currentStep === 2 && selectedUserType)) && (
-              <Button onClick={handleNextOrSubmit} color="primary" variant="contained">
-                {currentStep === 2 && selectedUserType === 'user' ? 'Submit' : 'Next'}
-              </Button>
+            {errorMessage && (
+              <Typography color="error" align="center">
+                {errorMessage}
+              </Typography>
             )}
-            {currentStep === 3 && (
-              <Button type="submit" color="primary" variant="contained">
-                Submit
-              </Button>
-            )}
+            {renderActionButton()}
           </Box>
         </Fragment>
       }
