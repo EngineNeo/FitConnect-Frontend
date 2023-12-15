@@ -40,14 +40,9 @@ function Main(props) {
   const selectWorkoutPlan = useCallback(() => {
     smoothScrollTop();
     document.title = "FitConnect - Workout Plan";
-    setSelectedTab("WorkoutPlan");
+    setSelectedTab("Workout Plan");
   }, [setSelectedTab]);
-  
-  const selectUserLogs = useCallback(() => {
-    smoothScrollTop();
-    document.title = "FitConnect - User Logs";
-    setSelectedTab("UserLogs");
-  }, [setSelectedTab]);
+
 
   const getPushMessageFromChild = useCallback(
     (pushMessage) => {
@@ -72,7 +67,6 @@ function Main(props) {
           selectDashboard={selectDashboard}
           selectCoach={selectCoach}
           selectWorkoutPlan={selectWorkoutPlan}
-          selectUserLogs={selectUserLogs}
         />
       </main>
     </Fragment>

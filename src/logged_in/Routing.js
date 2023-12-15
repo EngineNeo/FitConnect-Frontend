@@ -4,8 +4,7 @@ import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
 import Coach from "./coach/Coach";
-import WorkoutPlan from "./dashboard/WorkoutPlan"
-import UserLogs from "./dashboard/UserLogs"
+import WorkoutPlan from "./workoutplan/WorkoutPlan"
 import PropsRoute from "../shared/components/PropsRoute";
 import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
@@ -51,7 +50,6 @@ function Routing(props) {
     selectDashboard,
     selectCoach,
     selectWorkoutPlan,
-    selectUserLogs
   } = props;
   useLocationBlocker();
   const [storedUserId, setStoredUserId] = useState(null);
@@ -82,12 +80,6 @@ function Routing(props) {
           pushMessageToSnackbar={pushMessageToSnackbar}
           selectWorkoutPlan={selectWorkoutPlan}
         />
-        <PropsRoute
-          path="/c/userlogs"
-          component={UserLogs}
-          pushMessageToSnackbar={pushMessageToSnackbar}
-          selectUserLogs={selectUserLogs}
-        />
       </Switch>
     </div>
   );
@@ -104,7 +96,6 @@ Routing.propTypes = {
   selectDashboard: PropTypes.func.isRequired,
   selectCoach: PropTypes.func.isRequired,
   selectWorkoutPlan: PropTypes.func.isRequired,
-  selectUserLogs: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(memo(Routing));
