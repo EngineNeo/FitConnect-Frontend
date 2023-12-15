@@ -381,11 +381,11 @@ function RegisterDialog(props) {
         variant="outlined"
         margin="normal"
         fullWidth
-        label="Height (cm)"
+        label="Height (in)"
         placeholder="Enter your height in centimeters"
         value={height}
         onChange={(e) => setHeight(e.target.value)}
-        helperText="Example: 175"
+        helperText="Example: 72"
       />
       {/* Goal Dropdown */}
       <FormControl fullWidth margin="normal">

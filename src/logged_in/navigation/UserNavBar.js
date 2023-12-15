@@ -145,6 +145,7 @@ function NavBar(props) {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   const isWidthUpSm = useMediaQuery(theme.breakpoints.up("sm"));
   const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuOpen = (event) => {
@@ -206,10 +207,15 @@ function NavBar(props) {
 
   useEffect(() => {
     const storedFirstName = localStorage.getItem('first_name');
+    const storedLastName = localStorage.getItem('last_name');
     if (storedFirstName) {
       setFirstName(storedFirstName);
     }
+    if (storedLastName) {
+      setLastName(storedLastName);
+    }
   }, []);
+
 
   const openMobileDrawer = useCallback(() => {
     setIsMobileOpen(true);
@@ -373,7 +379,11 @@ function NavBar(props) {
               onClick={handleMenuOpen}
               color="inherit"
             >
-            <UserImage className={classes.accountAvatar} iconSize={23}/>
+              <UserImage
+                className={classes.accountAvatar}
+                iconSize={23}
+                name={`${firstName} ${lastName}`}
+              />
               {isWidthUpSm && (
                 <ListItemText
                   className={classes.username}
