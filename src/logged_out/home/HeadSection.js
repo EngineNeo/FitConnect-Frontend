@@ -32,36 +32,6 @@ const styles = (theme) => ({
       paddingBottom: theme.spacing(2),
     },
   },
-  card: {
-    boxShadow: theme.shadows[4],
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up("xs")]: {
-      paddingTop: theme.spacing(3),
-      paddingBottom: theme.spacing(3),
-    },
-    [theme.breakpoints.up("sm")]: {
-      paddingTop: theme.spacing(5),
-      paddingBottom: theme.spacing(5),
-      paddingLeft: theme.spacing(4),
-      paddingRight: theme.spacing(4),
-    },
-    [theme.breakpoints.up("md")]: {
-      paddingTop: theme.spacing(5.5),
-      paddingBottom: theme.spacing(5.5),
-      paddingLeft: theme.spacing(5),
-      paddingRight: theme.spacing(5),
-    },
-    [theme.breakpoints.up("lg")]: {
-      paddingTop: theme.spacing(6),
-      paddingBottom: theme.spacing(6),
-      paddingLeft: theme.spacing(6),
-      paddingRight: theme.spacing(6),
-    },
-    [theme.breakpoints.down("xl")]: {
-      width: "auto",
-    },
-  },
   wrapper: {
     position: "relative",
     backgroundColor: theme.palette.common.black,
@@ -113,13 +83,13 @@ const styles = (theme) => ({
     [theme.breakpoints.up("md")]: {
       maxWidth: "none !important",
     },
+    [theme.breakpoints.up('md')]: {
+      margin: '0 20.75%',
+    },
   },
   grid: {
     zIndex: 3,
   }
-  // waveBorder: {
-  //   paddingTop: theme.spacing(4),
-  // },
 });
 
 function HeadSection(props) {
@@ -140,7 +110,7 @@ function HeadSection(props) {
   return (
     <Fragment>
       <div className={classNames("lg-p-top", classes.wrapper)}>
-        <div className={classNames("container-fluid", classes.container)}>
+        <div className={classNames(classes.container)}>
           <Box display="flex" justifyContent="center" className="row">
               <div className={classNames(classes.containerFix, "container")}>
               <Box justifyContent="space-between" className= "row">

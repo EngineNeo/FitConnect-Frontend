@@ -5,11 +5,9 @@ import withStyles from '@mui/styles/withStyles';
 
 const styles = (theme) => ({
     cardWrapper: {
-        border: `1px solid ${theme.palette.common.primary}`,
-        borderRadius: theme.shape.borderRadius,
         textAlign: 'center',
         padding: theme.spacing(2),
-        width: "400px",
+        width: "325px",
         marginBottom: theme.spacing(3),
     },
     imageWrapper: {

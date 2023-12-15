@@ -19,6 +19,7 @@ const styles = (theme) => ({
   wrapper: {
     backgroundColor: theme.palette.common.darkBlack,
     overflowX: "hidden",
+    margin: '0 auto',
   },
 });
 function Main(props) {

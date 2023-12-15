@@ -17,12 +17,15 @@ const styles = theme => ({
     backgroundColor: 'transparent',
     transition: 'all 0.3s ease-in-out',
     '&.scrolled': {
-      boxShadow: theme.shadows[6],
+      boxShadow: 'none',
       backgroundColor: theme.palette.common.darkBlack
     }
   },
   toolbar: {
     justifyContent: "space-between",
+    [theme.breakpoints.up('md')]: {
+      margin: '0 20.75%',
+    },
   },
   logoContainer: {
     display: 'flex',

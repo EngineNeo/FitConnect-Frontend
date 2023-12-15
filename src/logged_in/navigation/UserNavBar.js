@@ -31,14 +31,13 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import MenuIcon from "@mui/icons-material/Menu";
 import SportsIcon from '@mui/icons-material/Sports';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import NotesIcon from '@mui/icons-material/Notes';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const logo = "/images/logged_out/FitConnectLogo.png"
 
 const styles = (theme) => ({
   appBar: {
-    boxShadow: theme.shadows[6],
+    boxShadow: 'none',
     backgroundColor: theme.palette.common.darkBlack,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
@@ -166,7 +165,6 @@ function NavBar(props) {
       "/c/dashboard": "Dashboard",
       "/c/coaches": "Coaches",
       "/c/workoutplan": "Workout Plan",
-      "/c/userlogs": "User Logs",
     };
 
     setSelectedTab(tabMap[currentPathname]);
@@ -178,7 +176,7 @@ function NavBar(props) {
   }, [history]);
 
   const handleLogout = useCallback(async () => {
-    const userId = localStorage.getItem('user_id');
+  const userId = localStorage.getItem('user_id');
 
     if (userId) {
       try {
@@ -276,22 +274,6 @@ function NavBar(props) {
           />
         ),
         mobile: <FitnessCenterIcon className="text-white" />,
-      },
-    },
-    {
-      link: "/c/userlogs",
-      name: "User Logs",
-      onClick: closeMobileDrawer,
-      icon: {
-        desktop: (
-          <NotesIcon
-            className={
-              selectedTab === "User Logs" ? classes.textPrimary : "text-white"
-            }
-            fontSize="small"
-          />
-        ),
-        mobile: <NotesIcon className="text-white" />,
       },
     },
   ];
