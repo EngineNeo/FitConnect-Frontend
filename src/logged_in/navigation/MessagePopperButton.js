@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef, useCallback } from "react";
+import React, { Fragment, useState, useRef, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Popover,
@@ -38,42 +38,30 @@ const styles = (theme) => ({
   },
 });
 
-const mockUsers = [
-  { id: 1, name: 'Alice', avatar: 'path/to/alice.jpg' },
-  { id: 2, name: 'Bob', avatar: 'path/to/bob.jpg' },
-  // ... more users
-];
-
-const fetchMessageHistory = (userId) => {
-  // Mock data
-  const mockMessageHistory = {
-    1: [
-      { id: 1, text: 'Hi there!', sender: 'Alice', date: new Date() },
-      { id: 2, text: 'Hey Alice, how are you?', sender: 'You', date: new Date() },
-      // ... more messages
-    ],
-    2: [
-      { id: 3, text: 'Hello!', sender: 'Bob', date: new Date() },
-      { id: 4, text: 'Hi Bob, you good?', sender: 'You', date: new Date() },
-      // ... more messages
-    ],
-      // ... other histories
-  };
-  return mockMessageHistory[userId] || [];
-};
-
 function MessagePopperButton(props) {
-  const { classes, messages = [] } = props;
+  const { classes, senderId } = props;
   const anchorEl = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messageHistory, setMessageHistory] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8000/your_backend_endpoint_for_users/') // Replace with your backend endpoint
+        .then(response => response.json())
+        .then(data => setUsers(data)) // Assuming the response is an array of users
+        .catch(error => console.error('Error fetching users:', error));
+}, []);
 
   const handleUserSelect = (userId) => {
-    const history = fetchMessageHistory(userId);
-    setSelectedUser(userId);
-    setMessageHistory(history);
-  };
+    fetch(`http://localhost:8000/fitConnect/get_messages/${senderId}/${userId}/`)
+        .then(response => response.json())
+        .then(data => {
+            setMessageHistory(data.messages);
+            setSelectedUser(userId);
+        })
+        .catch(error => console.error('Error fetching messages:', error));
+};
 
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen);
@@ -125,15 +113,14 @@ function MessagePopperButton(props) {
           <Divider className={classes.divider} />
         </AppBar>
         <List dense className={classes.tabContainer}>
-          {/* Conditional rendering based on selectedUser */}
           {selectedUser === null ? (
-                mockUsers.map((user) => (
-                    <ListItem key={user.id} button onClick={() => handleUserSelect(user.id)}>
-                        <ListItemText primary={user.name} />
-                    </ListItem>
-                ))
-            ) : (
-                <MessageHistory history={messageHistory} onBack={handleBackToUsers} />
+            users.map((user) => (
+              <ListItem key={user.id} button onClick={() => handleUserSelect(user.id)}>
+                <ListItemText primary={user.name} />
+              </ListItem>
+            ))
+          ) : (
+            <MessageHistory history={messageHistory} onBack={handleBackToUsers} senderId={senderId} recipientId={selectedUser} />
           )}
         </List>
       </Popover>
@@ -144,6 +131,7 @@ function MessagePopperButton(props) {
 MessagePopperButton.propTypes = {
   classes: PropTypes.object.isRequired,
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  senderId: PropTypes.number.isRequired,
 };
 
 MessagePopperButton.defaultProps = {

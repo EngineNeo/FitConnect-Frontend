@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef, useCallback } from "react";
+import React, { Fragment, useState, useRef, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Popover,
@@ -14,6 +14,7 @@ import {
 import withStyles from '@mui/styles/withStyles';
 import MessageIcon from "@mui/icons-material/Message";
 import MessageListItem from "./MessageListItem";
+import MessageHistory from "./MessageHistory";
 
 const styles = (theme) => ({
   tabContainer: {
@@ -38,25 +39,51 @@ const styles = (theme) => ({
 });
 
 function MessagePopperButton(props) {
-  const { classes, messages = [] } = props;
-  const anchorEl = useRef();
+  const { classes, senderId } = props;
+  const anchorEl = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [messageHistory, setMessageHistory] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8000/your_backend_endpoint_for_users/') // Replace with your backend endpoint
+        .then(response => response.json())
+        .then(data => setUsers(data)) // Assuming the response is an array of users
+        .catch(error => console.error('Error fetching users:', error));
+}, []);
+
+  const handleUserSelect = (userId) => {
+    fetch(`http://localhost:8000/fitConnect/get_messages/${senderId}/${userId}/`)
+        .then(response => response.json())
+        .then(data => {
+            setMessageHistory(data.messages);
+            setSelectedUser(userId);
+        })
+        .catch(error => console.error('Error fetching messages:', error));
+};
 
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen);
   }, [isOpen, setIsOpen]);
 
-  const handleClickAway = useCallback(() => {
+  const handleClickAway = useCallback((event) => {
+    if (anchorEl.current && (anchorEl.current.contains(event.target) || event.target === anchorEl.current)) {
+      return;
+    }
     setIsOpen(false);
   }, [setIsOpen]);
+
+  const handleBackToUsers = () => {
+    setSelectedUser(null);
+    setMessageHistory([]);
+  };
 
   const id = isOpen ? "scroll-playground" : null;
   return (
     <Fragment>
       <IconButton
         onClick={handleClick}
-        buttonRef={anchorEl}
         aria-label="Open Messages"
         aria-describedby={id}
         color="primary"
@@ -86,20 +113,14 @@ function MessagePopperButton(props) {
           <Divider className={classes.divider} />
         </AppBar>
         <List dense className={classes.tabContainer}>
-          {messages.length === 0 ? (
-            <ListItem>
-              <ListItemText>
-                You haven&apos;t received any messages yet.
-              </ListItemText>
-            </ListItem>
-          ) : (
-            messages.map((element, index) => (
-              <MessageListItem
-                key={index}
-                message={element}
-                divider={index !== messages.length - 1}
-              />
+          {selectedUser === null ? (
+            users.map((user) => (
+              <ListItem key={user.id} button onClick={() => handleUserSelect(user.id)}>
+                <ListItemText primary={user.name} />
+              </ListItem>
             ))
+          ) : (
+            <MessageHistory history={messageHistory} onBack={handleBackToUsers} senderId={senderId} recipientId={selectedUser} />
           )}
         </List>
       </Popover>
@@ -110,6 +131,7 @@ function MessagePopperButton(props) {
 MessagePopperButton.propTypes = {
   classes: PropTypes.object.isRequired,
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  senderId: PropTypes.number.isRequired,
 };
 
 MessagePopperButton.defaultProps = {

@@ -15,20 +15,32 @@ const LoggedInCoachComponent = withAuth(lazy(() => import("./logged_in_coach/Mai
 const LoggedInAdminComponent = withAuth(lazy(() => import("./logged_in_admin/Main")));
 
 function App() {
-  const [userType, setUserType] = useState(null);
+  const [userType, setUserType] = useState(localStorage.getItem('user_type') || 'logged_out');
 
   useEffect(() => {
-    const storedUserType = localStorage.getItem('user_type');
-    setUserType(storedUserType);
+    // Event listener for auth changes
+    const handleAuthChange = () => {
+      const storedUserType = localStorage.getItem('user_type');
+      setUserType(storedUserType);
+      console.log("Retrieved user type from localStorage:", storedUserType);
+    };
+
+    // Adding event listener when component mounts
+    window.addEventListener('storage', handleAuthChange);
+
+    // Cleanup event listener when the component unmounts
+    return () => {
+      window.removeEventListener('storage', handleAuthChange);
+    };
   }, []);
 
   let ComponentToRender;
-
   switch(userType) {
     case 'coach':
       ComponentToRender = LoggedInCoachComponent;
       break;
     case 'admin':
+      console.log("Switching to Admin Component");
       ComponentToRender = LoggedInAdminComponent;
       break;
     default:
