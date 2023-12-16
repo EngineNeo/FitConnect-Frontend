@@ -79,6 +79,7 @@ function LoginDialog(props) {
             localStorage.setItem(key, value);
           });
 
+          window.dispatchEvent(new Event('authChange'));
           history.push("/c/dashboard");
         }
       }

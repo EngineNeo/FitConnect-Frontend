@@ -30,25 +30,20 @@ function Main(props) {
   const [isCookieRulesDialogOpen, setIsCookieRulesDialogOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check for authToken in cookies
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      const authToken = Cookies.get('authToken');
-      setIsAuthenticated(!!authToken);
-    };
-
-    const handleAuthChange = () => {
-      checkAuthStatus();
-    };
-
-    window.addEventListener('authChange', handleAuthChange);
-
-    checkAuthStatus();
-    
-    return () => {
-      window.removeEventListener('authChange', handleAuthChange);
-    };
+  const checkAuthStatus = useCallback(() => {
+    setIsAuthenticated(!!Cookies.get('authToken'));
   }, []);
+
+  useEffect(() => {
+    window.addEventListener('authChange', checkAuthStatus);
+
+    // Check the auth status when the component mounts
+    checkAuthStatus();
+
+    return () => {
+      window.removeEventListener('authChange', checkAuthStatus);
+    };
+  }, [checkAuthStatus]);
 
 
   const selectHome = useCallback(() => {

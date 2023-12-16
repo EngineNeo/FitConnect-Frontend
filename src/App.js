@@ -1,10 +1,11 @@
-import React, { Fragment, Suspense, lazy, useEffect, useState } from "react";
+import React, { Fragment, Suspense, lazy, useContext } from "react";
 import { ThemeProvider, StyledEngineProvider, CssBaseline } from "@mui/material";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import theme from "./theme";
 import GlobalStyles from "./GlobalStyles";
 import Pace from "./shared/components/Pace";
 import withAuth from "./shared/components/WithAuth";
+import AuthContext from './shared/components/AuthContext';
 
 const LoggedInComponent = withAuth(lazy(() => import("./logged_in/Main")));
 
@@ -15,24 +16,7 @@ const LoggedInCoachComponent = withAuth(lazy(() => import("./logged_in_coach/Mai
 const LoggedInAdminComponent = withAuth(lazy(() => import("./logged_in_admin/Main")));
 
 function App() {
-  const [userType, setUserType] = useState(localStorage.getItem('user_type') || 'logged_out');
-
-  useEffect(() => {
-    // Event listener for auth changes
-    const handleAuthChange = () => {
-      const storedUserType = localStorage.getItem('user_type');
-      setUserType(storedUserType);
-      console.log("Retrieved user type from localStorage:", storedUserType);
-    };
-
-    // Adding event listener when component mounts
-    window.addEventListener('storage', handleAuthChange);
-
-    // Cleanup event listener when the component unmounts
-    return () => {
-      window.removeEventListener('storage', handleAuthChange);
-    };
-  }, []);
+  const { userType } = useContext(AuthContext);
 
   let ComponentToRender;
   switch(userType) {
@@ -42,6 +26,9 @@ function App() {
     case 'admin':
       console.log("Switching to Admin Component");
       ComponentToRender = LoggedInAdminComponent;
+      break;
+    case 'logged_out':
+      ComponentToRender = LoggedOutComponent;
       break;
     default:
       ComponentToRender = LoggedInComponent;
@@ -57,9 +44,9 @@ function App() {
           <Suspense fallback={<Fragment />}>
             <Switch>
               <Route path="/c">
-                <ComponentToRender />
+                {ComponentToRender && <ComponentToRender />}
               </Route>
-              <Route>
+              <Route path="/" exact>
                 <LoggedOutComponent />
               </Route>
             </Switch>
