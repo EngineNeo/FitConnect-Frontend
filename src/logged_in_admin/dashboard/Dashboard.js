@@ -1,16 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, List, ListItem, Divider, TextField, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
-
-const mockCoachRequests = [
-  { id: 1, name: 'John Doe', requestDate: '2023-01-01' },
-  { id: 2, name: 'Jane Smith', requestDate: '2023-01-05' },
-];
-
-const mockExerciseBank = [
-  { id: 1, name: 'Push-ups' },
-  { id: 2, name: 'Sit-ups' },
-];
 
 const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(1),
@@ -21,24 +11,64 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 const AdminDashboard = () => {
-  const [coachRequests, setCoachRequests] = useState(mockCoachRequests);
-  const [exerciseBank, setExerciseBank] = useState(mockExerciseBank);
+  const [coachRequests, setCoachRequests] = useState([]);
+  const [exerciseBank, setExerciseBank] = useState([]);
   const [newExercise, setNewExercise] = useState('');
 
+  useEffect(() => {
+    fetch('http://localhost:8000/fitConnect/manage_become_coach_request')
+      .then(response => response.json())
+      .then(data => setCoachRequests(data))
+      .catch(error => console.error('Error fetching coach requests:', error));
+
+      fetch('http://localhost:8000/fitConnect/edit_exercise_bank')
+      .then(response => response.json())
+      .then(data => setExerciseBank(data))
+      .catch(error => console.error('Error fetching exercises:', error));
+  }, []);
+
   const handleAcceptRequest = (requestId) => {
-    // Implement acceptance logic
+    fetch('http://localhost:8000/fitConnect/manage_become_coach_request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_id: requestId, is_approved: true }),
+    }).then(() => {
+    });
   };
 
   const handleRejectRequest = (requestId) => {
-    // Implement rejection logic
+    fetch('http://localhost:8000/fitConnect/manage_become_coach_request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_id: requestId }),
+    }).then(() => {
+    });
   };
 
   const handleAddExercise = () => {
-    // Implement add exercise logic
+    fetch('http://localhost:8000/fitConnect/edit_exercise_bank', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: newExercise, description: '', muscle_group: 1, equipment: 1 }),
+    }).then(() => {
+    });
   };
 
   const handleRemoveExercise = (exerciseId) => {
-    // Implement remove exercise logic
+    fetch('http://localhost:8000/fitConnect/edit_exercise_bank', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ exercise_id: exerciseId }),
+    }).then(() => {
+    });
   };
 
   return (
