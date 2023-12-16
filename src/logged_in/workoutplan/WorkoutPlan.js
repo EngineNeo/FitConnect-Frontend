@@ -5,8 +5,8 @@ import { Grid, Divider } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 
 import WorkoutPlanList from "./WorkoutPlanList";
-// import ViewWorkoutPlan from "./ViewWorkoutPlan";
-import EditWorkoutPlan from "./EditWorkoutPlan";
+import ReadWorkoutPlan from "./ReadWorkoutPlan";
+import UpdateWorkoutPlan from "./UpdateWorkoutPlan";
 import CreateWorkoutPlan from "./CreateWorkoutPlan";
 
 const styles = (theme) => ({
@@ -20,16 +20,18 @@ function WorkoutPlan(props) {
   const { selectWorkoutPlan, classes } = props;
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isCreatingNewPlan, setIsCreatingNewPlan] = useState(false);
+  const [viewMode, setViewMode] = useState('viewingPlan');
 
   useEffect(selectWorkoutPlan, [selectWorkoutPlan]);
 
   const handleSelectPlan = (plan) => {
-    setIsCreatingNewPlan(false);
     setSelectedPlan(plan);
+    setViewMode('viewingPlan');
   };
 
   const handleCreateNewPlan = () => {
-    setIsCreatingNewPlan(true);
+    setSelectedPlan(null);
+    setViewMode('creatingPlan');
   };
 
   const handleSaveNewPlan = (newPlan) => {
@@ -47,11 +49,9 @@ function WorkoutPlan(props) {
         </Grid>
         <Divider orientation="vertical" flexItem className={classes.fullHeight} />
         <Grid item xs className={classes.fullHeight}>
-          {isCreatingNewPlan ? (
-            <CreateWorkoutPlan onSave={handleSaveNewPlan} />
-          ) : (
-            <EditWorkoutPlan selectedPlan={selectedPlan} />
-          )}
+          {viewMode === 'creatingPlan' && <CreateWorkoutPlan onSave={handleSaveNewPlan} />}
+          {viewMode === 'updatingPlan' && <UpdateWorkoutPlan selectedPlan={selectedPlan} />}
+          {viewMode === 'viewingPlan' && <ReadWorkoutPlan plan={selectedPlan} />}
         </Grid>
       </Grid>
     </Fragment>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { List, ListItem, Divider, Typography, Paper, Button } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -12,24 +12,15 @@ const styles = {
         marginLeft: '10px',
     },
     Title: {
+        marginTop: '10px',
         marginBottom: '10px'
     }
 };
 
-const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
-    const initialItems = [
-        { id: 'item-1', content: 'Workout A' },
-        { id: 'item-2', content: 'Workout B' },
-        { id: 'item-3', content: 'Workout C' },
-        { id: 'item-4', content: 'Workout D' },
-        { id: 'item-5', content: 'Workout E' },
-        { id: 'item-6', content: 'Workout F' },
-        { id: 'item-7', content: 'Workout G' },
-        { id: 'item-8', content: 'Workout H' },
-        { id: 'item-9', content: 'Workout I' },
-    ];
+const userId = localStorage.getItem('user_id');
 
-    const [items] = useState(initialItems);
+const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
+    const [items, setItems] = useState([]);
     const [todaysPlan, setTodaysPlan] = useState(null);
 
     const handleListItemClick = (plan) => {
@@ -47,6 +38,20 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
             setTodaysPlan(items[source.index]);
         }
     };
+
+    const fetchWorkoutPlans = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/fitConnect/plans?user_id=${userId}`);
+            const data = await response.json();
+            setItems(data);
+        } catch (error) {
+            console.error('Error fetching workout plans:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchWorkoutPlans();
+    }, [userId]);
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -72,11 +77,12 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
                 )}
             </Droppable>
             <Divider />
+            <Typography variant="h6" style={styles.Title}>Your Workout plans</Typography>
             <Droppable droppableId="droppable">
                 {(provided) => (
                     <List {...provided.droppableProps} ref={provided.innerRef}>
                         {items.map((item, index) => (
-                            <Draggable key={item.id} draggableId={item.id} index={index}>
+                            <Draggable key={item.plan_id} draggableId={`draggable-${item.plan_id}`} index={index}>
                                 {(provided) => (
                                     <ListItem
                                         button
@@ -85,7 +91,7 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
                                         {...provided.dragHandleProps}
                                         onClick={() => handleListItemClick(item)}
                                     >
-                                        {item.content}
+                                        {item.plan_name}
                                     </ListItem>
                                 )}
                             </Draggable>

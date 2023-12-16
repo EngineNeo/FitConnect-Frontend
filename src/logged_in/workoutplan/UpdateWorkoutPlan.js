@@ -14,16 +14,19 @@ const styles = (theme) => ({
     },
 });
 
-const EditWorkoutPlan = (props, { selectedPlan }) => {
+const UpdateWorkoutPlan = (props, { plan }) => {
     const { classes } = props;
+
+    if (!plan || !plan.exercises || plan.exercises.length === 0) {
+        return <div className={classes.container}>No exercises found for this plan.</div>;
+    }
     return (
         <Paper className={classes.container}>
             <Typography variant="h5" className={classes.title}>
-                {selectedPlan ? selectedPlan.content : 'Select a Plan'}
+                Update
             </Typography>
-            {/* Additional configuration options here */}
         </Paper>
     );
 };
 
-export default withRouter(withStyles(styles)(EditWorkoutPlan));
+export default withRouter(withStyles(styles)(UpdateWorkoutPlan));

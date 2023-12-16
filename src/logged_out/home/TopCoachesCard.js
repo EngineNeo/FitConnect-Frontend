@@ -7,7 +7,7 @@ const styles = (theme) => ({
     cardWrapper: {
         textAlign: 'center',
         padding: theme.spacing(2),
-        width: "325px",
+        width: "350px",
         marginBottom: theme.spacing(3),
     },
     imageWrapper: {

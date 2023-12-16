@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
     Grid, Paper, Typography, TextField, Button, Pagination,
-    Dialog, DialogActions, DialogContent, DialogContentText
+    Dialog, DialogActions, DialogContent
 } from '@mui/material';
 import { withStyles } from '@mui/styles'
 import SearchIcon from '@mui/icons-material/Search';
@@ -77,7 +77,7 @@ function getIconForEquipmentName(equipmentName) {
     }
 }
 
-function ExerciseBank({ classes, onExerciseClick }) {
+function ExerciseBank({ classes, onExerciseClick, isDialogMode, onAddExercise }) {
     const [exercises, setExercises] = useState([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedExercise, setSelectedExercise] = useState(null);
@@ -88,11 +88,17 @@ function ExerciseBank({ classes, onExerciseClick }) {
     useEffect(() => {
         axios.get('http://localhost:8000/fitConnect/exercises')
             .then(response => {
-                setExercises(response.data);
-                setFilteredExercises(response.data);
+                const exercisesWithId = response.data.map((exercise, index) => ({
+                    ...exercise,
+                    exercise_id: index + 1
+                }));
+                setExercises(exercisesWithId);
+                setFilteredExercises(exercisesWithId);
+                console.log(exercisesWithId);
             })
             .catch(error => console.log(error));
     }, []);
+
 
     useEffect(() => {
         const filtered = exercises.filter(exercise =>
@@ -128,6 +134,12 @@ function ExerciseBank({ classes, onExerciseClick }) {
     const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
     const currentExercises = filteredExercises.slice(indexOfFirstExercise, indexOfLastExercise);
 
+    const handleAddExercise = (exercise) => {
+        if (isDialogMode && onAddExercise) {
+            onAddExercise(exercise);
+        }
+    };
+
     return (
         <div className={classNames("container-fluid", classes.containerFix, classes.textWhite)}>
             <Paper className={classes.searchContainer}>
@@ -155,6 +167,7 @@ function ExerciseBank({ classes, onExerciseClick }) {
                         exercise={exercise}
                         classes={classes}
                         onExerciseClick={handleExerciseClick}
+                        isDialogMode={isDialogMode}
                     />
                 ))}
             </Grid>
@@ -174,18 +187,24 @@ function ExerciseBank({ classes, onExerciseClick }) {
                 aria-describedby="exercise-dialog-description"
             >
                 <DialogContent>
-                    <DialogContentText id="exercise-dialog-description">
-                        <Typography variant='h6'>
-                            Description:
-                        </Typography>
-                        {selectedExercise ? selectedExercise.description : ''}
-                    </DialogContentText>
+                    <Typography variant='h6' style={{ marginBottom: "10px" }}>Exercise: {selectedExercise ? selectedExercise.name : ''}</Typography>
+                    <Typography variant='subtitle1'>Muscle Group: {selectedExercise ? selectedExercise.muscle_group_name : ''}</Typography>
+                    <Typography variant='subtitle1'>Equipment: {selectedExercise ? selectedExercise.equipment_name : ''}</Typography>
+                    <Typography variant='subtitle1' style={{ marginTop: "10px" }}>
+                        Description: {selectedExercise ? selectedExercise.description : ''}
+                    </Typography>
                 </DialogContent>
                 <DialogActions>
+                    {isDialogMode && (
+                        <Button onClick={() => handleAddExercise(selectedExercise)} color="primary">
+                            Add Exercise
+                        </Button>
+                    )}
                     <Button onClick={handleCloseDialog} color="primary">
                         Close
                     </Button>
                 </DialogActions>
+
             </Dialog>
         </div>
     );
