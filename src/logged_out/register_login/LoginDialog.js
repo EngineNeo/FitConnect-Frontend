@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, Fragment } from "react";
+import React, { useState, useEffect, useCallback, useRef, Fragment, useContext } from "react";
 import axios from 'axios';
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -10,6 +10,7 @@ import HighlightedInformation from "../../shared/components/HighlightedInformati
 import ButtonCircularProgress from "../../shared/components/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../shared/components/VisibilityPasswordTextField";
 import Cookies from 'js-cookie';
+import AuthContext from '../../shared/components/AuthContext';
 
 const styles = (theme) => ({
   forgotPassword: {
@@ -47,6 +48,7 @@ function LoginDialog(props) {
   const loginEmail = useRef();
   const loginPassword = useRef();
   const isMountedRef = useRef(true);
+  const { setUserType } = useContext(AuthContext);
 
   useEffect(() => {
     return () => {
@@ -78,7 +80,7 @@ function LoginDialog(props) {
           Object.entries(otherData).forEach(([key, value]) => {
             localStorage.setItem(key, value);
           });
-
+          setUserType(response.data.user_type); // Assume response includes user type
           window.dispatchEvent(new Event('authChange'));
           history.push("/c/dashboard");
         }
