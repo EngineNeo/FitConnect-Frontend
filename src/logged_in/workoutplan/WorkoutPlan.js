@@ -19,10 +19,27 @@ const styles = (theme) => ({
 function WorkoutPlan(props) {
   const { selectWorkoutPlan, classes } = props;
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isCreatingNewPlan, setIsCreatingNewPlan] = useState(false);
+  const [workoutPlans, setWorkoutPlans] = useState([]);
   const [viewMode, setViewMode] = useState('viewingPlan');
 
   useEffect(selectWorkoutPlan, [selectWorkoutPlan]);
+
+  const userId = localStorage.getItem('user_id');
+
+  const fetchWorkoutPlans = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/fitConnect/users/${userId}/plans`);
+      const data = await response.json();
+      setWorkoutPlans(data)
+    } catch (error) {
+      console.error('Error fetching workout plans:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkoutPlans();
+  }, []);
+
 
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
@@ -35,7 +52,9 @@ function WorkoutPlan(props) {
   };
 
   const handleSaveNewPlan = (newPlan) => {
-    setIsCreatingNewPlan(false);
+    setWorkoutPlans([...workoutPlans, newPlan]);
+    setViewMode('viewingPlan');
+    fetchWorkoutPlans();
   };
 
   return (
@@ -43,6 +62,7 @@ function WorkoutPlan(props) {
       <Grid container className={classes.fullHeight}>
         <Grid item className={classes.PlanList}>
           <WorkoutPlanList
+            plans={workoutPlans}
             onSelectPlan={handleSelectPlan}
             onCreateNewPlan={handleCreateNewPlan}
           />

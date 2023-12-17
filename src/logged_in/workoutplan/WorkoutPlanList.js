@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { List, ListItem, Divider, Typography, Paper, Button } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -14,16 +14,17 @@ const styles = {
     Title: {
         marginTop: '10px',
         marginBottom: '10px'
+    },
+    ListItemHover: {
+        cursor: 'pointer',
     }
 };
 
-const userId = localStorage.getItem('user_id');
-
-const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
-    const [items, setItems] = useState([]);
+const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
     const [todaysPlan, setTodaysPlan] = useState(null);
 
     const handleListItemClick = (plan) => {
+        console.log(plan)
         onSelectPlan(plan);
     };
 
@@ -35,23 +36,9 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
         }
 
         if (destination.droppableId === 'todays-plan') {
-            setTodaysPlan(items[source.index]);
+            setTodaysPlan(plans[source.index]);
         }
     };
-
-    const fetchWorkoutPlans = async () => {
-        try {
-            const response = await fetch(`http://localhost:8000/fitConnect/plans?user_id=${userId}`);
-            const data = await response.json();
-            setItems(data);
-        } catch (error) {
-            console.error('Error fetching workout plans:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchWorkoutPlans();
-    }, [userId]);
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -65,8 +52,8 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
                         style={styles.Paper}
                     >
                         {todaysPlan ? (
-                            <ListItem>
-                                {todaysPlan.content}
+                            <ListItem style={styles.ListItemHover}>
+                                {todaysPlan.plan_name} {/* Display the plan name */}
                                 <StarIcon style={styles.StarIcon} />
                             </ListItem>
                         ) : (
@@ -81,21 +68,27 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
             <Droppable droppableId="droppable">
                 {(provided) => (
                     <List {...provided.droppableProps} ref={provided.innerRef}>
-                        {items.map((item, index) => (
-                            <Draggable key={item.plan_id} draggableId={`draggable-${item.plan_id}`} index={index}>
-                                {(provided) => (
-                                    <ListItem
-                                        button
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        onClick={() => handleListItemClick(item)}
-                                    >
-                                        {item.plan_name}
-                                    </ListItem>
-                                )}
-                            </Draggable>
-                        ))}
+                        {plans.map((item, index) => {
+                            if (!item || !item.plan_id || !item.plan_name) {
+                                // Handle missing data
+                                return null;
+                            }
+                            return (
+                                <Draggable key={item.plan_id} draggableId={`draggable-${item.plan_id}`} index={index}>
+                                    {(provided) => (
+                                        <ListItem
+                                            button
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            onClick={() => handleListItemClick(item)}
+                                        >
+                                            {item.plan_name}
+                                        </ListItem>
+                                    )}
+                                </Draggable>
+                            );
+                        })}
                         {provided.placeholder}
                     </List>
                 )}

@@ -39,7 +39,6 @@ const ReadWorkoutPlan = ({ plan, classes }) => {
             try {
                 const response = await fetch(`http://localhost:8000/fitConnect/view_workout_logs/${userId}`);
                 const data = await response.json();
-                console.log(data);
                 setItems(data);
             } catch (error) {
                 console.error('Error fetching workout plans:', error);
