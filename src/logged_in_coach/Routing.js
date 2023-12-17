@@ -1,8 +1,10 @@
-import React, { memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
 import Dashboard from "./dashboard/Dashboard";
+import Coach from "./coach/Coach";
+import WorkoutPlan from "./workoutplan/WorkoutPlan"
 import MyRequests from "./dashboard/MyRequests";
 import MyClients from "./dashboard/MyClients";
 import PropsRoute from "../shared/components/PropsRoute";
@@ -22,52 +24,48 @@ function Routing(props) {
   const {
     classes,
     pushMessageToSnackbar,
-    toggleAccountActivation,
-    CardChart,
-    statistics,
-    targets,
-    setTargets,
-    isAccountActivated,
     selectDashboard,
+    selectCoach,
+    selectWorkoutPlan,
   } = props;
   useLocationBlocker();
+  const [storedUserId, setStoredUserId] = useState(null);
+  useEffect(() => {
+    const userId = localStorage.getItem('user_id');
+    setStoredUserId(userId);
+  }, []);
+  
   return (
     <div className={classes.wrapper}>
       <Switch>
-        <PropsRoute
-          exact path="/" component={Dashboard}
-          key="dashboard"
-          toggleAccountActivation={toggleAccountActivation}
-          pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
-          isAccountActivated={isAccountActivated}
+      <PropsRoute
+          path="/c/dashboard"
+          user_id={storedUserId}
+          component={Dashboard}
           selectDashboard={selectDashboard}
         />
         <PropsRoute
-          path="/my-requests" component={MyRequests}
-          key="my-requests"
-          toggleAccountActivation={toggleAccountActivation}
+          path="/c/coaches"
+          component={Coach}
           pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
-          isAccountActivated={isAccountActivated}
+          selectCoach={selectCoach}
+        />
+        <PropsRoute
+          path="/c/workoutplan"
+          component={WorkoutPlan}
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          selectWorkoutPlan={selectWorkoutPlan}
+        />
+        <PropsRoute
+          path="/c/my-requests"
+          user_id={storedUserId}
+          component={MyClients}
           selectDashboard={selectDashboard}
         />
         <PropsRoute
-          path="/my-clients" component={MyClients}
-          key="my-clients"
-          toggleAccountActivation={toggleAccountActivation}
-          pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
-          isAccountActivated={isAccountActivated}
+          path="/c/my-clients"
+          user_id={storedUserId}
+          component={MyRequests}
           selectDashboard={selectDashboard}
         />
       </Switch>
@@ -82,16 +80,10 @@ Routing.propTypes = {
   Dropzone: PropTypes.elementType,
   DateTimePicker: PropTypes.elementType,
   pushMessageToSnackbar: PropTypes.func,
-  setTargets: PropTypes.func.isRequired,
   toggleAccountActivation: PropTypes.func,
-  CardChart: PropTypes.elementType,
-  statistics: PropTypes.object.isRequired,
-  targets: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isAccountActivated: PropTypes.bool.isRequired,
   selectDashboard: PropTypes.func.isRequired,
-  openAddBalanceDialog: PropTypes.func.isRequired,
+  selectCoach: PropTypes.func.isRequired,
+  selectWorkoutPlan: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(memo(Routing));
-// what is /c/ when creating paths?
-// the highlight around dashboard tab
