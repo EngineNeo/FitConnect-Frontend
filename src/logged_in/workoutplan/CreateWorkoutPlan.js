@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { TextField, Button, Typography, Table, TableBody, 
          TableCell, TableHead, TableRow, Toolbar, IconButton, 
          Dialog, Snackbar, Alert, Paper } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { withStyles } from '@mui/styles';
 import ExerciseBank from '../../shared/components/ExerciseBank';
 import axios from 'axios';
 
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
 import EditIcon from '@mui/icons-material/Edit';
 

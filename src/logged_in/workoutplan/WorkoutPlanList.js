@@ -23,9 +23,15 @@ const styles = {
 const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
     const [todaysPlan, setTodaysPlan] = useState(null);
 
+    console.log(todaysPlan)
+
     const handleListItemClick = (plan) => {
         console.log(plan)
         onSelectPlan(plan);
+    };
+
+    const handleTodaysPlanClick = (todaysPlan) => {
+        onSelectTodaysPlan(todaysPlan);
     };
 
     const onDragEnd = (result) => {
@@ -36,9 +42,47 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
         }
 
         if (destination.droppableId === 'todays-plan') {
-            setTodaysPlan(plans[source.index]);
+            const draggedItem = items[source.index];
+            setTodaysPlan(draggedItem);
         }
     };
+
+    const fetchWorkoutPlans = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/fitConnect/plans?user_id=${userId}`);
+            const data = await response.json();
+            setItems(data);
+        } catch (error) {
+            console.error('Error fetching workout plans:', error);
+        }
+    };
+
+    const getTodayDateString = () => {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    };
+
+    useEffect(() => {
+        const savedTodaysPlan = localStorage.getItem('todaysPlan');
+        const savedDate = localStorage.getItem('todaysPlanDate');
+        const todayDate = getTodayDateString();
+
+        if (savedTodaysPlan && savedDate === todayDate) {
+            setTodaysPlan(JSON.parse(savedTodaysPlan));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (todaysPlan) {
+            const todayDate = getTodayDateString();
+            localStorage.setItem('todaysPlan', JSON.stringify(todaysPlan));
+            localStorage.setItem('todaysPlanDate', todayDate);
+        }
+    }, [todaysPlan]);
+
+    useEffect(() => {
+        fetchWorkoutPlans();
+    }, [userId]);
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -50,10 +94,11 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         style={styles.Paper}
+                        onClick={() => handleTodaysPlanClick(todaysPlan)}
                     >
                         {todaysPlan ? (
-                            <ListItem style={styles.ListItemHover}>
-                                {todaysPlan.plan_name} {/* Display the plan name */}
+                            <ListItem>
+                                {todaysPlan.plan_name}
                                 <StarIcon style={styles.StarIcon} />
                             </ListItem>
                         ) : (
