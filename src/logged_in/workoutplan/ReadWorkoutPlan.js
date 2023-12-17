@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { Typography, Table, TableBody, 
+         TableCell, TableHead, TableRow, 
+         Paper, Button, Toolbar } from '@mui/material';
 import { withStyles } from '@mui/styles';
 
 const styles = theme => ({
@@ -8,6 +10,11 @@ const styles = theme => ({
         [theme.breakpoints.down('sm')]: {
             padding: theme.spacing(1),
         },
+    },
+    toolbar: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     table: {
         marginTop: theme.spacing(2),
@@ -118,7 +125,9 @@ const ReadWorkoutPlan = ({ plan, classes }) => {
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
-                <Typography variant="h4" className={classes.title}>{plan.plan_name}</Typography>
+                <Toolbar className={classes.toolbar}>
+                    <Typography variant="h4">{plan.plan_name}</Typography>
+                </Toolbar>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
@@ -132,7 +141,11 @@ const ReadWorkoutPlan = ({ plan, classes }) => {
                     <TableBody>
                         {plan.exercises.map((exercise, index) => (
                             <TableRow key={index}>
-                                <TableCell>{exercise.exercise.name}</TableCell>
+                                <TableCell>
+                                    <div className={classes.toolbar}>
+                                        <Typography variant="subtitle1">{exercise.exercise.name}</Typography>
+                                    </div>
+                                </TableCell>
                                 <TableCell>{exercise.sets}</TableCell>
                                 <TableCell>{exercise.reps}</TableCell>
                                 <TableCell>{exercise.weight}</TableCell>
