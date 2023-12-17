@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { List, ListItem, Divider, Typography, Paper, Button } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -20,7 +20,7 @@ const styles = {
     }
 };
 
-const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
+const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysPlan }) => {
     const [todaysPlan, setTodaysPlan] = useState(null);
 
     console.log(todaysPlan)
@@ -42,18 +42,8 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
         }
 
         if (destination.droppableId === 'todays-plan') {
-            const draggedItem = items[source.index];
+            const draggedItem = plans[source.index];
             setTodaysPlan(draggedItem);
-        }
-    };
-
-    const fetchWorkoutPlans = async () => {
-        try {
-            const response = await fetch(`http://localhost:8000/fitConnect/plans?user_id=${userId}`);
-            const data = await response.json();
-            setItems(data);
-        } catch (error) {
-            console.error('Error fetching workout plans:', error);
         }
     };
 
@@ -80,10 +70,6 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
         }
     }, [todaysPlan]);
 
-    useEffect(() => {
-        fetchWorkoutPlans();
-    }, [userId]);
-
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Typography variant="h4" style={styles.Title}>Today's Plan</Typography>
@@ -97,7 +83,7 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan }) => {
                         onClick={() => handleTodaysPlanClick(todaysPlan)}
                     >
                         {todaysPlan ? (
-                            <ListItem>
+                            <ListItem style={styles.ListItemHover}>
                                 {todaysPlan.plan_name}
                                 <StarIcon style={styles.StarIcon} />
                             </ListItem>
