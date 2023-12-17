@@ -104,7 +104,7 @@ function RegisterDialog(props) {
         isValidStep = validateUserTypeSelection();
         break;
       case 4:
-        isValidStep = validateCoachSurvey();
+        isValidStep = selectedUserType === 'coach' ? validateCoachSurvey() : validateUserTypeSelection();
         break;
       default:
         isValidStep = true;
@@ -113,21 +113,21 @@ function RegisterDialog(props) {
     if (!isValidStep) return;
 
     // Proceed to next step or registration
-    if (currentStep === 4 && selectedUserType === 'user') {
+    if (currentStep === 4 && selectedUserType === 'coach') {
       register();
-    } else if (currentStep <= 4) {
+    } else if (currentStep < 4 || (currentStep === 4 && selectedUserType === 'user')) {
       setCurrentStep(currentStep + 1);
     }
   };
 
-    const renderActionButton = () => {
-    if (currentStep === 3 && selectedUserType === 'user') {
+  const renderActionButton = () => {
+    if ((currentStep === 4 && selectedUserType === 'coach') || (currentStep === 3 && selectedUserType === 'user')) {
       return (
         <Button onClick={register} color="primary" variant="contained">
           Submit
         </Button>
       );
-    } else if (currentStep <= 4) {
+    } else if (currentStep < 4 || (currentStep === 4 && selectedUserType === 'user')) {
       return (
         <Button onClick={handleNextOrSubmit} color="primary" variant="contained">
           Next
@@ -204,6 +204,7 @@ function RegisterDialog(props) {
         variant="outlined"
         margin="normal"
         fullWidth
+        required
         label="First Name"
         value={firstName}
         onChange={(e) => setFirstName(e.target.value.replace(/[^a-zA-Z]/g, ''))}
@@ -213,6 +214,7 @@ function RegisterDialog(props) {
         variant="outlined"
         margin="normal"
         fullWidth
+        required
         label="Last Name"
         value={lastName}
         onChange={(e) => setLastName(e.target.value.replace(/[^a-zA-Z]/g, ''))}

@@ -34,6 +34,11 @@ function WorkoutPlan(props) {
     setViewMode('creatingPlan');
   };
 
+  const handleSelectTodaysPlan = (plan) => {
+    setSelectedPlan(plan);
+    setViewMode('updatingPlan');
+  };
+
   const handleSaveNewPlan = (newPlan) => {
     setIsCreatingNewPlan(false);
   };
@@ -45,12 +50,13 @@ function WorkoutPlan(props) {
           <WorkoutPlanList
             onSelectPlan={handleSelectPlan}
             onCreateNewPlan={handleCreateNewPlan}
+            onSelectTodaysPlan={handleSelectTodaysPlan}
           />
         </Grid>
         <Divider orientation="vertical" flexItem className={classes.fullHeight} />
         <Grid item xs className={classes.fullHeight}>
           {viewMode === 'creatingPlan' && <CreateWorkoutPlan onSave={handleSaveNewPlan} />}
-          {viewMode === 'updatingPlan' && <UpdateWorkoutPlan selectedPlan={selectedPlan} />}
+          {viewMode === 'updatingPlan' && <UpdateWorkoutPlan plan={selectedPlan} />}
           {viewMode === 'viewingPlan' && <ReadWorkoutPlan plan={selectedPlan} />}
         </Grid>
       </Grid>

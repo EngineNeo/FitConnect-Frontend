@@ -19,12 +19,18 @@ const styles = {
 
 const userId = localStorage.getItem('user_id');
 
-const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
+const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan, onSelectTodaysPlan }) => {
     const [items, setItems] = useState([]);
     const [todaysPlan, setTodaysPlan] = useState(null);
 
+    console.log(todaysPlan)
+
     const handleListItemClick = (plan) => {
         onSelectPlan(plan);
+    };
+
+    const handleTodaysPlanClick = (todaysPlan) => {
+        onSelectTodaysPlan(todaysPlan);
     };
 
     const onDragEnd = (result) => {
@@ -35,7 +41,8 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
         }
 
         if (destination.droppableId === 'todays-plan') {
-            setTodaysPlan(items[source.index]);
+            const draggedItem = items[source.index];
+            setTodaysPlan(draggedItem);
         }
     };
 
@@ -48,6 +55,29 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
             console.error('Error fetching workout plans:', error);
         }
     };
+
+    const getTodayDateString = () => {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    };
+
+    useEffect(() => {
+        const savedTodaysPlan = localStorage.getItem('todaysPlan');
+        const savedDate = localStorage.getItem('todaysPlanDate');
+        const todayDate = getTodayDateString();
+
+        if (savedTodaysPlan && savedDate === todayDate) {
+            setTodaysPlan(JSON.parse(savedTodaysPlan));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (todaysPlan) {
+            const todayDate = getTodayDateString();
+            localStorage.setItem('todaysPlan', JSON.stringify(todaysPlan));
+            localStorage.setItem('todaysPlanDate', todayDate);
+        }
+    }, [todaysPlan]);
 
     useEffect(() => {
         fetchWorkoutPlans();
@@ -63,10 +93,11 @@ const WorkoutPlanList = ({ onSelectPlan, onCreateNewPlan }) => {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         style={styles.Paper}
+                        onClick={() => handleTodaysPlanClick(todaysPlan)}
                     >
                         {todaysPlan ? (
                             <ListItem>
-                                {todaysPlan.content}
+                                {todaysPlan.plan_name}
                                 <StarIcon style={styles.StarIcon} />
                             </ListItem>
                         ) : (
