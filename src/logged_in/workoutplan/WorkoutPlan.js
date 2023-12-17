@@ -41,26 +41,41 @@ function WorkoutPlan(props) {
   }, []);
 
 
+  // Function to handle selection of a plan
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
     setViewMode('viewingPlan');
   };
 
+  // Function to handle creating a new plan
   const handleCreateNewPlan = () => {
     setSelectedPlan(null);
     setViewMode('creatingPlan');
   };
 
+  // Function to handle selection of today's plan
   const handleSelectTodaysPlan = (plan) => {
     setSelectedPlan(plan);
     setViewMode('updatingPlan');
   };
 
+  // Function to handle saving of a new plan
   const handleSaveNewPlan = (newPlan) => {
     setWorkoutPlans([...workoutPlans, newPlan]);
     setViewMode('viewingPlan');
     fetchWorkoutPlans();
   };
+
+  // Initialize selectedPlan and viewMode based on today's plan
+  useEffect(() => {
+    const savedTodaysPlan = localStorage.getItem('todaysPlan');
+    if (savedTodaysPlan) {
+      setSelectedPlan(JSON.parse(savedTodaysPlan));
+      setViewMode('updatingPlan');
+    } else {
+      setViewMode('viewingPlan');
+    }
+  }, []);
 
   return (
     <Fragment>

@@ -5,14 +5,22 @@ import { withStyles } from '@mui/styles';
 const styles = theme => ({
     container: {
         padding: theme.spacing(2),
+        [theme.breakpoints.down('sm')]: {
+            padding: theme.spacing(1),
+        },
     },
     table: {
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
     },
+    title: {
+        marginBottom: 20,
+        marginLeft: 20,
+    },
     Paper: {
         padding: "10px",
-        marginBottom: theme.spacing(3),
+        marginTop: 40,
+        marginBottom: 40
     },
     dateSection: {
         padding: theme.spacing(1),
@@ -110,7 +118,7 @@ const ReadWorkoutPlan = ({ plan, classes }) => {
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
-                <Typography variant="h6">{plan.plan_name}</Typography>
+                <Typography variant="h4" className={classes.title}>{plan.plan_name}</Typography>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>

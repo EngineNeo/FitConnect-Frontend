@@ -2,7 +2,8 @@ import React, { Fragment, useState } from 'react';
 import {
     Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow,
-    IconButton, Toolbar, Typography, TextField
+    IconButton, Toolbar, Typography, TextField,
+    Button
 } from '@mui/material';
 import { withRouter } from "react-router-dom";
 import { withStyles } from '@mui/styles';
@@ -24,6 +25,7 @@ const styles = (theme) => ({
     },
     toolbar: {
         display: 'flex',
+        alignItems: 'center', // Align items vertically
         justifyContent: 'space-between',
     },
     textField: {
@@ -36,34 +38,37 @@ const styles = (theme) => ({
     table: {
         marginTop: theme.spacing(2),
     },
-    toolbar: {
-        justifyContent: 'space-between',
-        padding: theme.spacing(1),
-    },
     Paper: {
         padding: "10px",
         marginTop: 40,
         marginBottom: 40
-    }
+    },
+    narrowTextField: {
+        width: '100px',
+        marginRight: theme.spacing(1),
+    },
 });
 
 const UpdateWorkoutPlan = (props) => {
     const { classes, plan } = props;
     const [exercises, setExercises] = useState(plan.exercises.map(exercise => ({
         ...exercise,
-        editMode: false,
+        editMode: true,
         newEntry: { reps: '', weight: '', duration: '' }
     })));
-
-    console.log(plan)
+    const [entriesSubmitted, setEntriesSubmitted] = useState(false);
+    const [newEntries, setNewEntries] = useState({});
 
     if (!plan || !plan.exercises || plan.exercises.length === 0) {
         return <div className={classes.container}>No exercises found for this plan.</div>;
     }
 
-    const toggleEditMode = (index) => {
+    const toggleEditMode = async (index) => {
         const updatedExercises = exercises.map((exercise, idx) => {
             if (idx === index) {
+                if (exercise.editMode) {
+                    handleSubmit(index);
+                }
                 return { ...exercise, editMode: !exercise.editMode };
             }
             return exercise;
@@ -75,6 +80,7 @@ const UpdateWorkoutPlan = (props) => {
         const newExercises = exercises.map((exercise, idx) => {
             if (idx === index) {
                 return { ...exercise, editMode: true };
+                setNewEntries(prevEntries => ({ ...prevEntries, [index]: true }));
             }
             return exercise;
         });
@@ -98,9 +104,7 @@ const UpdateWorkoutPlan = (props) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                // Adjust this payload according to your backend requirements
                 exercise_id: exercise.id,
-                sets: 1, // Assuming one set per entry
                 reps: entryData.reps,
                 weight: entryData.weight,
                 duration: entryData.duration
@@ -108,20 +112,27 @@ const UpdateWorkoutPlan = (props) => {
         });
 
         if (response.ok) {
-            // Handle successful response
             console.log("Entry added successfully");
-            toggleEditMode(index); // Exit edit mode
+            toggleEditMode(index);
+            setEntriesSubmitted(true);
         } else {
-            // Handle errors
             console.error("Failed to add entry");
         }
+    };
+
+    const handleTitleSubmit = () => {
+        console.log("Entries submitted");
+        setEntriesSubmitted(true);
+        setNewEntries({});
     };
 
     return (
         <Fragment>
             <div className={classes.container}>
                 <Paper className={classes.Paper}>
-                    <Typography variant="h6">{plan.plan_name}</Typography>
+                    <Toolbar className={classes.toolbar}>
+                        <Typography variant="h4">{plan.plan_name}</Typography>
+                    </Toolbar>
                     <Table className={classes.table}>
                         <TableHead>
                             <TableRow>
@@ -135,7 +146,11 @@ const UpdateWorkoutPlan = (props) => {
                         <TableBody>
                             {plan.exercises.map((exercise, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{exercise.exercise.name}</TableCell>
+                                    <TableCell>
+                                        <div className={classes.toolbar}>
+                                            <Typography variant="subtitle1">{exercise.exercise.name}</Typography>
+                                        </div>
+                                    </TableCell>
                                     <TableCell>{exercise.sets}</TableCell>
                                     <TableCell>{exercise.reps}</TableCell>
                                     <TableCell>{exercise.weight}</TableCell>
@@ -150,7 +165,12 @@ const UpdateWorkoutPlan = (props) => {
                         <Paper className={classes.Paper}>
                             <Toolbar className={classes.toolbar}>
                                 <Typography variant="h6">{exercise.exercise.name}</Typography>
-                                {!exercise.editMode && (
+                                {Object.keys(newEntries).length > 0 && !entriesSubmitted && (
+                                    <Button variant="contained" color="primary" onClick={handleTitleSubmit}>
+                                        Submit Entries
+                                    </Button>
+                                )}
+                                {!exercise.editMode && !entriesSubmitted && (
                                     <IconButton color="primary" onClick={() => handleAddEntry(index)}>
                                         <AddCircleOutlineIcon />
                                         <Typography variant="subtitle2">Add Entry</Typography>
@@ -170,38 +190,42 @@ const UpdateWorkoutPlan = (props) => {
                                     </TableHead>
                                     <TableBody>
                                         {/* Display existing entries here */}
-                                        {exercise.editMode && (
-                                            <TableRow>
-                                                {/* Add input fields with "/" for new entry */}
-                                                <TableCell>1</TableCell>
-                                                <TableCell>
-                                                    <TextField
-                                                        value={exercise.newEntry.reps}
-                                                        onChange={(e) => handleEntryChange(index, 'reps', e.target.value)}
-                                                        size="small"
-                                                    /> / {exercise.reps}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <TextField
-                                                        value={exercise.newEntry.weight}
-                                                        onChange={(e) => handleEntryChange(index, 'weight', e.target.value)}
-                                                        size="small"
-                                                    /> / {exercise.weight}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <TextField
-                                                        value={exercise.newEntry.duration}
-                                                        onChange={(e) => handleEntryChange(index, 'duration', e.target.value)}
-                                                        size="small"
-                                                    /> / {exercise.duration_minutes}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <IconButton onClick={() => handleSubmit(index)}>
-                                                        <CheckIcon />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
+                                        <TableRow>
+                                            {/* Add input fields with "/" for new entry */}
+                                            <TableCell>1</TableCell>
+                                            <TableCell>
+                                                <TextField
+                                                    className={classes.narrowTextField}
+                                                    value={exercise.newEntry.reps}
+                                                    type="number"
+                                                    onChange={(e) => handleEntryChange(index, 'reps', e.target.value)}
+                                                    size="small"
+                                                /> / {exercise.reps}
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextField
+                                                    className={classes.narrowTextField}
+                                                    value={exercise.newEntry.weight}
+                                                    type="number"
+                                                    onChange={(e) => handleEntryChange(index, 'weight', e.target.value)}
+                                                    size="small"
+                                                /> / {exercise.weight}
+                                            </TableCell>
+                                            <TableCell>
+                                                <TextField
+                                                    className={classes.narrowTextField}
+                                                    value={exercise.newEntry.duration}
+                                                    type="number"
+                                                    onChange={(e) => handleEntryChange(index, 'duration', e.target.value)}
+                                                    size="small"
+                                                /> / {exercise.duration_minutes}
+                                            </TableCell>
+                                            <TableCell>
+                                                <IconButton onClick={() => handleSubmit(index)}>
+                                                    {exercise.editMode ? <CheckIcon /> : <EditIcon />}
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
                                     </TableBody>
                                 </Table>
                             </TableContainer>
