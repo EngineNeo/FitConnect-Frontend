@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import PropTypes from "prop-types";
 import { Switch } from "react-router-dom";
 import withStyles from '@mui/styles/withStyles';
@@ -20,28 +20,22 @@ function Routing(props) {
   const {
     classes,
     pushMessageToSnackbar,
-    toggleAccountActivation,
-    CardChart,
-    statistics,
-    targets,
-    setTargets,
-    isAccountActivated,
     selectDashboard,
   } = props;
   useLocationBlocker();
+  const [storedUserId, setStoredUserId] = useState(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem('user_id');
+    setStoredUserId(userId);
+  }, []);
   return (
     <div className={classes.wrapper}>
       <Switch>
         <PropsRoute
-          exact path="/admin" component={Dashboard}
-          key="dashboard"
-          toggleAccountActivation={toggleAccountActivation}
-          pushMessageToSnackbar={pushMessageToSnackbar}
-          CardChart={CardChart}
-          statistics={statistics}
-          targets={targets}
-          setTargets={setTargets}
-          isAccountActivated={isAccountActivated}
+          path="/c/dashboard"
+          user_id={storedUserId}
+          component={Dashboard}
           selectDashboard={selectDashboard}
         />
       </Switch>
@@ -56,14 +50,10 @@ Routing.propTypes = {
   Dropzone: PropTypes.elementType,
   DateTimePicker: PropTypes.elementType,
   pushMessageToSnackbar: PropTypes.func,
-  setTargets: PropTypes.func.isRequired,
   toggleAccountActivation: PropTypes.func,
-  CardChart: PropTypes.elementType,
-  statistics: PropTypes.object.isRequired,
-  targets: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isAccountActivated: PropTypes.bool.isRequired,
   selectDashboard: PropTypes.func.isRequired,
-  openAddBalanceDialog: PropTypes.func.isRequired,
+  selectCoach: PropTypes.func.isRequired,
+  selectWorkoutPlan: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(memo(Routing));
