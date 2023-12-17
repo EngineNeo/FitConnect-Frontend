@@ -1,16 +1,17 @@
 import React, { Fragment, useState } from 'react';
 import {
     Paper, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow,
-    IconButton, Toolbar, Typography, TextField,
-    Button
+    TableHead, TableRow, IconButton, Toolbar, 
+    Typography, TextField, Button
 } from '@mui/material';
 import { withRouter } from "react-router-dom";
 import { withStyles } from '@mui/styles';
+import axios from 'axios';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import CheckIcon from '@mui/icons-material/Check';
-import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete'
+// import CheckIcon from '@mui/icons-material/Check';
+// import EditIcon from '@mui/icons-material/Edit';
 
 const styles = (theme) => ({
     container: {
@@ -25,7 +26,7 @@ const styles = (theme) => ({
     },
     toolbar: {
         display: 'flex',
-        alignItems: 'center', // Align items vertically
+        alignItems: 'center',
         justifyContent: 'space-between',
     },
     textField: {
@@ -51,80 +52,61 @@ const styles = (theme) => ({
 
 const UpdateWorkoutPlan = (props) => {
     const { classes, plan } = props;
-    const [exercises, setExercises] = useState(plan.exercises.map(exercise => ({
-        ...exercise,
-        editMode: true,
-        newEntry: { reps: '', weight: '', duration: '' }
-    })));
-    const [entriesSubmitted, setEntriesSubmitted] = useState(false);
-    const [newEntries, setNewEntries] = useState({});
+    const [exerciseEntries, setExerciseEntries] = useState(() =>
+        plan.exercises.map(() => [])
+    );
+
+    const addExerciseEntry = (exerciseIndex) => {
+        const newEntries = [...exerciseEntries];
+        newEntries[exerciseIndex].push({ set: newEntries[exerciseIndex].length + 1, reps: '', weight: '', duration: '' });
+        setExerciseEntries(newEntries);
+    };
+
+    const deleteExerciseEntry = (exerciseIndex, entryIndex) => {
+        const updatedEntries = [...exerciseEntries];
+        updatedEntries[exerciseIndex].splice(entryIndex, 1); // Remove the entry at entryIndex
+        setExerciseEntries(updatedEntries);
+    };
+
+    const handleFieldChange = (exerciseIndex, entryIndex, field, value) => {
+        const updatedEntries = [...exerciseEntries];
+        updatedEntries[exerciseIndex][entryIndex][field] = value;
+        setExerciseEntries(updatedEntries);
+    };
+
+    const submitExerciseEntries = async (exerciseIndex, exerciseId) => {
+        const userId = localStorage.getItem('user_id');
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        try {
+            const responses = await Promise.all(
+                exerciseEntries[exerciseIndex].map(entry => {
+                    const postData = {
+                        user: userId,
+                        exercise_in_plan: exerciseId,
+                        reps: entry.reps,
+                        weight: entry.weight,
+                        duration_minutes: entry.duration,
+                        completed_date: currentDate,
+                    };
+
+                    return axios.post('http://localhost:8000/fitConnect/create_workout_log/', postData, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                })
+            );
+
+            console.log('Entries for exercise ' + exerciseId + ' submitted:', responses.map(response => response.data));
+        } catch (error) {
+            console.error('Error submitting entries:', error.response ? error.response.data : error);
+        }
+    };
 
     if (!plan || !plan.exercises || plan.exercises.length === 0) {
         return <div className={classes.container}>No exercises found for this plan.</div>;
     }
-
-    const toggleEditMode = async (index) => {
-        const updatedExercises = exercises.map((exercise, idx) => {
-            if (idx === index) {
-                if (exercise.editMode) {
-                    handleSubmit(index);
-                }
-                return { ...exercise, editMode: !exercise.editMode };
-            }
-            return exercise;
-        });
-        setExercises(updatedExercises);
-    };
-
-    const handleAddEntry = (index) => {
-        const newExercises = exercises.map((exercise, idx) => {
-            if (idx === index) {
-                return { ...exercise, editMode: true };
-                setNewEntries(prevEntries => ({ ...prevEntries, [index]: true }));
-            }
-            return exercise;
-        });
-        setExercises(newExercises);
-    };
-
-    const handleEntryChange = (index, field, value) => {
-        const newExercises = [...exercises];
-        newExercises[index].newEntry[field] = value;
-        setExercises(newExercises);
-    };
-
-    const handleSubmit = async (index) => {
-        const exercise = exercises[index];
-        const entryData = exercise.newEntry;
-
-        // Call your API endpoint to save the entry
-        const response = await fetch(`http://localhost:8000/fitConnect/exercise_in_plan/${plan.plan_id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                exercise_id: exercise.id,
-                reps: entryData.reps,
-                weight: entryData.weight,
-                duration: entryData.duration
-            })
-        });
-
-        if (response.ok) {
-            console.log("Entry added successfully");
-            toggleEditMode(index);
-            setEntriesSubmitted(true);
-        } else {
-            console.error("Failed to add entry");
-        }
-    };
-
-    const handleTitleSubmit = () => {
-        console.log("Entries submitted");
-        setEntriesSubmitted(true);
-        setNewEntries({});
-    };
 
     return (
         <Fragment>
@@ -160,77 +142,63 @@ const UpdateWorkoutPlan = (props) => {
                         </TableBody>
                     </Table>
                 </Paper>
-                {exercises.map((exercise, index) => (
-                    <div key={index}>
-                        <Paper className={classes.Paper}>
-                            <Toolbar className={classes.toolbar}>
-                                <Typography variant="h6">{exercise.exercise.name}</Typography>
-                                {Object.keys(newEntries).length > 0 && !entriesSubmitted && (
-                                    <Button variant="contained" color="primary" onClick={handleTitleSubmit}>
-                                        Submit Entries
-                                    </Button>
-                                )}
-                                {!exercise.editMode && !entriesSubmitted && (
-                                    <IconButton color="primary" onClick={() => handleAddEntry(index)}>
-                                        <AddCircleOutlineIcon />
-                                        <Typography variant="subtitle2">Add Entry</Typography>
-                                    </IconButton>
-                                )}
-                            </Toolbar>
-                            <TableContainer>
-                                <Table aria-label="exercise table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Set</TableCell>
-                                            <TableCell>Reps</TableCell>
-                                            <TableCell>Weight</TableCell>
-                                            <TableCell>Duration (Min)</TableCell>
-                                            <TableCell></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {/* Display existing entries here */}
-                                        <TableRow>
-                                            {/* Add input fields with "/" for new entry */}
-                                            <TableCell>1</TableCell>
-                                            <TableCell>
-                                                <TextField
-                                                    className={classes.narrowTextField}
-                                                    value={exercise.newEntry.reps}
-                                                    type="number"
-                                                    onChange={(e) => handleEntryChange(index, 'reps', e.target.value)}
-                                                    size="small"
-                                                /> / {exercise.reps}
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextField
-                                                    className={classes.narrowTextField}
-                                                    value={exercise.newEntry.weight}
-                                                    type="number"
-                                                    onChange={(e) => handleEntryChange(index, 'weight', e.target.value)}
-                                                    size="small"
-                                                /> / {exercise.weight}
-                                            </TableCell>
-                                            <TableCell>
-                                                <TextField
-                                                    className={classes.narrowTextField}
-                                                    value={exercise.newEntry.duration}
-                                                    type="number"
-                                                    onChange={(e) => handleEntryChange(index, 'duration', e.target.value)}
-                                                    size="small"
-                                                /> / {exercise.duration_minutes}
-                                            </TableCell>
-                                            <TableCell>
-                                                <IconButton onClick={() => handleSubmit(index)}>
-                                                    {exercise.editMode ? <CheckIcon /> : <EditIcon />}
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Paper>
-                    </div>
+                {plan.exercises.map((exercise, exerciseIndex) => (
+                    <Paper key={exerciseIndex} className={classes.Paper}>
+                        <Toolbar className={classes.toolbar}>
+                            <Typography variant="h6">{exercise.exercise.name}</Typography>
+                            <Button onClick={() => submitExerciseEntries(exerciseIndex, exercise.exercise_in_plan_id)} color="primary">Submit Entries</Button>
+                            <IconButton onClick={() => addExerciseEntry(exerciseIndex)}>
+                                <AddCircleOutlineIcon />
+                                <Typography variant="subtitle2">Add Entry</Typography>
+                            </IconButton>
+                        </Toolbar>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Set</TableCell>
+                                    <TableCell>Reps</TableCell>
+                                    <TableCell>Weight</TableCell>
+                                    <TableCell>Duration (mins)</TableCell>
+                                    <TableCell></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {exerciseEntries[exerciseIndex].map((entry, entryIndex) => (
+                                    <TableRow key={entryIndex}>
+                                        <TableCell>{entry.set}</TableCell>
+                                        <TableCell>
+                                            <TextField
+                                                type="number"
+                                                value={entry.reps}
+                                                onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'reps', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextField
+                                                type="number"
+                                                value={entry.weight}
+                                                onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'weight', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextField
+                                                type="number"
+                                                value={entry.duration}
+                                                onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'duration', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                        <IconButton
+                                            onClick={() => deleteExerciseEntry(exerciseIndex, entryIndex)}
+                                            aria-label="Delete entry">
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </Paper>
                 ))}
             </div>
         </Fragment>

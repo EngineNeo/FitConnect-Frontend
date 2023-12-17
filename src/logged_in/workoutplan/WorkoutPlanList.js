@@ -23,8 +23,6 @@ const styles = {
 const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysPlan }) => {
     const [todaysPlan, setTodaysPlan] = useState(null);
 
-    console.log(todaysPlan)
-
     const handleListItemClick = (plan) => {
         console.log(plan)
         onSelectPlan(plan);
