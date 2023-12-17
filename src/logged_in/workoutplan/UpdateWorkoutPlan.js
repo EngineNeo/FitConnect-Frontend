@@ -55,8 +55,6 @@ const UpdateWorkoutPlan = (props) => {
         newEntry: { reps: '', weight: '', duration: '' }
     })));
 
-    console.log(plan)
-
     if (!plan || !plan.exercises || plan.exercises.length === 0) {
         return <div className={classes.container}>No exercises found for this plan.</div>;
     }
