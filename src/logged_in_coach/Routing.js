@@ -59,13 +59,13 @@ function Routing(props) {
         <PropsRoute
           path="/c/my-requests"
           user_id={storedUserId}
-          component={MyClients}
+          component={MyRequests}
           selectDashboard={selectDashboard}
         />
         <PropsRoute
           path="/c/my-clients"
           user_id={storedUserId}
-          component={MyRequests}
+          component={MyClients}
           selectDashboard={selectDashboard}
         />
       </Switch>
