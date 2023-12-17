@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { List, ListItem, TextField, Button } from "@mui/material";
 
-const MessageHistory = ({ history, onBack, senderId, recipientId }) => {
+const MessageHistory = ({ history, setHistory, onBack, senderId, recipientId }) => {
     const [newMessage, setNewMessage] = useState('');
 
     const handleSendMessage = () => {
+        console.log("Sender ID:", senderId, "Recipient ID:", recipientId, "Message:", newMessage);
+        if(newMessage.trim() === "") {
+            console.error('Empty message cannot be sent');
+            return;
+        }
+        
         fetch('http://localhost:8000/fitConnect/create_message/', {
             method: 'POST',
             headers: {
@@ -19,8 +25,17 @@ const MessageHistory = ({ history, onBack, senderId, recipientId }) => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Message sent:', data);
-            setNewMessage('');
+            if(data.status === 'success') {
+                // Add new message to the history state and clear the input field
+                const updatedHistory = [
+                    ...history,
+                    { sender: senderId, text: newMessage } // Make sure sender ID is a string if history expects it as such
+                ];
+                setHistory(updatedHistory);
+                setNewMessage('');
+            } else {
+                console.error('Error sending message:', data);
+            }
         })
         .catch(error => console.error('Error sending message:', error));
     };
@@ -51,6 +66,7 @@ const MessageHistory = ({ history, onBack, senderId, recipientId }) => {
 
 MessageHistory.propTypes = {
     history: PropTypes.array.isRequired,
+    setHistory: PropTypes.func.isRequired,
     onBack: PropTypes.func.isRequired, 
     senderId: PropTypes.number.isRequired,
     recipientId: PropTypes.number.isRequired,

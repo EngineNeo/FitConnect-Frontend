@@ -39,20 +39,22 @@ const styles = (theme) => ({
 });
 
 function MessagePopperButton(props) {
-  const { classes, senderId } = props;
+  const { classes } = props;
   const anchorEl = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messageHistory, setMessageHistory] = useState([]);
   const [users, setUsers] = useState([]);
+  const senderId = localStorage.getItem('user_id');
 
   useEffect(() => {
-    fetch('http://localhost:8000/your_backend_endpoint_for_users/') // Replace with your backend endpoint
+    console.log("Sender ID:", senderId);
+    fetch(`http://localhost:8000/fitConnect/contactHistory/${senderId}/`)
         .then(response => response.json())
         .then(data => setUsers(data)) // Assuming the response is an array of users
         .catch(error => console.error('Error fetching users:', error));
 }, []);
-
+console.log("Users:", users)
   const handleUserSelect = (userId) => {
     fetch(`http://localhost:8000/fitConnect/get_messages/${senderId}/${userId}/`)
         .then(response => response.json())
@@ -115,7 +117,7 @@ function MessagePopperButton(props) {
         <List dense className={classes.tabContainer}>
           {selectedUser === null ? (
             users.map((user) => (
-              <ListItem key={user.id} button onClick={() => handleUserSelect(user.id)}>
+              <ListItem key={user.user_id} button onClick={() => handleUserSelect(user.user_id)}>
                 <ListItemText primary={user.name} />
               </ListItem>
             ))
