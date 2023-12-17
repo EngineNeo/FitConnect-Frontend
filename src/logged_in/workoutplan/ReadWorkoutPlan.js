@@ -31,22 +31,30 @@ const styles = theme => ({
 
 const ReadWorkoutPlan = ({ plan, classes }) => {
     const [showLogs, setShowLogs] = useState(false);
-    const [items, setItems] = useState([]); // State to store fetched data
-    const userId = localStorage.getItem('user_id'); // Retrieve user ID
+    const [items, setItems] = useState([]);
+    const userId = localStorage.getItem('user_id');
+
 
     useEffect(() => {
-        const fetchWorkoutPlans = async () => {
+        setShowLogs(false);
+
+        const fetchWorkoutLogs = async () => {
             try {
                 const response = await fetch(`http://localhost:8000/fitConnect/view_workout_logs/${userId}`);
                 const data = await response.json();
-                setItems(data);
+
+                // Filter logs that match the selected plan's name
+                const filteredLogs = data.filter(log => log.plan === plan.plan_name);
+                setItems(filteredLogs);
             } catch (error) {
-                console.error('Error fetching workout plans:', error);
+                console.error('Error fetching workout logs:', error);
             }
         };
 
-        fetchWorkoutPlans();
-    }, [userId]);
+        if (plan) {
+            fetchWorkoutLogs();
+        }
+    }, [userId, plan]);
 
     const handleToggleLogs = () => {
         setShowLogs(!showLogs);
