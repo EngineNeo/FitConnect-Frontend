@@ -21,9 +21,12 @@ const AdminDashboard = () => {
       .then(data => setCoachRequests(data))
       .catch(error => console.error('Error fetching coach requests:', error));
 
-      fetch('http://localhost:8000/fitConnect/edit_exercise_bank')
+    fetch('http://localhost:8000/fitConnect/exercises')
       .then(response => response.json())
-      .then(data => setExerciseBank(data))
+      .then(data => {
+        console.log("Fetched exercises:", data);
+        setExerciseBank(data);
+      })
       .catch(error => console.error('Error fetching exercises:', error));
   }, []);
 
@@ -61,6 +64,7 @@ const AdminDashboard = () => {
   };
 
   const handleRemoveExercise = (exerciseId) => {
+    console.log('Attempting to remove exercise with ID:', exerciseId);
     fetch('http://localhost:8000/fitConnect/edit_exercise_bank', {
       method: 'PUT',
       headers: {
