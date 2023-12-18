@@ -1,8 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import {
     Paper, Table, TableBody, TableCell,
     TableHead, TableRow, IconButton, Toolbar, 
-    Typography, TextField, Button
+    Typography, TextField, Button, Alert
 } from '@mui/material';
 import { withRouter } from "react-router-dom";
 import { withStyles } from '@mui/styles';
@@ -59,6 +59,7 @@ const UpdateWorkoutPlan = (props) => {
     const [exerciseEntries, setExerciseEntries] = useState(() =>
         plan.exercises.map(() => [])
     );
+		const [recentLogs, setRecentLogs] = useState([]);
 
     const addExerciseEntry = (exerciseIndex) => {
         const newEntries = [...exerciseEntries];
@@ -108,12 +109,43 @@ const UpdateWorkoutPlan = (props) => {
         }
     };
 
+    const fetchAndCheckWorkoutLogs = async () => {
+        const userId = localStorage.getItem('user_id');
+
+        try {
+            const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${userId}`);
+            setRecentLogs(response.data.logs || []);
+        } catch (error) {
+            console.error('Error fetching workout logs:', error);
+        }
+    };
+
+	const getIncompleteExercises = () => {
+		const currentDate = new Date().toISOString().split('T')[0];
+		return plan.exercises.filter(exercise =>
+			!recentLogs.some(log => log.exercise === exercise.exercise.name && log.completed_date === currentDate)
+		).map(exercise => exercise.exercise.name);
+	};
+
+    useEffect(() => {
+        fetchAndCheckWorkoutLogs();
+    }, []);
+
+	const incompleteExercises = getIncompleteExercises();
+
     if (!plan || !plan.exercises || plan.exercises.length === 0) {
         return <div className={classes.container}>No exercises found for this plan.</div>;
     }
 
     return (
         <Fragment>
+				{incompleteExercises.length === 0 ? (
+					<Alert severity="success">Great job! You have completed your entire workout plan for today.</Alert>
+				) : (
+					<Alert severity="warning">
+						You still need to complete the following exercises today: {incompleteExercises.join(', ')}.
+					</Alert>
+				)}
             <div className={classes.container}>
                 <Paper className={classes.Paper}>
                     <Toolbar className={classes.toolbar}>
@@ -186,6 +218,7 @@ const UpdateWorkoutPlan = (props) => {
                                                     <TextField
                                                         type="number"
                                                         value={entry.reps}
+																												variant="standard"
                                                         onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'reps', e.target.value)}
                                                         className={classes.narrowTextField}
                                                     />
@@ -201,6 +234,7 @@ const UpdateWorkoutPlan = (props) => {
                                                     <TextField
                                                         type="number"
                                                         value={entry.weight}
+																												variant="standard"
                                                         onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'weight', e.target.value)}
                                                         className={classes.narrowTextField}
                                                     />
@@ -216,6 +250,7 @@ const UpdateWorkoutPlan = (props) => {
                                                     <TextField
                                                         type="number"
                                                         value={entry.duration}
+																												variant="standard"
                                                         onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'duration', e.target.value)}
                                                         className={classes.narrowTextField}
                                                     />
