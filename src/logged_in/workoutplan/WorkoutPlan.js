@@ -7,6 +7,7 @@ import withStyles from '@mui/styles/withStyles';
 import WorkoutPlanList from "./WorkoutPlanList";
 import ReadWorkoutPlan from "./ReadWorkoutPlan";
 import UpdateWorkoutPlan from "./UpdateWorkoutPlan";
+import EditWorkoutPlan from "./EditWorkoutPlan";
 import CreateWorkoutPlan from "./CreateWorkoutPlan";
 
 const styles = (theme) => ({
@@ -66,9 +67,20 @@ function WorkoutPlan(props) {
     fetchWorkoutPlans();
   };
 
+  const handleEditPlan = (plan) => {
+    setViewMode('viewingPlan');
+    fetchWorkoutPlans();
+  };
+
+  const handleCancel = (plan) => {
+    setSelectedPlan(plan);
+    setViewMode('viewingPlan')
+  }
+
   // Initialize selectedPlan and viewMode based on today's plan
   useEffect(() => {
     const savedTodaysPlan = localStorage.getItem('todaysPlan');
+    console.log(savedTodaysPlan)
     if (savedTodaysPlan) {
       setSelectedPlan(JSON.parse(savedTodaysPlan));
       setViewMode('updatingPlan');
@@ -88,11 +100,13 @@ function WorkoutPlan(props) {
             onSelectTodaysPlan={handleSelectTodaysPlan}
           />
         </Grid>
+        
         <Divider orientation="vertical" flexItem className={classes.fullHeight} />
         <Grid item xs className={classes.fullHeight}>
           {viewMode === 'creatingPlan' && <CreateWorkoutPlan onSave={handleSaveNewPlan} />}
           {viewMode === 'updatingPlan' && <UpdateWorkoutPlan plan={selectedPlan} />}
-          {viewMode === 'viewingPlan' && <ReadWorkoutPlan plan={selectedPlan} />}
+          {viewMode === 'editingPlan' && <EditWorkoutPlan plan={selectedPlan} onSave={handleEditPlan} onCancel={handleCancel} />}
+          {viewMode === 'viewingPlan' && <ReadWorkoutPlan plan={selectedPlan} editHandler={()=> setViewMode('editingPlan')} />}
         </Grid>
       </Grid>
     </Fragment>

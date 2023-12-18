@@ -42,9 +42,15 @@ const styles = theme => ({
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
     },
+    flexContainer: {
+        display: 'flex',
+        alignItems: 'baseline',
+        justifyContent: 'space-between',
+    }
 });
 
-const ReadWorkoutPlan = ({ plan, classes }) => {
+
+const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
     const [showLogs, setShowLogs] = useState(false);
     const [items, setItems] = useState([]);
     const userId = localStorage.getItem('user_id');
@@ -119,15 +125,93 @@ const ReadWorkoutPlan = ({ plan, classes }) => {
         ));
     };
 
-    if (!plan || !plan.exercises || plan.exercises.length === 0) {
-        return <div className={classes.container}>No exercises found for this plan.</div>;
+    if (!plan) {
+        return <div className={classes.container}>
+        <div>
+            <p>Select a workout plan.</p>
+        </div>
+    </div>
     }
+    if (!plan.exercises || plan.exercises.length === 0) {
+        return <div className={classes.container}>
+        <div>
+            <p>No exercises found for {plan.plan_name}.</p>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={editHandler}
+                style={{ marginTop: '10px' }}
+            >
+                Edit Plan
+            </Button>
+        </div>
+    </div>
+    }
+    
+    const todaysPlan = localStorage.getItem('todaysPlan');
+    if (todaysPlan && plan === todaysPlan.plan_id) {
+        console.log("Plans are matched")
+        return <div className={classes.container}>
+            <div className={classes.container}>
+            <Paper className={classes.Paper}>
+                <Toolbar className={classes.toolbar}>
+                    <Typography variant="h4">{plan.plan_name}</Typography>
+                </Toolbar>
+                <Table className={classes.table}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Exercise Name</TableCell>
+                            <TableCell>Sets</TableCell>
+                            <TableCell>Reps</TableCell>
+                            <TableCell>Weight</TableCell>
+                            <TableCell>Duration (mins)</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {plan.exercises.map((exercise, index) => (
+                            <TableRow key={index}>
+                                <TableCell>
+                                    <div className={classes.toolbar}>
+                                        <Typography variant="subtitle1">{exercise.exercise.name}</Typography>
+                                    </div>
+                                </TableCell>
+                                <TableCell>{exercise.sets}</TableCell>
+                                <TableCell>{exercise.reps}</TableCell>
+                                <TableCell>{exercise.weight}</TableCell>
+                                <TableCell>{exercise.duration_minutes}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </Paper>
+
+            <Button onClick={handleToggleLogs} className={classes.viewLogsButton}>
+                {showLogs ? 'Hide Logs' : 'View Logs'}
+            </Button>
+
+            {showLogs && (
+                <div>
+                    {renderWorkoutLogTables()}
+                </div>
+            )}
+        </div>
+        </div>
+    }
+    
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
                 <Toolbar className={classes.toolbar}>
                     <Typography variant="h4">{plan.plan_name}</Typography>
                 </Toolbar>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={editHandler}
+                        style={{ marginTop: '10px' }}
+                    >
+                        Edit Plan
+                    </Button>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
