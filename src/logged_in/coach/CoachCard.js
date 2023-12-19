@@ -56,6 +56,7 @@ const CoachCards = ({ coach }) => {
 
             if (response.ok) {
                 console.log("Requested coach successfully");
+                localStorage.setItem('hired_coach', coachId);
                 setSnackbarOpen(true);
             } else {
                 const errorData = await response.json();
