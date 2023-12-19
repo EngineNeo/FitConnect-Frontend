@@ -115,6 +115,7 @@ const UpdateWorkoutPlan = (props) => {
         try {
             const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${userId}`);
             setRecentLogs(response.data.logs || []);
+			console.log(response.data)
         } catch (error) {
             console.error('Error fetching workout logs:', error);
         }
@@ -183,104 +184,122 @@ const UpdateWorkoutPlan = (props) => {
                         </TableBody>
                     </Table>
                 </Paper>
-                {plan.exercises.map((exercise, exerciseIndex) => (
-                    <Paper key={exerciseIndex} className={classes.Paper}>
-                        <Toolbar className={classes.toolbar}>
-                            <Typography variant="h6">{exercise.exercise.name}</Typography>
-                            <Button onClick={() => submitExerciseEntries(exerciseIndex, exercise.exercise_in_plan_id)} color="primary">Submit Entries</Button>
-                            <IconButton onClick={() => addExerciseEntry(exerciseIndex)}>
-                                <AddCircleOutlineIcon />
-                                <Typography variant="subtitle2">Add Entry</Typography>
-                            </IconButton>
-                        </Toolbar>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Set</TableCell>
-                                    <TableCell>Reps</TableCell>
-                                    <TableCell>Weight</TableCell>
-                                    <TableCell>Duration (mins)</TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {exerciseEntries[exerciseIndex].map((entry, entryIndex) => {
-                                    entry.reps = exercise.reps;
-                                    entry.weight = exercise.weight;
-                                    entry.duration = exercise.duration_minutes;
+				{plan.exercises.map((exercise, exerciseIndex) => {
+					const completedExercise = recentLogs.find(log => log.exercise === exercise.exercise.name);
 
-                                    return (
-                                        <TableRow key={entryIndex}>
-                                            <TableCell>
-                                                <div className={classes.horizontalFlexContainer}>
-                                                    <Typography variant="subtitle1">
-                                                        {entry.set}{' / '}{exercise.sets}
-                                                    </Typography>
-                                                </div>    
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className={classes.horizontalFlexContainer}>
-                                                    <TextField
-                                                        type="number"
-                                                        value={entry.reps}
-																												variant="standard"
-                                                        onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'reps', e.target.value)}
-                                                        className={classes.narrowTextField}
-                                                    />
-                                                    <Typography
-                                                        variant="subtitle1"
-                                                    >
-                                                        / {exercise.reps}
-                                                    </Typography>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className={classes.horizontalFlexContainer}>
-                                                    <TextField
-                                                        type="number"
-                                                        value={entry.weight}
-																												variant="standard"
-                                                        onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'weight', e.target.value)}
-                                                        className={classes.narrowTextField}
-                                                    />
-                                                    <Typography
-                                                        variant="subtitle1"
-                                                    >
-                                                        / {exercise.weight}
-                                                    </Typography>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className={classes.horizontalFlexContainer}>
-                                                    <TextField
-                                                        type="number"
-                                                        value={entry.duration}
-																												variant="standard"
-                                                        onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'duration', e.target.value)}
-                                                        className={classes.narrowTextField}
-                                                    />
-                                                    <Typography
-                                                        variant="subtitle1"
-                                                    >
-                                                        / {exercise.duration_minutes}
-                                                    </Typography>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <IconButton
-                                                    onClick={() => deleteExerciseEntry(exerciseIndex, entryIndex)}
-                                                    aria-label="Delete entry"
-                                                >
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </Paper>
-                ))}
+					return (
+						<Paper key={exerciseIndex} className={classes.Paper}>
+							<Toolbar className={classes.toolbar}>
+								{!completedExercise && (
+									<>
+										<Button onClick={() => submitExerciseEntries(exerciseIndex, exercise.exercise_in_plan_id)} color="primary">Submit Entries</Button>
+										<IconButton onClick={() => addExerciseEntry(exerciseIndex)}>
+											<AddCircleOutlineIcon />
+											<Typography variant="subtitle2">Add Entry</Typography>
+										</IconButton>
+									</>
+								)}
+							</Toolbar>
+							<Table>
+								<TableHead>
+									<TableRow>
+										<TableCell>Set</TableCell>
+										<TableCell>Reps</TableCell>
+										<TableCell>Weight</TableCell>
+										<TableCell>Duration (mins)</TableCell>
+										{!completedExercise && (
+										<TableCell></TableCell>
+										)}
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{completedExercise ? (
+										<TableRow>
+											<TableCell>{completedExercise.set}</TableCell>
+											<TableCell>{completedExercise.reps}</TableCell>
+											<TableCell>{completedExercise.weight}</TableCell>
+											<TableCell>{completedExercise.duration_minutes}</TableCell>
+										</TableRow>
+									) : (
+										exerciseEntries[exerciseIndex].map((entry, entryIndex) => {
+											entry.reps = exercise.reps;
+											entry.weight = exercise.weight;
+											entry.duration = exercise.duration_minutes;
+
+											return (
+											<TableRow key={entryIndex}>
+												<TableCell>
+													<div className={classes.horizontalFlexContainer}>
+														<Typography variant="subtitle1">
+															{entry.set}{' / '}{exercise.sets}
+														</Typography>
+													</div>    
+												</TableCell>
+												<TableCell>
+													<div className={classes.horizontalFlexContainer}>
+														<TextField
+															type="number"
+															value={entry.reps}
+															variant="standard"
+															onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'reps', e.target.value)}
+															className={classes.narrowTextField}
+														/>
+														<Typography
+															variant="subtitle1"
+														>
+															/ {exercise.reps}
+														</Typography>
+													</div>
+												</TableCell>
+												<TableCell>
+													<div className={classes.horizontalFlexContainer}>
+														<TextField
+															type="number"
+															value={entry.weight}
+															variant="standard"
+															onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'weight', e.target.value)}
+															className={classes.narrowTextField}
+														/>
+														<Typography
+															variant="subtitle1"
+														>
+															/ {exercise.weight}
+														</Typography>
+													</div>
+												</TableCell>
+												<TableCell>
+													<div className={classes.horizontalFlexContainer}>
+														<TextField
+															type="number"
+															value={entry.duration}
+															variant="standard"
+															onChange={(e) => handleFieldChange(exerciseIndex, entryIndex, 'duration', e.target.value)}
+															className={classes.narrowTextField}
+														/>
+														<Typography
+															variant="subtitle1"
+														>
+															/ {exercise.duration_minutes}
+														</Typography>
+													</div>
+												</TableCell>
+												<TableCell>
+													<IconButton
+														onClick={() => deleteExerciseEntry(exerciseIndex, entryIndex)}
+														aria-label="Delete entry"
+													>
+														<DeleteIcon />
+													</IconButton>
+												</TableCell>
+											</TableRow>
+											);
+										})
+									)}
+								</TableBody>
+							</Table>
+						</Paper>
+					);
+				})}
             </div>
         </Fragment>
     );
