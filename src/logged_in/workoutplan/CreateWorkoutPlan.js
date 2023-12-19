@@ -5,7 +5,7 @@ import { TextField, Button, Typography, Table, TableBody,
 import { withStyles } from '@mui/styles';
 import ExerciseBank from '../../shared/components/ExerciseBank';
 import axios from 'axios';
-import { fetchServerDate } from '../../shared/components/ServerDate';
+import useServerDate from '../../shared/functions/userServerDate';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
@@ -48,6 +48,7 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
         message: '',
         severity: 'info',
     });
+    const serverDate = useServerDate();
 
     const handleAddExercise = exercise => {
         setExercises([...exercises, { ...exercise, editMode: true }]);
@@ -79,14 +80,6 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
     };
 
     const handleSave = async () => {
-        const serverDate = fetchServerDate(); 
-
-        console.log("Server date:", serverDate);
-
-        if (!serverDate) {
-            console.error('Failed to fetch server date');
-            return;
-        }
 
         const workoutPlanData = {
             user: userId,
@@ -102,7 +95,7 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
         };
 
         try {
-            const response = await axios.post('http://localhost:8000/fitConnect/create_workout_plan', workoutPlanData);
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/create_workout_plan`, workoutPlanData);
             if (response.data.status === 'success') {
                 onSave(response.data.newPlan);
                 setSnackbar({ open: true, message: 'Workout plan saved successfully!', severity: 'success' });

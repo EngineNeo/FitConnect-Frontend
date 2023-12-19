@@ -47,7 +47,7 @@ const ViewCoach = ({ classes, coach, onCoachFired }) => {
     const handleFireCoach = async () => {
         const userId = localStorage.getItem('user_id');
         try {
-            const response = await fetch(`http://localhost:8000/fitConnect/fireCoach/${userId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/fireCoach/${userId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'

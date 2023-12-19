@@ -106,7 +106,7 @@ const EditWorkoutPlan = (props) => {
         
 
         try {
-            const response = await axios.put(`http://localhost:8000/fitConnect/exercise_in_plan/${exercises[0].plan_id}`, workoutPlanData);
+            const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}fitConnect/exercise_in_plan/${exercises[0].plan_id}`, workoutPlanData);
             if (response.status === 200) {
                 onSave();
                 setSnackbar({ open: true, message: 'Workout plan edit successfully!', severity: 'success' });

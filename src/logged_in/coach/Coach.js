@@ -21,7 +21,7 @@ function Coach(props) {
       if (!hiredCoachId) return;
 
       try {
-        const response = await fetch(`http://localhost:8000/fitConnect/coaches/${hiredCoachId}/clients`);
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/coaches/${hiredCoachId}/clients`);
         if (!response.ok) throw new Error('Failed to fetch coach clients');
 
         const clients = await response.json();
@@ -40,7 +40,7 @@ function Coach(props) {
 
     const fetchCoachDetails = async (coachId) => {
       try {
-        const coachResponse = await fetch(`http://localhost:8000/fitConnect/coaches/${coachId}`);
+        const coachResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/coaches/${coachId}`);
         if (!coachResponse.ok) throw new Error('Failed to fetch coach details');
 
         const coachDetails = await coachResponse.json();

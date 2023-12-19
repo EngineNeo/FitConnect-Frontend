@@ -7,6 +7,7 @@ import {
 import { withRouter } from "react-router-dom";
 import { withStyles } from '@mui/styles';
 import axios from 'axios';
+import useServerDate from '../../shared/functions/userServerDate';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -68,6 +69,8 @@ const UpdateWorkoutPlan = (props) => {
 	const [recentLogs, setRecentLogs] = useState([]);
 	const todaysPlanDate = localStorage.getItem('todaysPlanDate');
 
+	const serverDate = useServerDate();
+
     const addExerciseEntry = (exerciseIndex) => {
         const newEntries = [...exerciseEntries];
         newEntries[exerciseIndex].push({ set: newEntries[exerciseIndex].length + 1, reps: '', weight: '', duration: '' });
@@ -88,7 +91,6 @@ const UpdateWorkoutPlan = (props) => {
 
 	const submitExerciseEntries = async (exerciseIndex, exerciseId) => {
 		const userId = localStorage.getItem('user_id');
-		const currentDate = new Date().toISOString().split('T')[0];
 
 		try {
 			const responses = await Promise.all(
@@ -99,10 +101,10 @@ const UpdateWorkoutPlan = (props) => {
 						reps: entry.reps,
 						weight: entry.weight,
 						duration_minutes: entry.duration,
-						completed_date: currentDate,
+						completed_date: serverDate,
 					};
 
-					return axios.post('http://localhost:8000/fitConnect/create_workout_log/', postData, {
+					return axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/create_workout_log/`, postData, {
 						headers: {
 							'Content-Type': 'application/json',
 						},
@@ -124,7 +126,7 @@ const UpdateWorkoutPlan = (props) => {
         const userId = localStorage.getItem('user_id');
 
         try {
-            const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${userId}`);
+            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/mostRecentWorkoutPlanView/${userId}`);
             setRecentLogs(response.data.logs || []);
         } catch (error) {
             console.error('Error fetching workout logs:', error);
@@ -132,11 +134,10 @@ const UpdateWorkoutPlan = (props) => {
     };
 
     const getIncompleteExercises = () => {
-        const currentDate = new Date().toISOString().split('T')[0];
 
         if (plan && Array.isArray(plan.exercises)) {
             return plan.exercises.filter(exercise =>
-                !recentLogs.some(log => log.exercise === exercise.exercise.name && log.completed_date === currentDate)
+                !recentLogs.some(log => log.exercise === exercise.exercise.name && log.completed_date === serverDate)
             ).map(exercise => exercise.exercise.name);
         }
 

@@ -6,6 +6,7 @@ import { Typography, Alert, Button, Table, TableBody, TableCell, TableHead, Tabl
 import DailySurveyDialog from '../dailysurvey/DailySurveyDialog';
 import { withRouter } from "react-router-dom";
 import { withStyles } from '@mui/styles';
+import useServerDate from '../../shared/functions/userServerDate';
 
 const styles = (theme) => ({
   dateSection: {
@@ -46,6 +47,8 @@ function Dashboard(props) {
   const [showSurveyAlert, setShowSurveyAlert] = useState(false);
   const [showSurveyDialog, setShowSurveyDialog] = useState(false);
   const [workoutLogs, setWorkoutLogs] = useState([]);
+  
+  const serverDate = useServerDate();
 
   // Handlers to open and close daily survey
   const openSurveyDialog = () => {
@@ -68,7 +71,7 @@ function Dashboard(props) {
     if (!user_id) return;
 
     try {
-      const response = await axios.get(`http://localhost:8000/fitConnect/daily_survey/${user_id}/`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/daily_survey/${user_id}/`);
       processResponseData(response.data);
       checkForTodaysSurvey(response.data);
     } catch (error) {
@@ -80,7 +83,7 @@ function Dashboard(props) {
     if (!user_id) return;
 
     try {
-      const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${user_id}/`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/mostRecentWorkoutPlanView/${user_id}/`);
       setWorkoutLogs(response.data.logs);
     } catch (error) {
       console.error('Error fetching workout logs:', error);
@@ -88,8 +91,7 @@ function Dashboard(props) {
   };
 
   const checkForTodaysSurvey = (data) => {
-    const today = new Date().toISOString().split('T')[0];
-    const hasTodaySurvey = data.some(entry => entry.recorded_date === today);
+    const hasTodaySurvey = data.some(entry => entry.recorded_date === serverDate);
     setShowSurveyAlert(!hasTodaySurvey);
   };
 

@@ -4,6 +4,32 @@ import MoodBadIcon from '@mui/icons-material/MoodBad';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import MoodIcon from '@mui/icons-material/Mood';
 import axios from 'axios';
+import useServerDate from '../../shared/functions/userServerDate';
+
+const styles = {
+    dialogBox: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2
+    },
+    moodButton: {
+        aspectRatio: '1 / 1',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100px',
+        height: '100px',
+        border: (theme) => `1px solid ${theme.palette.divider}`,
+        borderRadius: 1,
+        '&.selected': {
+            backgroundColor: (theme) => theme.palette.action.selected,
+        }
+    },
+    textField: {
+        marginBottom: 2,
+    }
+};
 
 const DailySurveyDialog = ({ userId, open, onClose, onUpdate }) => {
     const [surveyData, setSurveyData] = useState({
@@ -13,30 +39,7 @@ const DailySurveyDialog = ({ userId, open, onClose, onUpdate }) => {
         weight: ''
     });
 
-    const styles = {
-        dialogBox: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2
-        },
-        moodButton: {
-            aspectRatio: '1 / 1',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100px',
-            height: '100px',
-            border: (theme) => `1px solid ${theme.palette.divider}`,
-            borderRadius: 1,
-            '&.selected': {
-                backgroundColor: (theme) => theme.palette.action.selected,
-            }
-        },
-        textField: {
-            marginBottom: 2,
-        }
-    };
+    const serverDate = useServerDate();
 
     const handleInputChange = (e) => {
         setSurveyData({ ...surveyData, [e.target.name]: e.target.value });
@@ -47,12 +50,11 @@ const DailySurveyDialog = ({ userId, open, onClose, onUpdate }) => {
     };
 
     const handleSubmit = async () => {
-        const currentDate = new Date().toISOString().split('T')[0];
 
         try {
-            const response = await axios.post(`http://localhost:8000/fitConnect/daily_survey/${userId}/`, {
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/daily_survey/${userId}/`, {
                 ...surveyData,
-                recorded_date: currentDate
+                recorded_date: serverDate
             });
             console.log(response.data);
             onClose();

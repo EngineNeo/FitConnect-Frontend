@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { List, ListItem, Divider, Typography, Paper, Button } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import useServerDate from '../../shared/functions/userServerDate';
 
 const styles = {
     Paper: {
@@ -22,6 +23,8 @@ const styles = {
 
 const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysPlan }) => {
     const [todaysPlan, setTodaysPlan] = useState(null);
+
+    const serverDate = useServerDate();
 
     const handleListItemClick = (plan) => {
         onSelectPlan(plan);
@@ -44,26 +47,19 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
         }
     };
 
-    const getTodayDateString = () => {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
-    };
-
     useEffect(() => {
         const savedTodaysPlan = localStorage.getItem('todaysPlan');
         const savedDate = localStorage.getItem('todaysPlanDate');
-        const todayDate = getTodayDateString();
 
-        if (savedTodaysPlan && savedDate === todayDate) {
+        if (savedTodaysPlan && savedDate === serverDate) {
             setTodaysPlan(JSON.parse(savedTodaysPlan));
         }
     }, []);
 
     useEffect(() => {
         if (todaysPlan) {
-            const todayDate = getTodayDateString();
             localStorage.setItem('todaysPlan', JSON.stringify(todaysPlan));
-            localStorage.setItem('todaysPlanDate', todayDate);
+            localStorage.setItem('todaysPlanDate', serverDate);
         }
     }, [todaysPlan]);
 
