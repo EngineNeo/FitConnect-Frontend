@@ -1,13 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, CardActionArea, CardMedia, Typography, Button, Modal, Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-
-//mock
-const mockClients = [
-  { id: 1, name: "John Doe", age: 30, goal: "Weight Loss", plan: "Chest Day" },
-  { id: 2, name: "Jane Smith", age: 28, goal: "Muscle Gain", plan: "Arm Day" },
-  { id: 3, name: "Alice Johnson", age: 32, goal: "Endurance Training", plan: "Leg Day" },
-];
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,9 +65,20 @@ function ClientModule() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [clients, setClients] = useState([]);
+  const history = useHistory();
+  const coachId = localStorage.getItem('user_id');
+
+  useEffect(() => {
+    fetch(`http://localhost:8000/fitConnect/coaches/${coachId}/clients`)
+      .then(response => response.json())
+      .then(data => setClients(data))
+      .catch(error => console.error('Error fetching clients:', error));
+  }, [coachId]);
 
   const handleOpen = (client) => {
     setSelectedClient(client);
+    localStorage.setItem('client_id', client.id);
     setOpen(true);
   };
 
@@ -84,7 +89,7 @@ function ClientModule() {
   return (
     <Box className={classes.root}>
       <Grid container spacing={2}>
-        {mockClients.map((client) => (
+        {clients.map((client) => (
           <Grid item xs={12} sm={6} md={4} key={client.id}>
             <Card className={classes.card}>
               <CardActionArea onClick={() => handleOpen(client)}>
