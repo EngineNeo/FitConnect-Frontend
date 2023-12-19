@@ -93,7 +93,6 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
             }))
         };
 
-        console.log(workoutPlanData)
         try {
             const response = await axios.post('http://localhost:8000/fitConnect/create_workout_plan', workoutPlanData);
             if (response.data.status === 'success') {

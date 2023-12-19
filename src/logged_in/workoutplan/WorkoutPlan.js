@@ -93,7 +93,6 @@ function WorkoutPlan(props) {
   // Initialize selectedPlan and viewMode based on today's plan
   useEffect(() => {
     const savedTodaysPlan = localStorage.getItem('todaysPlan');
-    // console.log(savedTodaysPlan)
     if (savedTodaysPlan) {
       setSelectedPlan(JSON.parse(savedTodaysPlan));
       setViewMode('updatingPlan');
