@@ -193,6 +193,8 @@ function NavBar(props) {
           localStorage.clear();
           Cookies.remove('authToken');
           history.push('/login');
+          const logoutEvent = new Event('logout');
+          window.dispatchEvent(logoutEvent);
         } else {
           console.error('Logout failed');
           console.log(response)
