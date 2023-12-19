@@ -594,7 +594,7 @@ function RegisterDialog(props) {
         height: height,
       };
 
-      return fetch('http://localhost:8000/fitConnect/initial_survey', {
+      return fetch('${process.env.REACT_APP_API_BASE_URL}fitConnect/initial_survey', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -623,7 +623,7 @@ function RegisterDialog(props) {
         bio: coachBio,
       };
 
-      fetch('http://localhost:8000/fitConnect/become_coach', {
+      fetch('${process.env.REACT_APP_API_BASE_URL}fitConnect/become_coach', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -647,7 +647,7 @@ function RegisterDialog(props) {
         });
     };
 
-    fetch('http://localhost:8000/fitConnect/create_user', {
+    fetch('${process.env.REACT_APP_API_BASE_URL}fitConnect/create_user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
