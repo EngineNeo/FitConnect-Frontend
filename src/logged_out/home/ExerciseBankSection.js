@@ -51,10 +51,12 @@ function ExerciseBankSection(props) {
       <Typography variant="h3" align="center" className={classNames("lg-mg-bottom", classes.textWhite)}>
         Exercises
       </Typography>
-      <ExerciseBank
-        classes={classes}
-        onExerciseClick={handleExerciseClick}
-      />
+      <div data-aos="fade-down">
+        <ExerciseBank
+          classes={classes}
+          onExerciseClick={handleExerciseClick}
+        />
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Table, TableBody, 
          TableCell, TableHead, TableRow, Toolbar, IconButton, 
          Dialog, Snackbar, Alert, Paper } from '@mui/material';
@@ -36,17 +36,27 @@ const styles = theme => ({
     }
 });
 
-const userId = localStorage.getItem('user_id');
 
-const CreateWorkoutPlan = ({ onSave, classes }) => {
-    const [planTitle, setPlanTitle] = useState('');
-    const [exercises, setExercises] = useState([]);
+const EditWorkoutPlan = (props) => {
+    const { classes, plan, onSave, onCancel } = props;
+
+    const [planTitle, setPlanTitle] = useState(plan.plan_name);
+    const [exercises, setExercises] = useState(plan.exercises);
     const [openExerciseBank, setOpenExerciseBank] = useState(false);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
         severity: 'info',
     });
+
+    useEffect(() => {
+        const editedExercises = plan.exercises.map((item) => {
+            return {...item, duration: item.duration_minutes, name: item.exercise.name, description: item.exercise.description, editMode: false};
+        });
+        setExercises(editedExercises);
+    }, [plan])
+    
+
 
     const handleAddExercise = exercise => {
         setExercises([...exercises, { ...exercise, editMode: true }]);
@@ -58,49 +68,50 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
     };
 
     const handleFieldChange = (index, field, value) => {
-        const updatedExercises = exercises.map((exercise, idx) => {
+        const editedExercises = exercises.map((exercise, idx) => {
             if (idx === index) {
                 return { ...exercise, [field]: value };
             }
             return exercise;
         });
-        setExercises(updatedExercises);
+        setExercises(editedExercises);
+    };
+
+    const handleCancel = () => {
+        onCancel(plan)
     };
 
     const toggleEditMode = (index) => {
-        const updatedExercises = exercises.map((exercise, idx) => {
+        const editedExercises = exercises.map((exercise, idx) => {
             if (idx === index) {
                 return { ...exercise, editMode: !exercise.editMode };
             }
             return exercise;
         });
-        setExercises(updatedExercises);
+        setExercises(editedExercises);
     };
 
     const handleSave = async () => {
-        const formattedDate = new Date().toISOString().split('T')[0];
 
         const workoutPlanData = {
-            user: userId,
-            planName: planTitle,
-            creationDate: formattedDate,
-            exercises: exercises.map(exercise => ({
-                exercise: exercise.exercise_id,
-                sets: exercise.sets,
-                reps: exercise.reps,
-                weight: exercise.weight,
-                durationMinutes: exercise.duration 
-            }))
+                exercise_in_plan_id: exercises[0].exercise_in_plan_id,
+                sets: exercises[0].sets,
+                reps: exercises[0].reps,
+                weight: exercises[0].weight,
+                duration_minutes: parseInt(exercises[0].duration, 10) 
         };
+        // const workoutPlanName = {
+        //     plan_name: planTitle
+        // };
+        
 
-        console.log(workoutPlanData)
         try {
-            const response = await axios.post('http://localhost:8000/fitConnect/create_workout_plan', workoutPlanData);
-            if (response.data.status === 'success') {
-                onSave(response.data.newPlan);
-                setSnackbar({ open: true, message: 'Workout plan saved successfully!', severity: 'success' });
+            const response = await axios.put(`http://localhost:8000/fitConnect/exercise_in_plan/${exercises[0].plan_id}`, workoutPlanData);
+            if (response.status === 200) {
+                onSave();
+                setSnackbar({ open: true, message: 'Workout plan edit successfully!', severity: 'success' });
             } else {
-                setSnackbar({ open: true, message: 'Failed to save workout plan.', severity: 'error' });
+                setSnackbar({ open: true, message: 'Failed to edit workout plan.', severity: 'error' });
             }
         } catch (error) {
             console.error('Error saving workout plan:', error);
@@ -108,11 +119,14 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
         }
     };
 
+    if (!plan || !plan.exercises || plan.exercises.length === 0) {
+        return <div className={classes.container}>No exercises found for this plan.</div>;
+    }
 
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
-                <Typography variant="h6">Create New Workout Plan</Typography>
+                <Typography variant="h6">Edit Workout Plan</Typography>
                 <TextField
                     label="Plan Title"
                     value={planTitle}
@@ -121,7 +135,10 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
                     className={classes.textField}
                 />
                 <Button variant="contained" color="primary" onClick={handleSave} className={classes.button}>
-                    Save Plan
+                    Update Plan
+                </Button>
+                <Button variant="outlined" color="primary" onClick={handleCancel} className={classes.button}>
+                    Cancel
                 </Button>
                 <Toolbar className={classes.toolbar}>
                     <Typography variant="h6">Workout Plan</Typography>
@@ -194,4 +211,4 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
     );
 };
 
-export default withStyles(styles, { withTheme: true })(CreateWorkoutPlan);
+export default withStyles(styles, { withTheme: true })(EditWorkoutPlan);

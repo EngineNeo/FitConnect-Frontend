@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { Typography, Table, TableBody, 
+         TableCell, TableHead, TableRow, 
+         Paper, Button, Toolbar } from '@mui/material';
 import { withStyles } from '@mui/styles';
 
 const styles = theme => ({
     container: {
         padding: theme.spacing(2),
+        [theme.breakpoints.down('sm')]: {
+            padding: theme.spacing(1),
+        },
+    },
+    toolbar: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     table: {
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
     },
+    title: {
+        marginBottom: 20,
+        marginLeft: 20,
+    },
     Paper: {
         padding: "10px",
-        marginBottom: theme.spacing(3),
+        marginTop: 40,
+        marginBottom: 40
     },
     dateSection: {
         padding: theme.spacing(1),
@@ -27,26 +42,48 @@ const styles = theme => ({
         marginTop: theme.spacing(2),
         marginBottom: theme.spacing(2),
     },
+    flexContainer: {
+        display: 'flex',
+        alignItems: 'baseline',
+        justifyContent: 'space-between',
+    }
 });
 
-const ReadWorkoutPlan = ({ plan, classes }) => {
+
+const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
     const [showLogs, setShowLogs] = useState(false);
-    const [items, setItems] = useState([]); // State to store fetched data
-    const userId = localStorage.getItem('user_id'); // Retrieve user ID
+    const [items, setItems] = useState([]);
+    const [todaysPlanId, setTodaysPlanId] = useState('');
+
+    const userId = localStorage.getItem('user_id');
 
     useEffect(() => {
-        const fetchWorkoutPlans = async () => {
+        const todaysPlan = localStorage.getItem('todaysPlan');
+        const parsedPlan = JSON.parse(todaysPlan);
+        setTodaysPlanId(parsedPlan.plan_id);
+    }, []);
+
+
+    useEffect(() => {
+        setShowLogs(false);
+
+        const fetchWorkoutLogs = async () => {
             try {
                 const response = await fetch(`http://localhost:8000/fitConnect/view_workout_logs/${userId}`);
                 const data = await response.json();
-                setItems(data);
+
+                // Filter logs that match the selected plan's name
+                const filteredLogs = data.filter(log => log.plan === plan.plan_name);
+                setItems(filteredLogs);
             } catch (error) {
-                console.error('Error fetching workout plans:', error);
+                console.error('Error fetching workout logs:', error);
             }
         };
 
-        fetchWorkoutPlans();
-    }, [userId]);
+        if (plan) {
+            fetchWorkoutLogs();
+        }
+    }, [userId, plan]);
 
     const handleToggleLogs = () => {
         setShowLogs(!showLogs);
@@ -96,13 +133,45 @@ const ReadWorkoutPlan = ({ plan, classes }) => {
         ));
     };
 
-    if (!plan || !plan.exercises || plan.exercises.length === 0) {
-        return <div className={classes.container}>No exercises found for this plan.</div>;
+    if (!plan) {
+        return <div className={classes.container}>
+        <div>
+            <p>Select a workout plan.</p>
+        </div>
+    </div>
     }
+    if (!plan.exercises || plan.exercises.length === 0) {
+        return <div className={classes.container}>
+        <div>
+            <p>No exercises found for {plan.plan_name}.</p>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={editHandler}
+                style={{ marginTop: '10px' }}
+            >
+                Edit Plan
+            </Button>
+        </div>
+    </div>
+    }
+    
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
-                <Typography variant="h6">{plan.plan_name}</Typography>
+                <Toolbar className={classes.toolbar}>
+                    <Typography variant="h4">{plan.plan_name}</Typography>
+                    {todaysPlanId && plan.plan_id !== todaysPlanId && (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={editHandler}
+                            style={{ marginTop: '10px' }}
+                        >
+                            Edit Plan
+                        </Button>
+                    )}
+                </Toolbar>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
@@ -116,7 +185,11 @@ const ReadWorkoutPlan = ({ plan, classes }) => {
                     <TableBody>
                         {plan.exercises.map((exercise, index) => (
                             <TableRow key={index}>
-                                <TableCell>{exercise.exercise.name}</TableCell>
+                                <TableCell>
+                                    <div className={classes.toolbar}>
+                                        <Typography variant="subtitle1">{exercise.exercise.name}</Typography>
+                                    </div>
+                                </TableCell>
                                 <TableCell>{exercise.sets}</TableCell>
                                 <TableCell>{exercise.reps}</TableCell>
                                 <TableCell>{exercise.weight}</TableCell>
