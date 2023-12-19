@@ -51,7 +51,7 @@ const EditWorkoutPlan = (props) => {
 
     useEffect(() => {
         const editedExercises = plan.exercises.map((item) => {
-            return {...item, duration: item.duration_minutes, name: item.exercise.name, description: item.exercise.description, editMode: false};
+            return {...item, duration_minutes: item.duration_minutes, name: item.exercise.name, description: item.exercise.description, editMode: false};
         });
         setExercises(editedExercises);
     }, [plan])
@@ -92,37 +92,45 @@ const EditWorkoutPlan = (props) => {
     };
 
     const handleSave = async () => {
-
-        const workoutPlanData = {
-                exercise_in_plan_id: exercises[0].exercise_in_plan_id,
-                sets: exercises[0].sets,
-                reps: exercises[0].reps,
-                weight: exercises[0].weight,
-                duration_minutes: parseInt(exercises[0].duration, 10) 
-        };
-        // const workoutPlanName = {
-        //     plan_name: planTitle
-        // };
+            try {
+                for (const exercise of exercises) {
+                    const workoutPlanData = {
+                        plan: plan.plan_id,
+                        plan_id: plan.plan_id,
+                        exercise_in_plan_id: exercise.exercise_in_plan_id,
+                        exercise: exercise.exercise_id,
+                        sets: exercise.sets,
+                        reps: exercise.reps,
+                        weight: exercise.weight,
+                        duration_minutes: exercise.duration_minutes,
+                    };
+                    console.log(workoutPlanData)
+                    if (!workoutPlanData.exercise_in_plan_id){
+                        delete exercise.exercise_in_plan_id;
+                        delete exercise.plan;
+                        const response = await axios.post(`http://localhost:8000/fitConnect/exercise_in_plan/`, workoutPlanData);
+                        if (response.status !== 201) {
+                            console.error(`Failed to insert new exercise to workoutplan`);
+                        }
+                        continue;
+                    }
+                    delete exercise.plan_id
+                    delete exercise.exercise
+                    const response = await axios.put(`http://localhost:8000/fitConnect/exercise_in_plan/${exercise.exercise_in_plan_id}`, workoutPlanData);
         
-
-        try {
-            const response = await axios.put(`http://localhost:8000/fitConnect/exercise_in_plan/${exercises[0].plan_id}`, workoutPlanData);
-            if (response.status === 200) {
+                    if (response.status !== 200) {
+                        console.error(`Failed to update workout plan for exercise with ID ${exercise.exercise_in_plan_id}`);
+                    }
+                }
+        
                 onSave();
-                setSnackbar({ open: true, message: 'Workout plan edit successfully!', severity: 'success' });
-            } else {
-                setSnackbar({ open: true, message: 'Failed to edit workout plan.', severity: 'error' });
+                setSnackbar({ open: true, message: 'Workout plans updated successfully!', severity: 'success' });
+            } catch (error) {
+                console.error('Error updating workout plans:', error);
+                setSnackbar({ open: true, message: 'An error occurred while updating workout plans.', severity: 'error' });
             }
-        } catch (error) {
-            console.error('Error saving workout plan:', error);
-            setSnackbar({ open: true, message: 'An error occurred while saving.', severity: 'error' });
-        }
-    };
-
-    if (!plan || !plan.exercises || plan.exercises.length === 0) {
-        return <div className={classes.container}>No exercises found for this plan.</div>;
-    }
-
+        };
+   
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
@@ -162,7 +170,7 @@ const EditWorkoutPlan = (props) => {
                         {exercises.map((exercise, index) => (
                             <TableRow key={index}>
                                 <TableCell>{exercise.name}</TableCell>
-                                {['sets', 'reps', 'weight', 'duration'].map(field => (
+                                {['sets', 'reps', 'weight', 'duration_minutes'].map(field => (
                                     <TableCell key={field}>
                                         {exercise.editMode ? (
                                             <TextField
