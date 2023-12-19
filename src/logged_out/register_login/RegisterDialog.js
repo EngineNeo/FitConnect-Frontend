@@ -19,6 +19,10 @@ import FormDialog from "../../shared/components/FormDialog";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format, isValid } from 'date-fns';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 import PersonIcon from '@mui/icons-material/Person';
 import SportsIcon from '@mui/icons-material/Sports';
 
@@ -66,6 +70,8 @@ function RegisterDialog(props) {
   const [goalId, setGoalId] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+
+  const history = useHistory();
 
   const handleUserTypeSelect = (type) => {
     setSelectedUserType(type);
@@ -506,6 +512,37 @@ function RegisterDialog(props) {
     }
   };
 
+  // Function to handle user login
+  const login = async (email, password) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/login`, {
+        email, password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response && response.data) {
+        const { token, ...otherData } = response.data;
+
+        Cookies.set('authToken', token, { expires: 7 }); // Expires in 7 days
+
+        Object.entries(otherData).forEach(([key, value]) => {
+          localStorage.setItem(key, value);
+        });
+
+        history.push("/c/dashboard");
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      setStatus("loginError");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const register = useCallback(() => {
     // Check for terms of service agreement
     if (registerTermsCheckbox.current && !registerTermsCheckbox.current.checked) {
@@ -545,7 +582,7 @@ function RegisterDialog(props) {
         height: height,
       };
 
-      return fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/initial_survey`, {
+      return fetch('http://localhost:8000/fitConnect/initial_survey', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -574,7 +611,7 @@ function RegisterDialog(props) {
         bio: coachBio,
       };
 
-      fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/become_coach`, {
+      fetch('http://localhost:8000/fitConnect/become_coach', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -598,7 +635,7 @@ function RegisterDialog(props) {
         });
     };
 
-    fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/create_user`, {
+    fetch('http://localhost:8000/fitConnect/create_user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -609,13 +646,15 @@ function RegisterDialog(props) {
       .then(data => {
         if (data.user_id) {
           handleInitialSurveySubmission(data.user_id)
-            .then(surveyResult => {
+            .then(async surveyResult => {
               if (surveyResult.success) {
                 if (selectedUserType === 'coach') {
                   handleCoachRegistration(surveyResult.userId);
+                  await login(email, password);
                 } else {
                   setIsLoading(false);
                   showSuccessMessage();
+                  await login(email, password);
                   onClose();
                 }
               } else {
