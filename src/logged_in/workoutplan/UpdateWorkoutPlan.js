@@ -56,10 +56,17 @@ const styles = (theme) => ({
 
 const UpdateWorkoutPlan = (props) => {
     const { classes, plan } = props;
-    const [exerciseEntries, setExerciseEntries] = useState(() =>
-        (plan && plan.exercises ? plan.exercises.map(() => []) : [])
-    );
-		const [recentLogs, setRecentLogs] = useState([]);
+	const [exerciseEntries, setExerciseEntries] = useState(() =>
+		plan && plan.exercises ? plan.exercises.map(exercise =>
+			Array(exercise.sets).fill().map(() => ({
+				reps: exercise.reps,
+				weight: exercise.weight,
+				duration: exercise.duration_minutes,
+			}))
+		) : []
+	);
+	const [recentLogs, setRecentLogs] = useState([]);
+	const todaysPlanDate = localStorage.getItem('todaysPlanDate');
 
     const addExerciseEntry = (exerciseIndex) => {
         const newEntries = [...exerciseEntries];
@@ -79,35 +86,39 @@ const UpdateWorkoutPlan = (props) => {
         setExerciseEntries(updatedEntries);
     };
 
-    const submitExerciseEntries = async (exerciseIndex, exerciseId) => {
-        const userId = localStorage.getItem('user_id');
-        const currentDate = new Date().toISOString().split('T')[0];
+	const submitExerciseEntries = async (exerciseIndex, exerciseId) => {
+		const userId = localStorage.getItem('user_id');
+		const currentDate = new Date().toISOString().split('T')[0];
 
-        try {
-            const responses = await Promise.all(
-                exerciseEntries[exerciseIndex].map(entry => {
-                    const postData = {
-                        user: userId,
-                        exercise_in_plan: exerciseId,
-                        reps: entry.reps,
-                        weight: entry.weight,
-                        duration_minutes: entry.duration,
-                        completed_date: currentDate,
-                    };
+		try {
+			const responses = await Promise.all(
+				exerciseEntries[exerciseIndex].map(entry => {
+					const postData = {
+						user: userId,
+						exercise_in_plan: exerciseId,
+						reps: entry.reps,
+						weight: entry.weight,
+						duration_minutes: entry.duration,
+						completed_date: currentDate,
+					};
 
-                    return axios.post('http://localhost:8000/fitConnect/create_workout_log/', postData, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-                })
-            );
+					return axios.post('http://localhost:8000/fitConnect/create_workout_log/', postData, {
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					});
+				})
+			);
 
-            console.log('Entries for exercise ' + exerciseId + ' submitted:', responses.map(response => response.data));
-        } catch (error) {
-            console.error('Error submitting entries:', error.response ? error.response.data : error);
-        }
-    };
+			console.log('Entries for exercise ' + exerciseId + ' submitted:', responses.map(response => response.data));
+
+			await fetchAndCheckWorkoutLogs();
+
+		} catch (error) {
+			console.error('Error submitting entries:', error.response ? error.response.data : error);
+		}
+	};
+
 
     const fetchAndCheckWorkoutLogs = async () => {
         const userId = localStorage.getItem('user_id');
@@ -115,7 +126,6 @@ const UpdateWorkoutPlan = (props) => {
         try {
             const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${userId}`);
             setRecentLogs(response.data.logs || []);
-			console.log(response.data)
         } catch (error) {
             console.error('Error fetching workout logs:', error);
         }
@@ -145,13 +155,13 @@ const UpdateWorkoutPlan = (props) => {
 
     return (
         <Fragment>
-				{incompleteExercises.length === 0 ? (
-					<Alert severity="success">Great job! You have completed your entire workout plan for today.</Alert>
-				) : (
-					<Alert severity="warning">
-						You still need to complete the following exercises today: {incompleteExercises.join(', ')}.
-					</Alert>
-				)}
+			{incompleteExercises.length === 0 ? (
+				<Alert severity="success">Great job! You have completed your entire workout plan for today.</Alert>
+			) : (
+				<Alert severity="warning">
+					You still need to complete the following exercises today: {incompleteExercises.join(', ')}.
+				</Alert>
+			)}
             <div className={classes.container}>
                 <Paper className={classes.Paper}>
                     <Toolbar className={classes.toolbar}>
@@ -185,11 +195,17 @@ const UpdateWorkoutPlan = (props) => {
                     </Table>
                 </Paper>
 				{plan.exercises.map((exercise, exerciseIndex) => {
-					const completedExercise = recentLogs.find(log => log.exercise === exercise.exercise.name);
+					const completedExercise = recentLogs.find(log =>
+						log.exercise === exercise.exercise.name && log.completed_date === todaysPlanDate
+					);
+					const completedExerciseLogs = recentLogs.filter(log =>
+						log.exercise === exercise.exercise.name && log.completed_date === todaysPlanDate
+					);
 
 					return (
 						<Paper key={exerciseIndex} className={classes.Paper}>
 							<Toolbar className={classes.toolbar}>
+								<Typography variant="h6">{exercise.exercise.name}</Typography>
 								{!completedExercise && (
 									<>
 										<Button onClick={() => submitExerciseEntries(exerciseIndex, exercise.exercise_in_plan_id)} color="primary">Submit Entries</Button>
@@ -213,19 +229,19 @@ const UpdateWorkoutPlan = (props) => {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{completedExercise ? (
-										<TableRow>
-											<TableCell>{completedExercise.set}</TableCell>
-											<TableCell>{completedExercise.reps}</TableCell>
-											<TableCell>{completedExercise.weight}</TableCell>
-											<TableCell>{completedExercise.duration_minutes}</TableCell>
-										</TableRow>
+									{completedExerciseLogs.length > 0 ? (
+										completedExerciseLogs.map((logEntry, logIndex) => (
+											<TableRow key={logIndex}>
+												<TableCell>
+													{logIndex + 1} / {exercise.sets}
+												</TableCell>
+												<TableCell>{logEntry.reps}</TableCell>
+												<TableCell>{logEntry.weight}</TableCell>
+												<TableCell>{logEntry.duration_minutes}</TableCell>
+											</TableRow>
+										))
 									) : (
 										exerciseEntries[exerciseIndex].map((entry, entryIndex) => {
-											entry.reps = exercise.reps;
-											entry.weight = exercise.weight;
-											entry.duration = exercise.duration_minutes;
-
 											return (
 											<TableRow key={entryIndex}>
 												<TableCell>
