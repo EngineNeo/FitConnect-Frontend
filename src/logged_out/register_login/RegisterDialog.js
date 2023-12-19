@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, Fragment } from "react";
+import React, { useEffect, useState, useCallback, useRef, Fragment } from "react";
 import PropTypes from "prop-types";
 import {
   FormHelperText,
@@ -72,6 +72,14 @@ function RegisterDialog(props) {
   const [height, setHeight] = useState('');
 
   const history = useHistory();
+
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const handleUserTypeSelect = (type) => {
     setSelectedUserType(type);
@@ -524,7 +532,7 @@ function RegisterDialog(props) {
         }
       });
 
-      if (response && response.data) {
+      if (isMountedRef.current && response && response.data) {
         const { token, ...otherData } = response.data;
 
         Cookies.set('authToken', token, { expires: 7 }); // Expires in 7 days
@@ -536,10 +544,14 @@ function RegisterDialog(props) {
         history.push("/c/dashboard");
       }
     } catch (error) {
-      console.error("Login Error:", error);
-      setStatus("loginError");
+      if (isMountedRef.current) {
+        console.error("Login Error:", error);
+        setStatus("loginError");
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 

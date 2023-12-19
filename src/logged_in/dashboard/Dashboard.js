@@ -47,6 +47,7 @@ function Dashboard(props) {
   const [showSurveyAlert, setShowSurveyAlert] = useState(false);
   const [showSurveyDialog, setShowSurveyDialog] = useState(false);
   const [workoutLogs, setWorkoutLogs] = useState([]);
+  const [hasWorkoutLogs, setHasWorkoutLogs] = useState(true);
   
   const serverDate = useServerDate();
 
@@ -84,11 +85,18 @@ function Dashboard(props) {
 
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/mostRecentWorkoutPlanView/${user_id}/`);
-      setWorkoutLogs(response.data.logs);
+      if (response.data.error && response.data.error === "No workout logs found.") {
+        setHasWorkoutLogs(false);
+      } else {
+        setWorkoutLogs(response.data.logs);
+        setHasWorkoutLogs(true);
+      }
     } catch (error) {
       console.error('Error fetching workout logs:', error);
+      setHasWorkoutLogs(false);
     }
   };
+
 
   const checkForTodaysSurvey = (data) => {
     const hasTodaySurvey = data.some(entry => entry.recorded_date === serverDate);
@@ -177,42 +185,52 @@ function Dashboard(props) {
       return acc;
     }, {});
 
-    // Map through each date group
-    return Object.entries(logsGroupedByDate).map(([date, exercises], dateIndex) => (
-      <div key={dateIndex} className={classes.dateSection}>
-        <Typography variant="h6" className={classes.workoutPlanTitle}>
-          Most recent workout plan: {planTitle}
-        </Typography>
-        <Paper className={classes.paper}>
-          <Typography variant="h6">{date}</Typography>
-          {Object.entries(exercises).map(([exerciseName, logs], exerciseIndex) => (
-            <div key={exerciseIndex}>
-              <Typography variant="subtitle1" className={classes.exerciseName}>{exerciseName}</Typography>
-              <Table className={classes.table}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Set</TableCell>
-                    <TableCell>Reps</TableCell>
-                    <TableCell>Weight</TableCell>
-                    <TableCell>Duration (mins)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {logs.map((log, logIndex) => (
-                    <TableRow key={logIndex}>
-                      <TableCell>{logIndex + 1}</TableCell>
-                      <TableCell>{log.reps}</TableCell>
-                      <TableCell>{log.weight}</TableCell>
-                      <TableCell>{log.duration_minutes}</TableCell>
+    if (!hasWorkoutLogs) {
+      return (
+        <div className={classes.dateSection}>
+          <Typography variant="h6" className={classes.workoutPlanTitle}>
+            Most recent workout plan: None (Complete a workout plan first!)
+          </Typography>
+        </div>
+      );
+    } else {
+      // Map through each date group
+      return Object.entries(logsGroupedByDate).map(([date, exercises], dateIndex) => (
+        <div key={dateIndex} className={classes.dateSection}>
+          <Typography variant="h6" className={classes.workoutPlanTitle}>
+            Most recent workout plan: {planTitle}
+          </Typography>
+          <Paper className={classes.paper}>
+            <Typography variant="h6">{date}</Typography>
+            {Object.entries(exercises).map(([exerciseName, logs], exerciseIndex) => (
+              <div key={exerciseIndex}>
+                <Typography variant="subtitle1" className={classes.exerciseName}>{exerciseName}</Typography>
+                <Table className={classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Set</TableCell>
+                      <TableCell>Reps</TableCell>
+                      <TableCell>Weight</TableCell>
+                      <TableCell>Duration (mins)</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ))}
-        </Paper>
-      </div>
-    ));
+                  </TableHead>
+                  <TableBody>
+                    {logs.map((log, logIndex) => (
+                      <TableRow key={logIndex}>
+                        <TableCell>{logIndex + 1}</TableCell>
+                        <TableCell>{log.reps}</TableCell>
+                        <TableCell>{log.weight}</TableCell>
+                        <TableCell>{log.duration_minutes}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ))}
+          </Paper>
+        </div>
+      ));
+    }
   };
 
   return (
