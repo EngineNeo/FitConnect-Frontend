@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Table, TableBody, 
          TableCell, TableHead, TableRow, Toolbar, IconButton, 
-         Dialog, Snackbar, Alert, Paper } from '@mui/material';
+         Dialog, Snackbar, Alert, Paper, Checkbox } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import ExerciseBank from '../../shared/components/ExerciseBank';
 import axios from 'axios';
@@ -48,6 +48,15 @@ const EditWorkoutPlan = (props) => {
         message: '',
         severity: 'info',
     });
+    const [checkedExercises, setCheckedExercises] = useState([]);
+
+  const handleToggleCheckbox = (exerciseId) => {
+    const newCheckedExercises = checkedExercises.includes(exerciseId)
+      ? checkedExercises.filter(id => id !== exerciseId)
+      : [...checkedExercises, exerciseId];
+
+    setCheckedExercises(newCheckedExercises);
+  };
 
     useEffect(() => {
         const editedExercises = plan.exercises.map((item) => {
@@ -81,6 +90,31 @@ const EditWorkoutPlan = (props) => {
         onCancel(plan)
     };
 
+
+    const handleDeleteCheckedExercises = async () => {
+        try {
+          const deletePromises = checkedExercises.map(async (exerciseId) => {
+            const response = await axios.delete(`http://localhost:8000/fitConnect/exercise_in_plan/${exerciseId}`);
+            
+            if (response.status !== 204) {
+              console.error(`Failed to delete exercise with ID ${exerciseId}`);
+              // Handle error as needed
+            }
+          });
+      
+          await Promise.all(deletePromises);
+      
+          // Update local state to reflect deletions
+          const updatedExercises = exercises.filter(exercise => !checkedExercises.includes(exercise.exercise_in_plan_id));
+          setExercises(updatedExercises);
+          setSnackbar({ open: true, message: 'Exercises deleted successfully!', severity: 'success' });
+          setCheckedExercises([]); // Clear checked exercises after deletion
+          onSave();  // Perform any action after all deletions are successful
+        } catch (error) {
+          console.error('Error deleting exercises:', error);
+          setSnackbar({ open: true, message: 'An error occurred while deleting exercises.', severity: 'error' });
+        }
+      };
     const toggleEditMode = (index) => {
         const editedExercises = exercises.map((exercise, idx) => {
             if (idx === index) {
@@ -147,6 +181,14 @@ const EditWorkoutPlan = (props) => {
                         <AddCircleOutlineIcon />
                         <Typography variant="subtitle2">Add Exercise</Typography>
                     </IconButton>
+                    <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleDeleteCheckedExercises}
+          disabled={checkedExercises.length === 0}
+        >
+          Delete Checked Exercises
+        </Button>
                 </Toolbar>
                 <Table className={classes.table}>
                     <TableHead>
@@ -183,6 +225,12 @@ const EditWorkoutPlan = (props) => {
                                         {exercise.editMode ? <CheckIcon /> : <EditIcon />}
                                     </IconButton>
                                 </TableCell>
+                                <TableCell>
+                <Checkbox
+                  checked={checkedExercises.includes(exercise.exercise_in_plan_id)}
+                  onChange={() => handleToggleCheckbox(exercise.exercise_in_plan_id)}
+                />
+              </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

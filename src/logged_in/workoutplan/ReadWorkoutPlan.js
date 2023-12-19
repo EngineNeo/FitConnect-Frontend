@@ -60,7 +60,9 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
     useEffect(() => {
         const todaysPlan = localStorage.getItem('todaysPlan');
         const parsedPlan = JSON.parse(todaysPlan);
-        setTodaysPlanId(parsedPlan.plan_id);
+        if (parsedPlan) {
+            setTodaysPlanId(parsedPlan.plan_id);
+        }
     }, []);
 
 
