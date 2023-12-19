@@ -10,6 +10,7 @@ import axios from 'axios';
 import DialogContent from '@mui/material/DialogContent'; // Add this import
 import DialogContentText from '@mui/material/DialogContentText'; // Add this import
 
+
 const styles = {
     Paper: {
         padding: 30,
@@ -58,7 +59,7 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
 
     const handleDeletePlan = async (plan) => {
         try {
-          const response = await axios.delete(`http://localhost:8000/fitConnect/plans/${plan.plan_id}`);
+          const response = await axios.delete(`localhost:8000/fitConnect/plans/${plan.plan_id}`);
           if (response.status === 200) {
             closeDeleteDialog();
             setSnackbar({ open: true, message: 'Workout plan deleted successfully!', severity: 'success' });
@@ -176,7 +177,8 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
                                         onClick={() => handleListItemClick(item)}
                                       >
                                         {item.plan_name}
-                                        {hoveredPlan === item && (
+                                        {hoveredPlan === item && (!todaysPlan || hoveredPlan.plan_id !== todaysPlan.plan_id) && (
+
                                           <DeleteIcon
                                             style={{ marginLeft: 'auto', cursor: 'pointer' }}
                                             onClick={() => openDeleteDialog(item)}
