@@ -134,14 +134,7 @@ const EditWorkoutPlan = (props) => {
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
-                <Typography variant="h6">Edit Workout Plan</Typography>
-                <TextField
-                    label="Plan Title"
-                    value={planTitle}
-                    onChange={(e) => setPlanTitle(e.target.value)}
-                    margin="normal"
-                    className={classes.textField}
-                />
+                <Typography variant="h6">Edit {planTitle}</Typography>                
                 <Button variant="contained" color="primary" onClick={handleSave} className={classes.button}>
                     Update Plan
                 </Button>
