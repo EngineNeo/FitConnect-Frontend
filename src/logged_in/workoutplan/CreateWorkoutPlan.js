@@ -5,6 +5,7 @@ import { TextField, Button, Typography, Table, TableBody,
 import { withStyles } from '@mui/styles';
 import ExerciseBank from '../../shared/components/ExerciseBank';
 import axios from 'axios';
+import { fetchServerDate } from '../../shared/components/ServerDate';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
@@ -78,12 +79,19 @@ const CreateWorkoutPlan = ({ onSave, classes }) => {
     };
 
     const handleSave = async () => {
-        const formattedDate = new Date().toISOString().split('T')[0];
+        const serverDate = fetchServerDate(); 
+
+        console.log("Server date:", serverDate);
+
+        if (!serverDate) {
+            console.error('Failed to fetch server date');
+            return;
+        }
 
         const workoutPlanData = {
             user: userId,
             planName: planTitle,
-            creationDate: formattedDate,
+            creationDate: serverDate,
             exercises: exercises.map(exercise => ({
                 exercise: exercise.exercise_id,
                 sets: exercise.sets,

@@ -82,7 +82,6 @@ function Dashboard(props) {
     try {
       const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${user_id}/`);
       setWorkoutLogs(response.data.logs);
-      console.log(response.data.logs)
     } catch (error) {
       console.error('Error fetching workout logs:', error);
     }

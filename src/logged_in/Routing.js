@@ -87,10 +87,6 @@ function Routing(props) {
 
 Routing.propTypes = {
   classes: PropTypes.object.isRequired,
-  EmojiTextArea: PropTypes.elementType,
-  ImageCropper: PropTypes.elementType,
-  Dropzone: PropTypes.elementType,
-  DateTimePicker: PropTypes.elementType,
   pushMessageToSnackbar: PropTypes.func,
   toggleAccountActivation: PropTypes.func,
   selectDashboard: PropTypes.func.isRequired,
