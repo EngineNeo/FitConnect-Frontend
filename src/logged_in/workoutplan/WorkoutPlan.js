@@ -28,17 +28,30 @@ function WorkoutPlan(props) {
   const userId = localStorage.getItem('user_id');
 
   const fetchWorkoutPlans = async () => {
+    let isMounted = true;
+    const controller = new AbortController();
+
     try {
-      const response = await fetch(`http://localhost:8000/fitConnect/users/${userId}/plans`);
+      const response = await fetch(`http://localhost:8000/fitConnect/users/${userId}/plans`, { signal: controller.signal });
+      if (!isMounted) return;
+
       const data = await response.json();
-      setWorkoutPlans(data)
+      setWorkoutPlans(data);
     } catch (error) {
-      console.error('Error fetching workout plans:', error);
+      if (isMounted) {
+        console.error('Error fetching workout plans:', error);
+      }
     }
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   };
 
   useEffect(() => {
-    fetchWorkoutPlans();
+    const cleanup = fetchWorkoutPlans();
+    return cleanup;
   }, []);
 
 
@@ -80,7 +93,7 @@ function WorkoutPlan(props) {
   // Initialize selectedPlan and viewMode based on today's plan
   useEffect(() => {
     const savedTodaysPlan = localStorage.getItem('todaysPlan');
-    console.log(savedTodaysPlan)
+    // console.log(savedTodaysPlan)
     if (savedTodaysPlan) {
       setSelectedPlan(JSON.parse(savedTodaysPlan));
       setViewMode('updatingPlan');

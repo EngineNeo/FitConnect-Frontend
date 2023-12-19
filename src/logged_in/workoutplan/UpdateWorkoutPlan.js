@@ -57,7 +57,7 @@ const styles = (theme) => ({
 const UpdateWorkoutPlan = (props) => {
     const { classes, plan } = props;
     const [exerciseEntries, setExerciseEntries] = useState(() =>
-        plan.exercises.map(() => [])
+        (plan && plan.exercises ? plan.exercises.map(() => []) : [])
     );
 		const [recentLogs, setRecentLogs] = useState([]);
 
@@ -120,12 +120,17 @@ const UpdateWorkoutPlan = (props) => {
         }
     };
 
-	const getIncompleteExercises = () => {
-		const currentDate = new Date().toISOString().split('T')[0];
-		return plan.exercises.filter(exercise =>
-			!recentLogs.some(log => log.exercise === exercise.exercise.name && log.completed_date === currentDate)
-		).map(exercise => exercise.exercise.name);
-	};
+    const getIncompleteExercises = () => {
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        if (plan && Array.isArray(plan.exercises)) {
+            return plan.exercises.filter(exercise =>
+                !recentLogs.some(log => log.exercise === exercise.exercise.name && log.completed_date === currentDate)
+            ).map(exercise => exercise.exercise.name);
+        }
+
+        return [];
+    };
 
     useEffect(() => {
         fetchAndCheckWorkoutLogs();

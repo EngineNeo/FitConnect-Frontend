@@ -24,7 +24,6 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
     const [todaysPlan, setTodaysPlan] = useState(null);
 
     const handleListItemClick = (plan) => {
-        console.log(plan)
         onSelectPlan(plan);
     };
 

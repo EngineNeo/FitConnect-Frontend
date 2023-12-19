@@ -53,7 +53,15 @@ const styles = theme => ({
 const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
     const [showLogs, setShowLogs] = useState(false);
     const [items, setItems] = useState([]);
+    const [todaysPlanId, setTodaysPlanId] = useState('');
+
     const userId = localStorage.getItem('user_id');
+
+    useEffect(() => {
+        const todaysPlan = localStorage.getItem('todaysPlan');
+        const parsedPlan = JSON.parse(todaysPlan);
+        setTodaysPlanId(parsedPlan.plan_id);
+    }, []);
 
 
     useEffect(() => {
@@ -148,70 +156,22 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
     </div>
     }
     
-    const todaysPlan = localStorage.getItem('todaysPlan');
-    if (todaysPlan && plan === todaysPlan.plan_id) {
-        console.log("Plans are matched")
-        return <div className={classes.container}>
-            <div className={classes.container}>
-            <Paper className={classes.Paper}>
-                <Toolbar className={classes.toolbar}>
-                    <Typography variant="h4">{plan.plan_name}</Typography>
-                </Toolbar>
-                <Table className={classes.table}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Exercise Name</TableCell>
-                            <TableCell>Sets</TableCell>
-                            <TableCell>Reps</TableCell>
-                            <TableCell>Weight</TableCell>
-                            <TableCell>Duration (mins)</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {plan.exercises.map((exercise, index) => (
-                            <TableRow key={index}>
-                                <TableCell>
-                                    <div className={classes.toolbar}>
-                                        <Typography variant="subtitle1">{exercise.exercise.name}</Typography>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{exercise.sets}</TableCell>
-                                <TableCell>{exercise.reps}</TableCell>
-                                <TableCell>{exercise.weight}</TableCell>
-                                <TableCell>{exercise.duration_minutes}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Paper>
-
-            <Button onClick={handleToggleLogs} className={classes.viewLogsButton}>
-                {showLogs ? 'Hide Logs' : 'View Logs'}
-            </Button>
-
-            {showLogs && (
-                <div>
-                    {renderWorkoutLogTables()}
-                </div>
-            )}
-        </div>
-        </div>
-    }
-    
     return (
         <div className={classes.container}>
             <Paper className={classes.Paper}>
                 <Toolbar className={classes.toolbar}>
                     <Typography variant="h4">{plan.plan_name}</Typography>
+                    {todaysPlanId && plan.plan_id !== todaysPlanId && (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={editHandler}
+                            style={{ marginTop: '10px' }}
+                        >
+                            Edit Plan
+                        </Button>
+                    )}
                 </Toolbar>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={editHandler}
-                        style={{ marginTop: '10px' }}
-                    >
-                        Edit Plan
-                    </Button>
                 <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
