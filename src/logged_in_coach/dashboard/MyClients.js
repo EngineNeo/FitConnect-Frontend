@@ -59,6 +59,15 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark,
     },
   },
+  avatar: {
+    height: 140,
+    backgroundColor: theme.palette.primary.main, // Adjust background color as needed
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'white',
+    fontSize: '2rem', // Adjust font size as needed
+  },
 }));
 
 function ClientModule() {
@@ -78,12 +87,21 @@ function ClientModule() {
 
   const handleOpen = (client) => {
     setSelectedClient(client);
-    localStorage.setItem('client_id', client.id);
+    console.log("Selected client:", client);
+    localStorage.setItem('client_id', client.user_id);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const generateInitials = (firstName, lastName) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+  const getRandomColor = () => {
+    const colors = ['#e57373', '#ba68c8', '#7986cb', '#4fc3f7', '#aed581', '#ff8a65', '#d4e157', '#ffd54f']; // Add more colors as needed
+    return colors[Math.floor(Math.random() * colors.length)];
   };
 
   return (
@@ -93,17 +111,15 @@ function ClientModule() {
           <Grid item xs={12} sm={6} md={4} key={client.id}>
             <Card className={classes.card}>
               <CardActionArea onClick={() => handleOpen(client)}>
-                <CardMedia
-                  className={classes.media}
-                  image="https://via.placeholder.com/150" // Static image placeholder
-                  title="Client Image"
-                />
+              <Box className={classes.avatar} style={{ backgroundColor: getRandomColor() }}>
+                  {generateInitials(client.first_name, client.last_name)}
+                </Box>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="h2">
-                    {client.name}
+                  {client.first_name} {client.last_name}
                   </Typography>
                   <Typography variant="body2">
-                    Plan: {client.plan}
+                    {client.email}
                   </Typography>
                 </CardContent>
               </CardActionArea>
