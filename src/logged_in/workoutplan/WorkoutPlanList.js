@@ -82,6 +82,7 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
         if (destination.droppableId === 'todays-plan') {
             const draggedItem = plans[source.index];
             setTodaysPlan(draggedItem);
+            window.location.reload(true);
         }
     };
 
