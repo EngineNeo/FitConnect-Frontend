@@ -13,21 +13,26 @@ import {
 } from "@mui/material";
 import withStyles from '@mui/styles/withStyles';
 import MessageIcon from "@mui/icons-material/Message";
-import MessageListItem from "./MessageListItem";
 import MessageHistory from "./MessageHistory";
 
 const styles = (theme) => ({
   tabContainer: {
     overflowY: "auto",
-    maxHeight: 350,
+    maxHeight: 'calc(100vh - 100px)',
   },
   popoverPaper: {
-    width: "100%",
-    maxWidth: 350,
+    width: '100%',
+    maxWidth: 700,
+    maxHeight: '80vh',
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
+    zIndex: 1000,
+    overflowY: 'auto',
     [theme.breakpoints.down('md')]: {
-      maxWidth: 270,
+      maxWidth: 500,
     },
   },
   divider: {
@@ -38,6 +43,7 @@ const styles = (theme) => ({
   },
 });
 
+
 function MessagePopperButton(props) {
   const { classes } = props;
   const anchorEl = useRef(null);
@@ -45,7 +51,7 @@ function MessagePopperButton(props) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messageHistory, setMessageHistory] = useState([]);
   const [users, setUsers] = useState([]);
-  const senderId = localStorage.getItem('user_id');
+  const senderId = Number(localStorage.getItem('user_id'));
 
   useEffect(() => {
     console.log("Sender ID:", senderId);

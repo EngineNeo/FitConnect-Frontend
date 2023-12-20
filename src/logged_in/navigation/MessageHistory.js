@@ -1,17 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { List, ListItem, TextField, Button } from "@mui/material";
+import { List, ListItem, TextField, Button, Typography } from "@mui/material";
+import { makeStyles } from '@mui/styles';
 
-const MessageHistory = ({ history, setHistory, onBack, senderId, recipientId }) => {
+const useStyles = makeStyles((theme) => ({
+    messageContainer: {
+        display: 'flex', 
+        flexDirection: 'column', 
+        height: '100%'
+    },
+    messageList: {
+        overflowY: 'auto', 
+        flexGrow: 1, 
+        marginBottom: '10px'
+    },
+    messageInputContainer: {
+        borderTop: '1px solid grey', 
+        padding: '10px'
+    },  
+}));
+
+const MessageHistory = ({ onBack, senderId, recipientId }) => {
     const [newMessage, setNewMessage] = useState('');
+    const [messageHistory, setMessageHistory] = useState([]);
+    const [, setRenderTrigger] = useState(false);
+    const bottomRef = useRef(null);
+    const classes = useStyles();
+
+    const fetchAndUpdateMessageHistory = () => {
+        if (recipientId !== null) {
+            fetch(`http://localhost:8000/fitConnect/get_messages/${senderId}/${recipientId}/`)
+                .then(response => response.json())
+                .then(data => setMessageHistory(data.messages))
+                .catch(error => console.error('Error fetching messages:', error));
+        }
+    };
+
+    useEffect(() => {
+        fetchAndUpdateMessageHistory();
+        setRenderTrigger(prev => !prev);
+    }, [senderId, recipientId]);
 
     const handleSendMessage = () => {
-        console.log("Sender ID:", senderId, "Recipient ID:", recipientId, "Message:", newMessage);
-        if(newMessage.trim() === "") {
+        if (newMessage.trim() === "") {
             console.error('Empty message cannot be sent');
             return;
         }
-        
+
         fetch('http://localhost:8000/fitConnect/create_message/', {
             method: 'POST',
             headers: {
@@ -26,50 +61,52 @@ const MessageHistory = ({ history, setHistory, onBack, senderId, recipientId }) 
         .then(response => response.json())
         .then(data => {
             if(data.status === 'success') {
-                // Add new message to the history state and clear the input field
-                const updatedHistory = [
-                    ...history,
-                    { sender: senderId, text: newMessage } // Make sure sender ID is a string if history expects it as such
-                ];
-                setHistory(updatedHistory);
                 setNewMessage('');
+                fetchAndUpdateMessageHistory(); // Fetch and update message history after sending a new message
             } else {
                 console.error('Error sending message:', data);
             }
         })
         .catch(error => console.error('Error sending message:', error));
     };
-
-    return (
-        <div>
-            <Button onClick={onBack}>Back to Users</Button> {/* Use onBack here */}
-            <List>
-                {history.map((message, index) => (
-                    <ListItem key={index}>
-                        <b>{message.sender}:</b> {message.text}
-                    </ListItem>
-                ))}
-            </List>
+    
+      return (
+        <div className={classes.messageContainer}>
+        <Button onClick={onBack}>Back to Users</Button>
+        <List className={classes.messageList}>
+            {messageHistory.map((message, index) => (
+            <ListItem key={index} alignItems="flex-start">
+            <Typography variant="subtitle2" component="span" style={{ fontWeight: 'bold', marginRight: '10px' }}>
+                {message.sender_name}:
+            </Typography>
+            <Typography variant="body1" style={{ wordBreak: 'break-word' }}>
+                {message.text}
+            </Typography>
+            </ListItem>
+            ))}
+        </List>
+          <div className={classes.messageInputContainer}>
             <TextField 
-                value={newMessage} 
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message"
-                fullWidth
-                margin="normal"
+              value={newMessage} 
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message"
+              fullWidth
+              margin="normal"
             />
             <Button onClick={handleSendMessage} variant="contained" color="primary">
-                Send
+              Send
             </Button>
+          </div>
         </div>
-    );
+      );
+    
 };
 
 MessageHistory.propTypes = {
-    history: PropTypes.array.isRequired,
-    setHistory: PropTypes.func.isRequired,
     onBack: PropTypes.func.isRequired, 
     senderId: PropTypes.number.isRequired,
     recipientId: PropTypes.number.isRequired,
+
 };
 
 export default MessageHistory;
