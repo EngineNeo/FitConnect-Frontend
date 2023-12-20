@@ -30,6 +30,13 @@ const AdminDashboard = () => {
       .catch(error => console.error('Error fetching exercises:', error));
   }, []);
 
+  const fetchExercises = () => {
+    fetch('http://localhost:8000/fitConnect/exercises')
+      .then(response => response.json())
+      .then(data => setExerciseBank(data))
+      .catch(error => console.error('Error fetching exercises:', error));
+  };
+
   const handleAcceptRequest = (requestId) => {
     fetch('http://localhost:8000/fitConnect/manage_become_coach_request', {
       method: 'POST',
@@ -60,6 +67,8 @@ const AdminDashboard = () => {
       },
       body: JSON.stringify({ name: newExercise, description: '', muscle_group: 1, equipment: 1 }),
     }).then(() => {
+      setNewExercise('');
+      fetchExercises();
     });
   };
 
@@ -72,6 +81,7 @@ const AdminDashboard = () => {
       },
       body: JSON.stringify({ exercise_id: exerciseId }),
     }).then(() => {
+      fetchExercises();
     });
   };
 
