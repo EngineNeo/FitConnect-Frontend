@@ -110,6 +110,7 @@ const EditWorkoutPlan = (props) => {
           setSnackbar({ open: true, message: 'Exercises deleted successfully!', severity: 'success' });
           setCheckedExercises([]); // Clear checked exercises after deletion
           onSave();  // Perform any action after all deletions are successful
+          window.location.reload();
         } catch (error) {
           console.error('Error deleting exercises:', error);
           setSnackbar({ open: true, message: 'An error occurred while deleting exercises.', severity: 'error' });

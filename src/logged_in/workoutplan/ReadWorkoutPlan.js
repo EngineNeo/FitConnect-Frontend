@@ -79,9 +79,10 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
             }
         };
 
-        if (plan) {
+        if (plan ) {
             fetchWorkoutLogs();
         }
+        return () => setItems([]);
     }, [userId, plan]);
 
     const handleToggleLogs = () => {
@@ -97,6 +98,15 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
             return acc;
         }, {});
 
+        if (items.length === 0) {
+            return (
+              <div className={classes.dateSection}>
+                <Paper className={classes.Paper}>
+                  <Typography variant="subtitle1" className={classes.exerciseName}>No Logs</Typography>
+                </Paper>
+              </div>
+            );
+          }
         // Map through each date group
         return Object.entries(logsGroupedByDate).map(([date, exercises]) => (
             <div key={date} className={classes.dateSection}>
