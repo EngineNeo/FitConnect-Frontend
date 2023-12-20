@@ -70,6 +70,7 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
             console.error('Error deleting workout plan:', error);
             setSnackbar({ open: true, message: 'An error occurred while deleting workout plan.', severity: 'error' });
         }
+        window.location.reload(true);
       };
       
     const onDragEnd = (result) => {
@@ -133,7 +134,7 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
                         {provided.placeholder}
                         <Dialog
   open={deleteDialogOpen}
-  onClose={setDeleteDialogClose}
+  onClose={closeDeleteDialog}
   aria-labelledby="alert-dialog-title"
   aria-describedby="alert-dialog-description"
 >
