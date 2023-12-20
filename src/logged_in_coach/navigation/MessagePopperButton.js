@@ -23,11 +23,12 @@ const styles = (theme) => ({
   },
   popoverPaper: {
     width: "100%",
-    maxWidth: 350,
+    maxWidth: 700,
+    maxHeight: 500, 
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
     [theme.breakpoints.down('md')]: {
-      maxWidth: 270,
+      maxWidth: 400, 
     },
   },
   divider: {

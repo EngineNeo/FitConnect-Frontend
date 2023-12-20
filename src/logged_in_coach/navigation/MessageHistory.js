@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { List, ListItem, TextField, Button } from "@mui/material";
+import { List, ListItem, TextField, Button, Typography } from "@mui/material";
 
 const MessageHistory = ({ history, onBack, senderId, recipientId }) => {
     const [newMessage, setNewMessage] = useState('');
     const [messageHistory, setMessageHistory] = useState([]);
+    const [, setRenderTrigger] = useState(false);
+    const bottomRef = useRef(null);
 
     const fetchAndUpdateMessageHistory = () => {
         if (recipientId !== null) {
@@ -17,6 +19,7 @@ const MessageHistory = ({ history, onBack, senderId, recipientId }) => {
 
     useEffect(() => {
         fetchAndUpdateMessageHistory();
+        setRenderTrigger(prev => !prev);
     }, [senderId, recipientId]);
 
     const handleSendMessage = () => {
@@ -47,29 +50,37 @@ const MessageHistory = ({ history, onBack, senderId, recipientId }) => {
         })
         .catch(error => console.error('Error sending message:', error));
     };
-
-    return (
-        <div>
-            <Button onClick={onBack}>Back to Users</Button>
-            <List>
-                {messageHistory.map((message, index) => (
-                    <ListItem key={index}>
-                        <b>{message.sender_name}:</b> {message.text}
-                    </ListItem>
-                ))}
-            </List>
+    
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Button onClick={onBack}>Back to Users</Button>
+        <List style={{ overflowY: 'auto', flexGrow: 1, marginBottom: '10px' }}>
+            {messageHistory.map((message, index) => (
+            <ListItem key={index} alignItems="flex-start">
+            <Typography variant="subtitle2" component="span" style={{ fontWeight: 'bold', marginRight: '10px' }}>
+                {message.sender_name}:
+            </Typography>
+            <Typography variant="body1" style={{ wordBreak: 'break-word' }}>
+                {message.text}
+            </Typography>
+            </ListItem>
+            ))}
+        </List>
+          <div ref={bottomRef} style={{ borderTop: '1px solid grey', padding: '10px' }}>
             <TextField 
-                value={newMessage} 
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message"
-                fullWidth
-                margin="normal"
+              value={newMessage} 
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message"
+              fullWidth
+              margin="normal"
             />
             <Button onClick={handleSendMessage} variant="contained" color="primary">
-                Send
+              Send
             </Button>
+          </div>
         </div>
-    );
+      );
+    
 };
 
 MessageHistory.propTypes = {
