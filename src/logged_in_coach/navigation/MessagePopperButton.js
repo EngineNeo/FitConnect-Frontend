@@ -13,22 +13,26 @@ import {
 } from "@mui/material";
 import withStyles from '@mui/styles/withStyles';
 import MessageIcon from "@mui/icons-material/Message";
-import MessageListItem from "./MessageListItem";
 import MessageHistory from "./MessageHistory";
 
 const styles = (theme) => ({
   tabContainer: {
     overflowY: "auto",
-    maxHeight: 350,
+    maxHeight: 'calc(100vh - 100px)',
   },
   popoverPaper: {
-    width: "100%",
+    width: '100%',
     maxWidth: 700,
-    maxHeight: 500, 
+    maxHeight: '80vh',
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
+    zIndex: 1000,
+    overflowY: 'auto',
     [theme.breakpoints.down('md')]: {
-      maxWidth: 400, 
+      maxWidth: 500,
     },
   },
   divider: {
@@ -38,6 +42,7 @@ const styles = (theme) => ({
     boxShadow: "none !important",
   },
 });
+
 
 function MessagePopperButton(props) {
   const { classes } = props;
