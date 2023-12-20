@@ -89,29 +89,38 @@ function MyRequests() {
           InputProps={{ style: { color: 'white' } }}
         />
       </Box>
-      {filteredRequests.map((request, index) => (
-        <Card key={index} variant="outlined" sx={{ mb: 2, bgcolor: 'grey.900', color: 'white' }}>
-          <Grid container>
-            <Grid item xs={8}>
-              <CardContent>
-                <Typography variant="subtitle1">{`${request.first_name} ${request.last_name}`}</Typography>
-                <Typography variant="body2" sx={{ color: 'grey.500' }}>Email: {request.email}</Typography>
-                <Typography variant="body2" sx={{ color: 'grey.500' }}>Goal: {request.goal}</Typography>
-              </CardContent>
+      {filteredRequests.length > 0 ? (
+        filteredRequests.map((request, index) => (
+          <Card key={index} variant="outlined" sx={{ mb: 2, bgcolor: 'grey.900', color: 'white' }}>
+            <Grid container>
+              <Grid item xs={8}>
+                <CardContent>
+                  <Typography variant="subtitle1">{`${request.first_name} ${request.last_name}`}</Typography>
+                  <Typography variant="body2" sx={{ color: 'grey.500' }}>Email: {request.email}</Typography>
+                  <Typography variant="body2" sx={{ color: 'grey.500' }}>Goal: {request.goal}</Typography>
+                </CardContent>
+              </Grid>
+              <Grid item xs={4}>
+                <CardActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                  <Button variant="contained" color="success" sx={{ mx: 1 }} onClick={() => handleAccept(request.user_id)}>
+                    Accept
+                  </Button>
+                  <Button variant="contained" color="error" sx={{ mx: 1 }} onClick={() => handleDecline(request.user_id)}>
+                    Deny
+                  </Button>
+                </CardActions>
+              </Grid>
             </Grid>
-            <Grid item xs={4}>
-              <CardActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                <Button variant="contained" color="success" sx={{ mx: 1 }}  onClick={() => handleAccept(request.user_id)}>
-                  Accept
-                </Button>
-                <Button variant="contained" color="error" sx={{ mx: 1 }}  onClick={() => handleDecline(request.user_id)}>
-                  Deny
-                </Button>
-              </CardActions>
-            </Grid>
-          </Grid>
-        </Card>
-      ))}
+          </Card>
+        ))
+      ) : (
+        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt={5}>
+          
+          <Typography variant="h5" sx={{ color: 'grey.500', mt: 3 }}>
+            No client requests at the moment
+          </Typography>
+        </Box>
+      )}
     </Container>
   );
 }

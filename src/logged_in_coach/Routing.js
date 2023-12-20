@@ -73,7 +73,7 @@ function Routing(props) {
           path="/c/clientview"
           user_id={storedUserId}
           component={Clients}
-          selectDashboard={selectDashboard}
+          selectDashboard={selectWorkoutPlan}
         />
       </Switch>
     </div>

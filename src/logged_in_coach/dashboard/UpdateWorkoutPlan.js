@@ -104,7 +104,7 @@ const UpdateWorkoutPlan = (props) => {
 						completed_date: serverDate,
 					};
 
-					return axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/create_workout_log/`, postData, {
+					return axios.post(`http://localhost:8000/fitConnect/create_workout_log/`, postData, {
 						headers: {
 							'Content-Type': 'application/json',
 						},
@@ -126,7 +126,7 @@ const UpdateWorkoutPlan = (props) => {
         const userId = localStorage.getItem('user_id');
 
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/mostRecentWorkoutPlanView/${userId}`);
+            const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${userId}`);
             setRecentLogs(response.data.logs || []);
         } catch (error) {
             console.error('Error fetching workout logs:', error);
