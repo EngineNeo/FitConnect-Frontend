@@ -60,7 +60,9 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
     useEffect(() => {
         const todaysPlan = localStorage.getItem('todaysPlan');
         const parsedPlan = JSON.parse(todaysPlan);
-        setTodaysPlanId(parsedPlan.plan_id);
+        if (parsedPlan) {
+            setTodaysPlanId(parsedPlan.plan_id);
+        }
     }, []);
 
 
@@ -69,12 +71,9 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
 
         const fetchWorkoutLogs = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/fitConnect/view_workout_logs/${userId}`);
+                const response = await fetch(`http://localhost:8000/fitConnect/view_workout_logs/${plan.plan_id}`);
                 const data = await response.json();
-
-                // Filter logs that match the selected plan's name
-                const filteredLogs = data.filter(log => log.plan === plan.plan_name);
-                setItems(filteredLogs);
+                setItems(data);
             } catch (error) {
                 console.error('Error fetching workout logs:', error);
             }
@@ -161,7 +160,7 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
             <Paper className={classes.Paper}>
                 <Toolbar className={classes.toolbar}>
                     <Typography variant="h4">{plan.plan_name}</Typography>
-                    {todaysPlanId && plan.plan_id !== todaysPlanId && (
+                    {(todaysPlanId === null) || plan.plan_id !== todaysPlanId && (
                         <Button
                             variant="contained"
                             color="primary"
@@ -171,6 +170,7 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
                             Edit Plan
                         </Button>
                     )}
+                    
                 </Toolbar>
                 <Table className={classes.table}>
                     <TableHead>
