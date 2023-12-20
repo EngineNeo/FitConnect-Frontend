@@ -45,7 +45,7 @@ function MessagePopperButton(props) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messageHistory, setMessageHistory] = useState([]);
   const [users, setUsers] = useState([]);
-  const senderId = localStorage.getItem('user_id');
+  const senderId = Number(localStorage.getItem('user_id'));
 
   useEffect(() => {
     console.log("Sender ID:", senderId);

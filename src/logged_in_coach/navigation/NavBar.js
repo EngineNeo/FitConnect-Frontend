@@ -148,9 +148,13 @@ function NavBar(props) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
+  const [refreshMessages, setRefreshMessages] = useState(false);
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const triggerRefresh = () => {
+    setRefreshMessages(prev => !prev); 
   };
 
   const handleMenuClose = () => {
@@ -498,12 +502,13 @@ function NavBar(props) {
         selectedItem={selectedTab}
         onClose={closeMobileDrawer}
       />
+      <MessagePopperButton refreshTrigger={refreshMessages} onRefresh={triggerRefresh} />
     </Fragment>
   );
 }
 
 NavBar.propTypes = {
-  // messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  messages: PropTypes.arrayOf(PropTypes.object).isRequired,
   classes: PropTypes.object.isRequired,
 };
 
