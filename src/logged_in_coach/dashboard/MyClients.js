@@ -61,12 +61,12 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     height: 140,
-    backgroundColor: theme.palette.primary.main, // Adjust background color as needed
+    backgroundColor: theme.palette.primary.main,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     color: 'white',
-    fontSize: '2rem', // Adjust font size as needed
+    fontSize: '2rem',
   },
 }));
 
@@ -89,6 +89,7 @@ function ClientModule() {
     setSelectedClient(client);
     console.log("Selected client:", client);
     localStorage.setItem('client_id', client.user_id);
+    history.push('/c/clientview');
     setOpen(true);
   };
 
