@@ -91,14 +91,14 @@ const AdminDashboard = () => {
                   <StyledButton
                     variant="contained"
                     color="success"
-                    onClick={() => handleAcceptRequest(request.id)}
+                    onClick={() => handleAcceptRequest(request.user_id)}
                   >
                     Accept
                   </StyledButton>
                   <StyledButton
                     variant="contained"
                     color="error"
-                    onClick={() => handleRejectRequest(request.id)}
+                    onClick={() => handleRejectRequest(request.user_id)}
                   >
                     Reject
                   </StyledButton>
@@ -141,12 +141,12 @@ const AdminDashboard = () => {
           <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>Exercise Bank</Typography>
           <List>
             {exerciseBank.map((exercise) => (
-              <Box key={exercise.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Box key={exercise.exercise_id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                 <Typography>{exercise.name}</Typography>
                 <StyledButton
                   variant="contained"
                   color="error"
-                  onClick={() => handleRemoveExercise(exercise.id)}
+                  onClick={() => handleRemoveExercise(exercise.exercise_id)}
                 >
                   Remove
                 </StyledButton>
