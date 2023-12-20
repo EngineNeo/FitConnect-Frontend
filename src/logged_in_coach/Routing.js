@@ -7,6 +7,7 @@ import Coach from "./coach/Coach";
 import WorkoutPlan from "./workoutplan/WorkoutPlan"
 import MyRequests from "./dashboard/MyRequests";
 import MyClients from "./dashboard/MyClients";
+import Clients from "./dashboard/ClientView";
 import PropsRoute from "../shared/components/PropsRoute";
 import useLocationBlocker from "../shared/functions/useLocationBlocker";
 
@@ -66,6 +67,12 @@ function Routing(props) {
           path="/c/my-clients"
           user_id={storedUserId}
           component={MyClients}
+          selectDashboard={selectDashboard}
+        />
+        <PropsRoute
+          path="/c/clientview"
+          user_id={storedUserId}
+          component={Clients}
           selectDashboard={selectDashboard}
         />
       </Switch>
