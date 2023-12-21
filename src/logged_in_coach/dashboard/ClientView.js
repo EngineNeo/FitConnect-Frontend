@@ -18,12 +18,10 @@ const styles = (theme) => ({
 });
 
 function WorkoutPlan(props) {
-  const { selectWorkoutPlan, classes } = props;
+  const { classes } = props;
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [workoutPlans, setWorkoutPlans] = useState([]);
   const [viewMode, setViewMode] = useState('viewingPlan');
-
-  useEffect(selectWorkoutPlan, [selectWorkoutPlan]);
 
   const userId = localStorage.getItem('client_id');
 
@@ -110,7 +108,7 @@ function WorkoutPlan(props) {
             onSelectPlan={handleSelectPlan}
             onCreateNewPlan={handleCreateNewPlan}
             onSelectTodaysPlan={handleSelectTodaysPlan}
-          />
+          />  
         </Grid>
         
         <Divider orientation="vertical" flexItem className={classes.fullHeight} />
@@ -130,4 +128,4 @@ WorkoutPlan.propTypes = {
   selectWorkoutPlan: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(WorkoutPlan);
+export default withRouter(withStyles(styles)(WorkoutPlan));
