@@ -60,7 +60,9 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
     useEffect(() => {
         const todaysPlan = localStorage.getItem('todaysPlan');
         const parsedPlan = JSON.parse(todaysPlan);
-        setTodaysPlanId(parsedPlan.plan_id);
+        if (parsedPlan) {
+            setTodaysPlanId(parsedPlan.plan_id);
+        }
     }, []);
 
 
@@ -69,20 +71,19 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
 
         const fetchWorkoutLogs = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/view_workout_logs/${userId}`);
-                const data = await response.json();
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/view_workout_logs/${plan.plan_id}`);
 
-                // Filter logs that match the selected plan's name
-                const filteredLogs = data.filter(log => log.plan === plan.plan_name);
-                setItems(filteredLogs);
+                const data = await response.json();
+                setItems(data);
             } catch (error) {
                 console.error('Error fetching workout logs:', error);
             }
         };
 
-        if (plan) {
+        if (plan ) {
             fetchWorkoutLogs();
         }
+        return () => setItems([]);
     }, [userId, plan]);
 
     const handleToggleLogs = () => {
@@ -98,6 +99,15 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
             return acc;
         }, {});
 
+        if (items.length === 0) {
+            return (
+              <div className={classes.dateSection}>
+                <Paper className={classes.Paper}>
+                  <Typography variant="subtitle1" className={classes.exerciseName}>No Logs</Typography>
+                </Paper>
+              </div>
+            );
+          }
         // Map through each date group
         return Object.entries(logsGroupedByDate).map(([date, exercises]) => (
             <div key={date} className={classes.dateSection}>
@@ -161,7 +171,7 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
             <Paper className={classes.Paper}>
                 <Toolbar className={classes.toolbar}>
                     <Typography variant="h4">{plan.plan_name}</Typography>
-                    {todaysPlanId && plan.plan_id !== todaysPlanId && (
+                    {(todaysPlanId === null) || plan.plan_id !== todaysPlanId && (
                         <Button
                             variant="contained"
                             color="primary"
@@ -171,6 +181,7 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
                             Edit Plan
                         </Button>
                     )}
+                    
                 </Toolbar>
                 <Table className={classes.table}>
                     <TableHead>
