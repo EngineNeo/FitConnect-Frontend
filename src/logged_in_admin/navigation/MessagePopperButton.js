@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef, useCallback, useEffect } from "react";
+import React, { Fragment, useState, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import {
   Popover,
@@ -13,26 +13,20 @@ import {
 } from "@mui/material";
 import withStyles from '@mui/styles/withStyles';
 import MessageIcon from "@mui/icons-material/Message";
-import MessageHistory from "./MessageHistory";
+import MessageListItem from "./MessageListItem";
 
 const styles = (theme) => ({
   tabContainer: {
     overflowY: "auto",
-    maxHeight: 'calc(100vh - 100px)',
+    maxHeight: 350,
   },
   popoverPaper: {
-    width: '100%',
-    maxWidth: 700,
-    maxHeight: '80vh',
-    position: 'fixed',
-    bottom: 0,
-    left: 0,
+    width: "100%",
+    maxWidth: 350,
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
-    zIndex: 1000,
-    overflowY: 'auto',
     [theme.breakpoints.down('md')]: {
-      maxWidth: 500,
+      maxWidth: 270,
     },
   },
   divider: {
@@ -43,55 +37,26 @@ const styles = (theme) => ({
   },
 });
 
-
 function MessagePopperButton(props) {
-  const { classes } = props;
-  const anchorEl = useRef(null);
+  const { classes, messages = [] } = props;
+  const anchorEl = useRef();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [messageHistory, setMessageHistory] = useState([]);
-  const [users, setUsers] = useState([]);
-  const senderId = Number(localStorage.getItem('user_id'));
-
-  useEffect(() => {
-    console.log("Sender ID:", senderId);
-    fetch(`http://localhost:8000/fitConnect/contactHistory/${senderId}/`)
-        .then(response => response.json())
-        .then(data => setUsers(data)) // Assuming the response is an array of users
-        .catch(error => console.error('Error fetching users:', error));
-}, []);
-console.log("Users:", users)
-  const handleUserSelect = (userId) => {
-    fetch(`http://localhost:8000/fitConnect/get_messages/${senderId}/${userId}/`)
-        .then(response => response.json())
-        .then(data => {
-            setMessageHistory(data.messages);
-            setSelectedUser(userId);
-        })
-        .catch(error => console.error('Error fetching messages:', error));
-};
+  
 
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen);
   }, [isOpen, setIsOpen]);
 
-  const handleClickAway = useCallback((event) => {
-    if (anchorEl.current && (anchorEl.current.contains(event.target) || event.target === anchorEl.current)) {
-      return;
-    }
+  const handleClickAway = useCallback(() => {
     setIsOpen(false);
   }, [setIsOpen]);
-
-  const handleBackToUsers = () => {
-    setSelectedUser(null);
-    setMessageHistory([]);
-  };
 
   const id = isOpen ? "scroll-playground" : null;
   return (
     <Fragment>
       <IconButton
         onClick={handleClick}
+        buttonRef={anchorEl}
         aria-label="Open Messages"
         aria-describedby={id}
         color="primary"
@@ -121,14 +86,20 @@ console.log("Users:", users)
           <Divider className={classes.divider} />
         </AppBar>
         <List dense className={classes.tabContainer}>
-          {selectedUser === null ? (
-            users.map((user) => (
-              <ListItem key={user.user_id} button onClick={() => handleUserSelect(user.user_id)}>
-                <ListItemText primary={user.name} />
-              </ListItem>
-            ))
+          {messages.length === 0 ? (
+            <ListItem>
+              <ListItemText>
+                You haven&apos;t received any messages yet.
+              </ListItemText>
+            </ListItem>
           ) : (
-            <MessageHistory history={messageHistory} onBack={handleBackToUsers} senderId={senderId} recipientId={selectedUser} />
+            messages.map((element, index) => (
+              <MessageListItem
+                key={index}
+                message={element}
+                divider={index !== messages.length - 1}
+              />
+            ))
           )}
         </List>
       </Popover>
@@ -139,7 +110,6 @@ console.log("Users:", users)
 MessagePopperButton.propTypes = {
   classes: PropTypes.object.isRequired,
   messages: PropTypes.arrayOf(PropTypes.object).isRequired,
-  senderId: PropTypes.number.isRequired,
 };
 
 MessagePopperButton.defaultProps = {
