@@ -18,7 +18,9 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/manage_become_coach_request`)
       .then(response => response.json())
-      .then(data => setCoachRequests(data))
+      .then(data => {
+        console.log("Fetched exercises:", data);
+        setCoachRequests(data)})
       .catch(error => console.error('Error fetching coach requests:', error));
 
     fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/exercises`)

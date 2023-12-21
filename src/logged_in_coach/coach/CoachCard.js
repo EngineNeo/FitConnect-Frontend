@@ -46,7 +46,7 @@ const CoachCards = ({ coach }) => {
         }
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/requestCoach/`, {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/requestCoach/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,6 +56,7 @@ const CoachCards = ({ coach }) => {
 
             if (response.ok) {
                 console.log("Requested coach successfully");
+                localStorage.setItem('hired_coach', coachId);
                 setSnackbarOpen(true);
             } else {
                 const errorData = await response.json();

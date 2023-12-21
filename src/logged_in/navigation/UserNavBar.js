@@ -192,7 +192,7 @@ function NavBar(props) {
           // Clearing local storage and cookies
           localStorage.clear();
           Cookies.remove('authToken');
-          history.push('/login');
+          history.push('');
           const logoutEvent = new Event('logout');
           window.dispatchEvent(logoutEvent);
         } else {
