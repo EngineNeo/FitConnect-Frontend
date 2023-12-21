@@ -52,7 +52,7 @@ function LoginPage(props) {
         const password = loginPassword.current.value;
 
         try {
-            const response = await axios.post('http://localhost:8000/fitConnect/login', {
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/login`, {
                 email, password
             }, {
                 headers: {

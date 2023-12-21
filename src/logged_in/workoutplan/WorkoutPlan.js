@@ -32,7 +32,7 @@ function WorkoutPlan(props) {
     const controller = new AbortController();
 
     try {
-      const response = await fetch(`http://localhost:8000/fitConnect/users/${userId}/plans`, { signal: controller.signal });
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/users/${userId}/plans`, { signal: controller.signal });
       if (!isMounted) return;
 
       const data = await response.json();
@@ -93,7 +93,6 @@ function WorkoutPlan(props) {
   // Initialize selectedPlan and viewMode based on today's plan
   useEffect(() => {
     const savedTodaysPlan = localStorage.getItem('todaysPlan');
-    // console.log(savedTodaysPlan)
     if (savedTodaysPlan) {
       setSelectedPlan(JSON.parse(savedTodaysPlan));
       setViewMode('updatingPlan');

@@ -110,3 +110,7 @@ build/
 #lockfiles
 yarn.lock
 
+# Environment Variable
+.env
+.env.development
+.env.production

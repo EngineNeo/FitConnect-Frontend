@@ -86,7 +86,7 @@ function ExerciseBank({ classes, onExerciseClick, isDialogMode, onAddExercise })
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
-        axios.get('http://localhost:8000/fitConnect/exercises')
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/exercises`)
             .then(response => {
                 const exercisesWithId = response.data.map((exercise, index) => ({
                     ...exercise,
@@ -94,7 +94,6 @@ function ExerciseBank({ classes, onExerciseClick, isDialogMode, onAddExercise })
                 }));
                 setExercises(exercisesWithId);
                 setFilteredExercises(exercisesWithId);
-                console.log(exercisesWithId);
             })
             .catch(error => console.log(error));
     }, []);

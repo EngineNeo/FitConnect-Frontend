@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -9,6 +10,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import DialogContent from '@mui/material/DialogContent'; // Add this import
 import DialogContentText from '@mui/material/DialogContentText'; // Add this import
+
+
+import useServerDate from '../../shared/functions/userServerDate';
 
 
 const styles = {
@@ -40,6 +44,7 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
       const [deleteDialogClose, setDeleteDialogClose] = useState(false);
       const [hoveredPlan, setHoveredPlan] = useState(null);
 
+
     const openDeleteDialog = (plan) => {
         setDeleteTarget(plan);
         setDeleteDialogOpen(true);
@@ -49,6 +54,10 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
         setDeleteDialogOpen(false);
     };
     
+
+    const serverDate = useServerDate();
+
+
     const handleListItemClick = (plan) => {
         onSelectPlan(plan);
     };
@@ -59,7 +68,7 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
 
     const handleDeletePlan = async (plan) => {
         try {
-          const response = await axios.delete(`http://localhost:8000/fitConnect/plans/${plan.plan_id}`);
+          const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}fitConnect/plans/${plan.plan_id}`);
           if (response.status === 200) {
             closeDeleteDialog();
             setSnackbar({ open: true, message: 'Workout plan deleted successfully!', severity: 'success' });
@@ -87,26 +96,19 @@ const WorkoutPlanList = ({ plans, onSelectPlan, onCreateNewPlan, onSelectTodaysP
         }
     };
 
-    const getTodayDateString = () => {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
-    };
-
     useEffect(() => {
         const savedTodaysPlan = localStorage.getItem('todaysPlan');
         const savedDate = localStorage.getItem('todaysPlanDate');
-        const todayDate = getTodayDateString();
 
-        if (savedTodaysPlan && savedDate === todayDate) {
+        if (savedTodaysPlan && savedDate === serverDate) {
             setTodaysPlan(JSON.parse(savedTodaysPlan));
         }
     }, []);
 
     useEffect(() => {
         if (todaysPlan) {
-            const todayDate = getTodayDateString();
             localStorage.setItem('todaysPlan', JSON.stringify(todaysPlan));
-            localStorage.setItem('todaysPlanDate', todayDate);
+            localStorage.setItem('todaysPlanDate', serverDate);
         }
     }, [todaysPlan]);
 

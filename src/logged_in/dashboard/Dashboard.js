@@ -2,9 +2,43 @@ import React, { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
-import { Typography, Alert, Button } from '@mui/material';
+import { Typography, Alert, Button, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
 import DailySurveyDialog from '../dailysurvey/DailySurveyDialog';
+import { withRouter } from "react-router-dom";
+import { withStyles } from '@mui/styles';
+import useServerDate from '../../shared/functions/userServerDate';
+
+const styles = (theme) => ({
+  dateSection: {
+    marginBottom: theme.spacing(2),
+  },
+  paper: {
+    padding: theme.spacing(2),
+  },
+  exerciseName: {
+    marginTop: theme.spacing(1),
+  },
+  workoutPlanTitle: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    fontWeight: 'bold',
+  },
+  table: {
+    minWidth: 300,
+  },
+  chartsContainer: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    marginBottom: theme.spacing(2.5),
+  },
+  workoutLogsContainer: {
+    textAlign: 'center',
+  },
+});
+
 function Dashboard(props) {
+  const { classes } = props;
+
   const { selectDashboard, user_id } = props;
   const [weightData, setWeightData] = useState([]);
   const [calorieData, setCalorieData] = useState([]);
@@ -12,6 +46,10 @@ function Dashboard(props) {
   const [moodData, setMoodData] = useState([]);
   const [showSurveyAlert, setShowSurveyAlert] = useState(false);
   const [showSurveyDialog, setShowSurveyDialog] = useState(false);
+  const [workoutLogs, setWorkoutLogs] = useState([]);
+  const [hasWorkoutLogs, setHasWorkoutLogs] = useState(true);
+  
+  const serverDate = useServerDate();
 
   // Handlers to open and close daily survey
   const openSurveyDialog = () => {
@@ -27,13 +65,14 @@ function Dashboard(props) {
   useEffect(() => {
     selectDashboard();
     fetchData();
+    fetchWorkoutLogs();
   }, [selectDashboard, user_id]);
 
   const fetchData = async () => {
     if (!user_id) return;
 
     try {
-      const response = await axios.get(`http://localhost:8000/fitConnect/daily_survey/${user_id}/`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/daily_survey/${user_id}/`);
       processResponseData(response.data);
       checkForTodaysSurvey(response.data);
     } catch (error) {
@@ -41,9 +80,26 @@ function Dashboard(props) {
     }
   };
 
+  const fetchWorkoutLogs = async () => {
+    if (!user_id) return;
+
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/mostRecentWorkoutPlanView/${user_id}/`);
+      if (response.data.error && response.data.error === "No workout logs found.") {
+        setHasWorkoutLogs(false);
+      } else {
+        setWorkoutLogs(response.data.logs);
+        setHasWorkoutLogs(true);
+      }
+    } catch (error) {
+      console.error('Error fetching workout logs:', error);
+      setHasWorkoutLogs(false);
+    }
+  };
+
+
   const checkForTodaysSurvey = (data) => {
-    const today = new Date().toISOString().split('T')[0];
-    const hasTodaySurvey = data.some(entry => entry.recorded_date === today);
+    const hasTodaySurvey = data.some(entry => entry.recorded_date === serverDate);
     setShowSurveyAlert(!hasTodaySurvey);
   };
 
@@ -119,6 +175,64 @@ function Dashboard(props) {
     color: '#333'
   };
 
+  const renderWorkoutLogTables = () => {
+    const planTitle = workoutLogs.length > 0 ? workoutLogs[0].plan : 'Workout Plan';
+
+    const logsGroupedByDate = workoutLogs.reduce((acc, log) => {
+      const dateGroup = acc[log.completed_date] = acc[log.completed_date] || {};
+      const exerciseLogs = dateGroup[log.exercise] = dateGroup[log.exercise] || [];
+      exerciseLogs.push(log);
+      return acc;
+    }, {});
+
+    if (!hasWorkoutLogs) {
+      return (
+        <div className={classes.dateSection}>
+          <Typography variant="h6" className={classes.workoutPlanTitle}>
+            Most recent workout plan: None (Complete a workout plan first!)
+          </Typography>
+        </div>
+      );
+    } else {
+      // Map through each date group
+      return Object.entries(logsGroupedByDate).map(([date, exercises], dateIndex) => (
+        <div key={dateIndex} className={classes.dateSection}>
+          <Typography variant="h6" className={classes.workoutPlanTitle}>
+            Most recent workout plan: {planTitle}
+          </Typography>
+          <Paper className={classes.paper}>
+            <Typography variant="h6">{date}</Typography>
+            {Object.entries(exercises).map(([exerciseName, logs], exerciseIndex) => (
+              <div key={exerciseIndex}>
+                <Typography variant="subtitle1" className={classes.exerciseName}>{exerciseName}</Typography>
+                <Table className={classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Set</TableCell>
+                      <TableCell>Reps</TableCell>
+                      <TableCell>Weight</TableCell>
+                      <TableCell>Duration (mins)</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {logs.map((log, logIndex) => (
+                      <TableRow key={logIndex}>
+                        <TableCell>{logIndex + 1}</TableCell>
+                        <TableCell>{log.reps}</TableCell>
+                        <TableCell>{log.weight}</TableCell>
+                        <TableCell>{log.duration_minutes}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ))}
+          </Paper>
+        </div>
+      ));
+    }
+  };
+
   return (
     <Fragment>
       {showSurveyAlert && (
@@ -127,7 +241,7 @@ function Dashboard(props) {
         </Alert>
       )}
       <Typography variant="h4" style={{ marginTop: '40px', marginBottom: '40px' }}>Welcome back, {firstName}</Typography>
-      <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px' }}>
+      <div className={classes.chartsContainer}>
         <div style={{ width: '48%' }}>
           <Typography variant="h6">Weight Tracker</Typography>
           <ResponsiveContainer width="100%" height={300}>
@@ -185,6 +299,9 @@ function Dashboard(props) {
           </ResponsiveContainer>
         </div>
       </div>
+      <div className={classes.workoutLogsContainer}>
+        {renderWorkoutLogTables()}
+      </div>
         <DailySurveyDialog
           userId={user_id}
           open={showSurveyDialog}
@@ -199,4 +316,4 @@ Dashboard.propTypes = {
   selectDashboard: PropTypes.func.isRequired,
 };
 
-export default Dashboard;
+export default withRouter(withStyles(styles)(Dashboard));

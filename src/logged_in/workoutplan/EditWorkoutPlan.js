@@ -94,7 +94,7 @@ const EditWorkoutPlan = (props) => {
     const handleDeleteCheckedExercises = async () => {
         try {
           const deletePromises = checkedExercises.map(async (exerciseId) => {
-            const response = await axios.delete(`http://localhost:8000/fitConnect/exercise_in_plan/${exerciseId}`);
+            const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}fitConnect/exercise_in_plan/${exerciseId}`);
             
             if (response.status !== 204) {
               console.error(`Failed to delete exercise with ID ${exerciseId}`);
@@ -143,7 +143,7 @@ const EditWorkoutPlan = (props) => {
                     if (!workoutPlanData.exercise_in_plan_id){
                         delete exercise.exercise_in_plan_id;
                         delete exercise.plan;
-                        const response = await axios.post(`http://localhost:8000/fitConnect/exercise_in_plan/`, workoutPlanData);
+                        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/exercise_in_plan/`, workoutPlanData);
                         if (response.status !== 201) {
                             console.error(`Failed to insert new exercise to workoutplan`);
                         }
@@ -151,13 +151,12 @@ const EditWorkoutPlan = (props) => {
                     }
                     delete exercise.plan_id
                     delete exercise.exercise
-                    const response = await axios.put(`http://localhost:8000/fitConnect/exercise_in_plan/${exercise.exercise_in_plan_id}`, workoutPlanData);
+                    const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}fitConnect/exercise_in_plan/${exercise.exercise_in_plan_id}`, workoutPlanData);
         
                     if (response.status !== 200) {
                         console.error(`Failed to update workout plan for exercise with ID ${exercise.exercise_in_plan_id}`);
                     }
                 }
-        
                 onSave();
                 setSnackbar({ open: true, message: 'Workout plans updated successfully!', severity: 'success' });
             } catch (error) {
