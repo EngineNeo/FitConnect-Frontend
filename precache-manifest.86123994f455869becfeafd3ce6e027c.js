@@ -12,20 +12,20 @@ self.__precacheManifest = [
     "url": "/FitConnect-Frontend/static/js/2.c1324fd5.chunk.js"
   },
   {
-    "revision": "b2ccd5496ba9b8ce7db6",
-    "url": "/FitConnect-Frontend/static/js/3.9c1f1336.chunk.js"
+    "revision": "3ff09463029e2d04e6f0",
+    "url": "/FitConnect-Frontend/static/js/3.b74c217b.chunk.js"
   },
   {
-    "revision": "ff50665d44bccd354270",
-    "url": "/FitConnect-Frontend/static/js/main.e21da22a.chunk.js"
+    "revision": "f807eced737efdba1188",
+    "url": "/FitConnect-Frontend/static/js/main.b880b56a.chunk.js"
   },
   {
-    "revision": "335413f897ca44629975",
-    "url": "/FitConnect-Frontend/static/js/runtime~main.be3671ab.js"
+    "revision": "d131abd7baa0da0cc06d",
+    "url": "/FitConnect-Frontend/static/js/runtime~main.78b107bc.js"
   },
   {
-    "revision": "de4246abdb1c8fedc1d1",
-    "url": "/FitConnect-Frontend/static/js/6.fb2f1bf6.chunk.js"
+    "revision": "426d9fa21f13fd895432",
+    "url": "/FitConnect-Frontend/static/js/6.0d582b30.chunk.js"
   },
   {
     "revision": "3ef77d7ea3b1d13a8b1d",
@@ -40,23 +40,23 @@ self.__precacheManifest = [
     "url": "/FitConnect-Frontend/static/js/8.e14ef025.chunk.js"
   },
   {
-    "revision": "fc1d442c6bb0a1e72518",
-    "url": "/FitConnect-Frontend/static/js/9.5b7b6f54.chunk.js"
+    "revision": "dec48643b0f2625a8f94",
+    "url": "/FitConnect-Frontend/static/js/9.462261e3.chunk.js"
   },
   {
-    "revision": "d52e7a3b6901d43baea9",
-    "url": "/FitConnect-Frontend/static/js/10.f2fd80f5.chunk.js"
+    "revision": "219b9f09893777a6023e",
+    "url": "/FitConnect-Frontend/static/js/10.00b2b27a.chunk.js"
   },
   {
     "revision": "52686fb84ff2346a964c",
     "url": "/FitConnect-Frontend/static/js/11.77996be8.chunk.js"
   },
   {
-    "revision": "d9d1407f2aa89ef372e4",
-    "url": "/FitConnect-Frontend/static/js/12.fa1603fd.chunk.js"
+    "revision": "775bf6abfce8cca1e81a",
+    "url": "/FitConnect-Frontend/static/js/12.a900f515.chunk.js"
   },
   {
-    "revision": "c8fda08c0c1ffad4a5e26a98065837c7",
+    "revision": "869937a5bb276a6c5be02daf8355946b",
     "url": "/FitConnect-Frontend/index.html"
   }
 ];
