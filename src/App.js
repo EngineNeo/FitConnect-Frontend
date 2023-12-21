@@ -1,6 +1,6 @@
 import React, { Fragment, Suspense, lazy, useContext } from "react";
 import { ThemeProvider, StyledEngineProvider, CssBaseline } from "@mui/material";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import theme from "./theme";
 import GlobalStyles from "./GlobalStyles";
 import Pace from "./shared/components/Pace";
@@ -35,7 +35,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <CssBaseline />
@@ -53,7 +53,7 @@ function App() {
           </Suspense>
         </ThemeProvider>
       </StyledEngineProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

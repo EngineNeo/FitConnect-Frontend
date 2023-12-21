@@ -1,6 +1,6 @@
 // RoutesComponent.js
 import React, { useContext, Fragment, Suspense, lazy } from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch } from "react-router-dom";
 import { AuthContext } from "../../shared/components/AuthContext";
 
 const LoggedInComponent = lazy(() => import("../../logged_in/components/Main"));
