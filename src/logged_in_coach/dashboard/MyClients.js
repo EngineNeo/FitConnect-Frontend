@@ -104,7 +104,7 @@ function ClientModule() {
   const coachId = localStorage.getItem('user_id');
 
   useEffect(() => {
-    fetch(`http://localhost:8000/fitConnect/coaches/${coachId}/clients`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/coaches/${coachId}/clients`)
       .then(response => response.json())
       .then(data => {
         const clientsWithColor = data.map(client => ({

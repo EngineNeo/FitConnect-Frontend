@@ -71,7 +71,7 @@ const ReadWorkoutPlan = ({ plan, classes, editHandler }) => {
 
         const fetchWorkoutLogs = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/fitConnect/view_workout_logs/${userId}`);
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/view_workout_logs/${userId}`);
                 const data = await response.json();
 
                 // Filter logs that match the selected plan's name

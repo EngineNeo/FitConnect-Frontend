@@ -33,7 +33,7 @@ function Dashboard(props) {
     if (!user_id) return;
 
     try {
-      const response = await axios.get(`http://localhost:8000/fitConnect/daily_survey/${user_id}/`);
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/daily_survey/${user_id}/`);
       processResponseData(response.data);
       checkForTodaysSurvey(response.data);
     } catch (error) {

@@ -50,7 +50,7 @@ const DailySurveyDialog = ({ userId, open, onClose, onUpdate }) => {
         const currentDate = new Date().toISOString().split('T')[0];
 
         try {
-            const response = await axios.post(`http://localhost:8000/fitConnect/daily_survey/${userId}/`, {
+            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/daily_survey/${userId}/`, {
                 ...surveyData,
                 recorded_date: currentDate
             });

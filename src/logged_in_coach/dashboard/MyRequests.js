@@ -17,7 +17,7 @@ function MyRequests() {
   const coachId = localStorage.getItem('user_id');
 
   useEffect(() => {
-    fetch(`http://localhost:8000/fitConnect/coaches/${coachId}/requests`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/coaches/${coachId}/requests`)
       .then(response => response.json())
       .then(data => {
         console.log("Fetched client requests data:", data); 
@@ -32,7 +32,7 @@ function MyRequests() {
 
   const handleAccept = (userId) => {
     const payload = { user: userId, coach:  coachId  };
-    fetch("http://localhost:8000/fitConnect/acceptClient/", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/acceptClient/`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -47,7 +47,7 @@ function MyRequests() {
 
   const handleDecline = (userId) => {
     const payload = { user: userId, coach: coachId };
-    fetch("http://localhost:8000/fitConnect/declineClient/", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/declineClient/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

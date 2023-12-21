@@ -29,7 +29,7 @@ const MessageHistory = ({ onBack, senderId, recipientId }) => {
 
     const fetchAndUpdateMessageHistory = () => {
         if (recipientId !== null) {
-            fetch(`http://localhost:8000/fitConnect/get_messages/${senderId}/${recipientId}/`)
+            fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/get_messages/${senderId}/${recipientId}/`)
                 .then(response => response.json())
                 .then(data => setMessageHistory(data.messages))
                 .catch(error => console.error('Error fetching messages:', error));
@@ -47,7 +47,7 @@ const MessageHistory = ({ onBack, senderId, recipientId }) => {
             return;
         }
 
-        fetch('http://localhost:8000/fitConnect/create_message/', {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/create_message/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

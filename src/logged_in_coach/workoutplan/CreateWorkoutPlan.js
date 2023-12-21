@@ -13,7 +13,7 @@ const CreateWorkoutPlan = ({ onSave }) => {
     const exercisesPerPage = 6;
 
     useEffect(() => {
-        axios.get('http://localhost:8000/fitConnect/exercises')
+        axios.get(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/exercises`)
             .then(response => {
                 setExercises(response.data);
             })

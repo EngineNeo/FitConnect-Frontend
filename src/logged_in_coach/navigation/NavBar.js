@@ -188,7 +188,7 @@ function NavBar(props) {
 
     if (userId) {
       try {
-        const response = await fetch('http://localhost:8000/fitConnect/logout/', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/logout/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

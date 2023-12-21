@@ -16,12 +16,12 @@ const AdminDashboard = () => {
   const [newExercise, setNewExercise] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8000/fitConnect/manage_become_coach_request')
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/manage_become_coach_request`)
       .then(response => response.json())
       .then(data => setCoachRequests(data))
       .catch(error => console.error('Error fetching coach requests:', error));
 
-    fetch('http://localhost:8000/fitConnect/exercises')
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/exercises`)
       .then(response => response.json())
       .then(data => {
         console.log("Fetched exercises:", data);
@@ -31,14 +31,14 @@ const AdminDashboard = () => {
   }, []);
 
   const fetchExercises = () => {
-    fetch('http://localhost:8000/fitConnect/exercises')
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/exercises`)
       .then(response => response.json())
       .then(data => setExerciseBank(data))
       .catch(error => console.error('Error fetching exercises:', error));
   };
 
   const handleAcceptRequest = (requestId) => {
-    fetch('http://localhost:8000/fitConnect/manage_become_coach_request', {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/manage_become_coach_request`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
   };
 
   const handleRejectRequest = (requestId) => {
-    fetch('http://localhost:8000/fitConnect/manage_become_coach_request', {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/manage_become_coach_request`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
   };
 
   const handleAddExercise = () => {
-    fetch('http://localhost:8000/fitConnect/edit_exercise_bank', {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/edit_exercise_bank`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
 
   const handleRemoveExercise = (exerciseId) => {
     console.log('Attempting to remove exercise with ID:', exerciseId);
-    fetch('http://localhost:8000/fitConnect/edit_exercise_bank', {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/fitConnect/edit_exercise_bank`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
