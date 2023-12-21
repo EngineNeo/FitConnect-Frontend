@@ -90,7 +90,7 @@ const UpdateWorkoutPlan = (props) => {
     };
 
 	const submitExerciseEntries = async (exerciseIndex, exerciseId) => {
-		const userId = localStorage.getItem('user_id');
+		const userId = localStorage.getItem('client_id');
 
 		try {
 			const responses = await Promise.all(
@@ -123,7 +123,7 @@ const UpdateWorkoutPlan = (props) => {
 
 
     const fetchAndCheckWorkoutLogs = async () => {
-        const userId = localStorage.getItem('user_id');
+        const userId = localStorage.getItem('client_id');
 
         try {
             const response = await axios.get(`http://localhost:8000/fitConnect/mostRecentWorkoutPlanView/${userId}`);
