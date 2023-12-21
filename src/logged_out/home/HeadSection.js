@@ -8,9 +8,9 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from 'react-scroll';
 
 const gifFiles = [
-  "/images/logged_out/DumbbellOpt.gif",
-  "/images/logged_out/JumpRopeOpt.gif",
-  "/images/logged_out/RunningOpt.gif",
+  "/FitConnect-Frontend/images/logged_out/DumbbellOpt.gif",
+  "/FitConnect-Frontend/images/logged_out/JumpRopeOpt.gif",
+  "/FitConnect-Frontend/images/logged_out/RunningOpt.gif",
 ];
 
 const styles = (theme) => ({

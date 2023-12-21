@@ -33,7 +33,7 @@ import SportsIcon from '@mui/icons-material/Sports';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const logo = "/images/logged_out/FitConnectLogo.png"
+const logo = "/FitConnect-Frontend/images/logged_out/FitConnectLogo.png"
 
 const styles = (theme) => ({
   appBar: {

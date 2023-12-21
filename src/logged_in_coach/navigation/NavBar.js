@@ -35,7 +35,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Email from '@mui/icons-material/Email';
 import RecentActors from '@mui/icons-material/RecentActors';
 
-const logo = "/images/logged_out/FitConnectLogo.png"
+const logo = "/FitConnect-Frontend/images/logged_out/FitConnectLogo.png"
 
 const styles = (theme) => ({
   appBar: {

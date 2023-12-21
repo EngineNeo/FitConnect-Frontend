@@ -9,7 +9,7 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import NavigationDrawer from "../../shared/components/NavigationDrawer";
 
-const logo = "/images/logged_out/FitConnectLogo.png"
+const logo = "/FitConnect-Frontend/images/logged_out/FitConnectLogo.png"
 
 const styles = theme => ({
   appBar: {
