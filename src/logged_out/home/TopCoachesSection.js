@@ -12,7 +12,7 @@ function TopCoachesSection(props) {
   const isWidthUpMd = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
-    axios.get('http://localhost:8000/fitConnect/coaches')
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}fitConnect/coaches`)
       .then(response => {
         const topCoaches = response.data.slice(0, 5);
         setCoaches(topCoaches);

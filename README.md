@@ -9,6 +9,8 @@ gh repo clone EngineNeo/FitConnect-Frontend
 ### Then use
 cd FitConnect-Frontend
 
+Create a .env in root dir that contains REACT_APP_API_BASE_URL=
+
 npm install
 
 ### To run the page

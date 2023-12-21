@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, Fragment } from "react";
+import React, { useEffect, useState, useCallback, useRef, Fragment } from "react";
 import PropTypes from "prop-types";
 import {
   FormHelperText,
@@ -19,6 +19,10 @@ import FormDialog from "../../shared/components/FormDialog";
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format, isValid } from 'date-fns';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 import PersonIcon from '@mui/icons-material/Person';
 import SportsIcon from '@mui/icons-material/Sports';
 
@@ -67,6 +71,16 @@ function RegisterDialog(props) {
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
 
+  const history = useHistory();
+
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const handleUserTypeSelect = (type) => {
     setSelectedUserType(type);
   };
@@ -104,7 +118,7 @@ function RegisterDialog(props) {
         isValidStep = validateUserTypeSelection();
         break;
       case 4:
-        isValidStep = validateCoachSurvey();
+        isValidStep = selectedUserType === 'coach' ? validateCoachSurvey() : validateUserTypeSelection();
         break;
       default:
         isValidStep = true;
@@ -113,21 +127,21 @@ function RegisterDialog(props) {
     if (!isValidStep) return;
 
     // Proceed to next step or registration
-    if (currentStep === 4 && selectedUserType === 'user') {
+    if (currentStep === 4 && selectedUserType === 'coach') {
       register();
-    } else if (currentStep <= 4) {
+    } else if (currentStep < 4 || (currentStep === 4 && selectedUserType === 'user')) {
       setCurrentStep(currentStep + 1);
     }
   };
 
-    const renderActionButton = () => {
-    if (currentStep === 3 && selectedUserType === 'user') {
+  const renderActionButton = () => {
+    if ((currentStep === 4 && selectedUserType === 'coach') || (currentStep === 3 && selectedUserType === 'user')) {
       return (
         <Button onClick={register} color="primary" variant="contained">
           Submit
         </Button>
       );
-    } else if (currentStep <= 4) {
+    } else if (currentStep < 4 || (currentStep === 4 && selectedUserType === 'user')) {
       return (
         <Button onClick={handleNextOrSubmit} color="primary" variant="contained">
           Next
@@ -204,6 +218,7 @@ function RegisterDialog(props) {
         variant="outlined"
         margin="normal"
         fullWidth
+        required
         label="First Name"
         value={firstName}
         onChange={(e) => setFirstName(e.target.value.replace(/[^a-zA-Z]/g, ''))}
@@ -213,6 +228,7 @@ function RegisterDialog(props) {
         variant="outlined"
         margin="normal"
         fullWidth
+        required
         label="Last Name"
         value={lastName}
         onChange={(e) => setLastName(e.target.value.replace(/[^a-zA-Z]/g, ''))}
@@ -504,6 +520,41 @@ function RegisterDialog(props) {
     }
   };
 
+  // Function to handle user login
+  const login = async (email, password) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}fitConnect/login`, {
+        email, password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (isMountedRef.current && response && response.data) {
+        const { token, ...otherData } = response.data;
+
+        Cookies.set('authToken', token, { expires: 7 }); // Expires in 7 days
+
+        Object.entries(otherData).forEach(([key, value]) => {
+          localStorage.setItem(key, value);
+        });
+
+        history.push("/c/dashboard");
+      }
+    } catch (error) {
+      if (isMountedRef.current) {
+        console.error("Login Error:", error);
+        setStatus("loginError");
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  };
+
   const register = useCallback(() => {
     // Check for terms of service agreement
     if (registerTermsCheckbox.current && !registerTermsCheckbox.current.checked) {
@@ -543,7 +594,7 @@ function RegisterDialog(props) {
         height: height,
       };
 
-      return fetch('http://localhost:8000/fitConnect/initial_survey', {
+      return fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/initial_survey`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -572,7 +623,7 @@ function RegisterDialog(props) {
         bio: coachBio,
       };
 
-      fetch('http://localhost:8000/fitConnect/become_coach', {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/become_coach`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -596,7 +647,7 @@ function RegisterDialog(props) {
         });
     };
 
-    fetch('http://localhost:8000/fitConnect/create_user', {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/create_user`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -607,13 +658,15 @@ function RegisterDialog(props) {
       .then(data => {
         if (data.user_id) {
           handleInitialSurveySubmission(data.user_id)
-            .then(surveyResult => {
+            .then(async surveyResult => {
               if (surveyResult.success) {
                 if (selectedUserType === 'coach') {
                   handleCoachRegistration(surveyResult.userId);
+                  await login(email, password);
                 } else {
                   setIsLoading(false);
                   showSuccessMessage();
+                  await login(email, password);
                   onClose();
                 }
               } else {

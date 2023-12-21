@@ -110,4 +110,8 @@ build/
 #lockfiles
 yarn.lock
 
-.DS_Store
+
+# Environment Variable
+.env
+.env.development
+.env.production

@@ -48,6 +48,18 @@ function Main(props) {
   }, [checkAuthStatus]);
 
 
+  useEffect(() => {
+    const handleLogoutEvent = () => {
+      setIsAuthenticated(false);
+    };
+
+    window.addEventListener('logout', handleLogoutEvent);
+
+    return () => {
+      window.removeEventListener('logout', handleLogoutEvent);
+    };
+  }, []);
+
 
   const selectHome = useCallback(() => {
     smoothScrollTop();
@@ -117,6 +129,7 @@ function Main(props) {
         <UserNavBar
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
+          isAuthenticated={isAuthenticated}
         />
       ) : (
       <GuestNavBar

@@ -180,7 +180,7 @@ function NavBar(props) {
 
     if (userId) {
       try {
-        const response = await fetch('http://localhost:8000/fitConnect/logout/', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/logout/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -193,6 +193,8 @@ function NavBar(props) {
           localStorage.clear();
           Cookies.remove('authToken');
           history.push('/login');
+          const logoutEvent = new Event('logout');
+          window.dispatchEvent(logoutEvent);
         } else {
           console.error('Logout failed');
           console.log(response)

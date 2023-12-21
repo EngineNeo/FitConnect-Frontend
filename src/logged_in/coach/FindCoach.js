@@ -17,7 +17,7 @@ const FindCoach = () => {
     const [costRange, setCostRange] = useState([0, 250]);
 
     useEffect(() => {
-        fetch("http://localhost:8000/fitConnect/coaches")
+        fetch(`${process.env.REACT_APP_API_BASE_URL}fitConnect/coaches`)
             .then(response => response.json())
             .then(data => setCoaches(data))
             .catch(error => console.error("Error fetching data: ", error));
