@@ -115,3 +115,7 @@ yarn.lock
 .env
 .env.development
 .env.production
+src/logged_in_coach/dashboard/.DS_Store
+src/logged_in_coach/.DS_Store
+src/.DS_Store
+.DS_Store
