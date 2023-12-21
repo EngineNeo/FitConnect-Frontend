@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, CardActionArea, CardMedia, Typography, Button, Modal, Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
+import {
+  TextField
+} from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,6 +71,27 @@ const useStyles = makeStyles((theme) => ({
     color: 'white',
     fontSize: '2rem',
   },
+  modalContent: {
+    backgroundColor: '#333',
+    padding: theme.spacing(4),
+    outline: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '50%',
+    maxWidth: '600px',
+},
+buttonContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: theme.spacing(2),
+},
+button: {
+    flex: 1,
+    margin: theme.spacing(1),
+},
 }));
 
 function ClientModule() {
@@ -76,20 +100,47 @@ function ClientModule() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [clients, setClients] = useState([]);
   const history = useHistory();
+  const [searchTerm, setSearchTerm] = useState('');
   const coachId = localStorage.getItem('user_id');
 
   useEffect(() => {
     fetch(`http://localhost:8000/fitConnect/coaches/${coachId}/clients`)
       .then(response => response.json())
-      .then(data => setClients(data))
+      .then(data => {
+        const clientsWithColor = data.map(client => ({
+          ...client,
+          color: getRandomColor(),
+        }));
+        setClients(clientsWithColor);
+      })
       .catch(error => console.error('Error fetching clients:', error));
   }, [coachId]);
+
+  const navigateToClientInfo = () => {
+    history.push('/c/clientviewdashboard');
+    handleClose();
+};
+
+const navigateToWorkoutInfo = () => {
+    history.push('/c/clientview');
+    handleClose();
+};
+const handleSearchChange = (event) => {
+  setSearchTerm(event.target.value);
+};
+
+const filteredClients = clients.filter(client =>
+  client.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  client.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  client.email.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const handleOpen = (client) => {
     setSelectedClient(client);
     console.log("Selected client:", client);
     localStorage.setItem('client_id', client.user_id);
-    history.push('/c/clientview');
+    localStorage.setItem('client_name', client.first_name);
+
     setOpen(true);
   };
 
@@ -107,12 +158,23 @@ function ClientModule() {
 
   return (
     <Box className={classes.root}>
+      <TextField
+        fullWidth
+        variant="outlined"
+        label="Search Clients"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        InputLabelProps={{ style: { color: 'white' } }}
+        InputProps={{ style: { color: 'white' } }}
+        sx={{ mb: 2 }}
+      />
+      {filteredClients.length > 0 ? (
       <Grid container spacing={2}>
-        {clients.map((client) => (
+        {filteredClients.map((client) => (
           <Grid item xs={12} sm={6} md={4} key={client.id}>
             <Card className={classes.card}>
               <CardActionArea onClick={() => handleOpen(client)}>
-              <Box className={classes.avatar} style={{ backgroundColor: getRandomColor() }}>
+              <Box className={classes.avatar} style={{ backgroundColor: client.color }}>
                   {generateInitials(client.first_name, client.last_name)}
                 </Box>
                 <CardContent>
@@ -128,38 +190,26 @@ function ClientModule() {
           </Grid>
         ))}
       </Grid>
+      ) : (
+        <Typography variant="h6" style={{ color: 'white', marginTop: '20px', textAlign: 'center' }}>
+          No clients found.
+        </Typography>
+      )}
 
       {selectedClient && (
         <Modal
-          className={classes.modal}
           open={open}
           onClose={handleClose}
+          className={classes.modal}
         >
-          <Box className={classes.paper}>
-            <Typography variant="h5" gutterBottom>
-              {selectedClient.name}
-            </Typography>
-            <Typography variant="body1">
-              Age: {selectedClient.age}
-            </Typography>
-            <Typography variant="body1">
-              Goal: {selectedClient.goal}
-            </Typography>
-            <Typography variant="body1">
-              Workout Plan: {selectedClient.plan}
-            </Typography>
-            <Box>
-              <Button className={`${classes.button} ${classes.editButton}`}>
-                Edit Workout Plan
+          <Box className={classes.modalContent}>
+            <Typography variant="h6">{selectedClient.first_name} {selectedClient.last_name}</Typography>
+            <Box className={classes.buttonContainer}>
+              <Button onClick={navigateToClientInfo} variant="contained" color="primary" className={classes.button}>
+                View Client Info
               </Button>
-              <Button className={`${classes.button} ${classes.createButton}`}>
-                Create New Plan
-              </Button>
-              <Button className={`${classes.button} ${classes.deleteButton}`}>
-                Delete Plan
-              </Button>
-              <Button className={`${classes.button} ${classes.deleteButton}`}>
-                Remove Client
+              <Button onClick={navigateToWorkoutInfo} variant="contained" color="primary" className={classes.button}>
+                Client Workout Info
               </Button>
             </Box>
           </Box>
