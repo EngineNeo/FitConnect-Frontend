@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/FitConnect-Frontend/precache-manifest.51bac3e515004c910585aaf06f32a4ea.js"
+  "/FitConnect-Frontend/precache-manifest.4c973e04fcbc5c08cf005109dbd5b309.js"
 );
 
 workbox.clientsClaim();
